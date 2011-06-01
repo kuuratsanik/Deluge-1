@@ -419,19 +419,19 @@ class TopLevel(resource.Resource):
         js = ScriptResource()
 
         # configure the dev scripts
-        js.add_script("ext-base-debug.js", rpath("js", "extjs", "ext-base-debug.js"), "dev")
+        js.add_script("ext-debug.js", rpath("js", "extjs", "ext-debug.js"), "dev")
         js.add_script("ext-all-debug.js", rpath("js", "extjs", "ext-all-debug.js"), "dev")
-        js.add_script_folder("ext-extensions", rpath("js", "extjs", "ext-extensions"), "dev")
+        js.add_script_folder("ext-extensions", rpath("js", "extjs","ext-extensions"), "dev")
         js.add_script_folder("deluge-all", rpath("js", "deluge-all"), "dev")
 
         # configure the debug scripts
-        js.add_script("ext-base-debug.js", rpath("js", "extjs", "ext-base-debug.js"), "debug")
+        js.add_script("ext-debug.js", rpath("js", "extjs", "ext-debug.js"), "debug")
         js.add_script("ext-all-debug.js", rpath("js", "extjs", "ext-all-debug.js"), "debug")
         js.add_script("ext-extensions-debug.js", rpath("js", "extjs", "ext-extensions-debug.js"), "debug")
         js.add_script("deluge-all-debug.js", rpath("js", "deluge-all-debug.js"), "debug")
 
         # configure the normal scripts
-        js.add_script("ext-base.js", rpath("js", "extjs", "ext-base.js"))
+        js.add_script("ext.js", rpath("js", "extjs", "ext.js"))
         js.add_script("ext-all.js", rpath("js", "extjs", "ext-all.js"))
         js.add_script("ext-extensions.js", rpath("js", "extjs", "ext-extensions.js"))
         js.add_script("deluge-all.js", rpath("js", "deluge-all.js"))
