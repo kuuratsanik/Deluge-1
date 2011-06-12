@@ -1,7 +1,7 @@
 /*!
  * Deluge.details.StatusTab.js
  *
- * Copyright (c) Damien Churchill 2009-2010 <damoxc@gmail.com>
+ * Copyright (c) Damien Churchill 2009-2011 <damoxc@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,21 +29,22 @@
  * this exception statement from your version. If you delete this exception
  * statement from all source files in the program, then also delete it here.
  */
-Ext.ns('Deluge.details');
 
 /**
  * @class Deluge.details.StatusTab
  * @extends Ext.Panel
  */
-Deluge.details.StatusTab = Ext.extend(Ext.Panel, {
+Ext.define('Deluge.details.StatusTab', {
+    extend: 'Ext.Panel',
+
     title: _('Status'),
     autoScroll: true,
 
     onRender: function(ct, position) {
-        Deluge.details.StatusTab.superclass.onRender.call(this, ct, position);
+        this.callParent(arguments);
 
         this.progressBar = this.add({
-            xtype: 'progress',
+            xtype: 'progressbar',
             cls: 'x-deluge-status-progressbar'
         });
 
@@ -53,17 +54,11 @@ Deluge.details.StatusTab = Ext.extend(Ext.Panel, {
 
             border: false,
             width: 1000,
-            listeners: {
-                'render': {
-                    fn: function(panel) {
-                        panel.load({
-                            url: deluge.config.base + 'render/tab_status.html',
-                            text: _('Loading') + '...'
-                        });
-                        panel.getUpdater().on('update', this.onPanelUpdate, this);
-                    },
-                    scope: this
-                }
+            loader: {
+                url: deluge.config.base + 'render/tab_status.html',
+                loadMask: true,
+                success: this.onPanelUpdate,
+                scope: this
             }
         });
     },

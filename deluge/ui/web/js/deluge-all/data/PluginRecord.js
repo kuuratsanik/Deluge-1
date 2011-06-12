@@ -1,7 +1,7 @@
 /*!
- * Deluge.preferences.CachePage.js
+ * Deluge.data.PluginRecord.js
  *
- * Copyright (c) Damien Churchill 2009-2011 <damoxc@gmail.com>
+ * Copyright (c) Damien Churchill 2011 <damoxc@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,44 +31,20 @@
  */
 
 /**
- * @class Deluge.preferences.Cache
- * @extends Ext.form.FormPanel
+ * Deluge.data.Plugin record
+ *
+ * @author Damien Churchill <damoxc@gmail.com>
+ * @version 1.4
+ *
+ * @class Deluge.data.Plugin
+ * @extends Ext.data.Model
+ * @constructor
+ * @param {Object} data The plugin data
  */
-Ext.define('Deluge.preferences.Cache', {
-    extend: 'Ext.form.Panel',
-
-    border: false,
-    title: _('Cache'),
-
-    initComponent: function() {
-        this.callParent(arguments);
-
-        var om = deluge.preferences.getOptionsManager();
-
-        var fieldset = this.add({
-            xtype: 'fieldset',
-            border: false,
-            title: _('Settings'),
-            autoHeight: true,
-            labelWidth: 180,
-            defaultType: 'spinnerfield',
-            defaults: {
-                decimalPrecision: 0,
-                minValue: -1,
-                maxValue: 999999
-            }
-        });
-        om.bind('cache_size', fieldset.add({
-            fieldLabel: _('Cache Size (16 KiB Blocks)'),
-            name: 'cache_size',
-            width: 60,
-            value: 512
-        }));
-        om.bind('cache_expiry', fieldset.add({
-            fieldLabel: _('Cache Expiry (seconds)'),
-            name: 'cache_expiry',
-            width: 60,
-            value: 60
-        }));
-    }
+Ext.define('Deluge.data.Plugin', {
+    extend: 'Ext.data.Model',
+    fields: [
+        {name: 'enabled', type: 'boolean'},
+        {name: 'plugin', type: 'string'}
+    ]
 });

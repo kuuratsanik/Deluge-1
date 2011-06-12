@@ -1,7 +1,7 @@
 /*!
  * Deluge.preferences.ProxyPage.js
  *
- * Copyright (c) Damien Churchill 2009-2010 <damoxc@gmail.com>
+ * Copyright (c) Damien Churchill 2009-2011 <damoxc@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,25 +29,19 @@
  * this exception statement from your version. If you delete this exception
  * statement from all source files in the program, then also delete it here.
  */
-Ext.namespace('Deluge.preferences');
 
 /**
  * @class Deluge.preferences.Proxy
  * @extends Ext.form.FormPanel
  */
-Deluge.preferences.Proxy = Ext.extend(Ext.form.FormPanel, {
-    constructor: function(config) {
-        config = Ext.apply({
-            border: false,
-            title: _('Proxy'),
-            layout: 'form',
-            autoScroll: true
-        }, config);
-        Deluge.preferences.Proxy.superclass.constructor.call(this, config);
-    },
+Ext.define('Deluge.preferences.Proxy', {
+    extend: 'Ext.form.Panel',
+
+    border: false,
+    title: _('Proxy'),
 
     initComponent: function() {
-        Deluge.preferences.Proxy.superclass.initComponent.call(this);
+        this.callParent(arguments);
         this.proxy = this.add(new Deluge.preferences.ProxyField({
             title: _('Proxy'),
             name: 'proxy'
