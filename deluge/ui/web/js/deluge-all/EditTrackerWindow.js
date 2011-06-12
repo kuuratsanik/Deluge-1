@@ -1,7 +1,7 @@
 /*!
  * Deluge.EditTrackerWindow.js
  *
- * Copyright (c) Damien Churchill 2009-2010 <damoxc@gmail.com>
+ * Copyright (c) Damien Churchill 2009-2011 <damoxc@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,13 +29,13 @@
  * this exception statement from your version. If you delete this exception
  * statement from all source files in the program, then also delete it here.
  */
-Ext.ns('Deluge');
 
 /**
  * @class Deluge.EditTrackerWindow
  * @extends Ext.Window
  */
-Deluge.EditTrackerWindow = Ext.extend(Ext.Window, {
+Ext.define('Deluge.EditTrackerWindow', {
+    extend: 'Ext.Window',
 
     title: _('Edit Tracker'),
     layout: 'fit',
@@ -51,10 +51,10 @@ Deluge.EditTrackerWindow = Ext.extend(Ext.Window, {
     iconCls: 'x-deluge-edit-trackers',
 
     initComponent: function() {
-        Deluge.EditTrackerWindow.superclass.initComponent.call(this);
+        this.callParent(arguments);
 
-        this.addButton(_('Cancel'), this.onCancelClick, this);
-        this.addButton(_('Save'), this.onSaveClick, this);
+        //this.addButton(_('Cancel'), this.onCancelClick, this);
+        //this.addButton(_('Save'), this.onSaveClick, this);
         this.on('hide', this.onHide, this);
 
         this.form = this.add({
@@ -72,7 +72,7 @@ Deluge.EditTrackerWindow = Ext.extend(Ext.Window, {
     },
 
     show: function(record) {
-        Deluge.EditTrackerWindow.superclass.show.call(this);
+        this.callParent(arguments);
 
         this.record = record;
         this.form.getForm().findField('tracker').setValue(record.data['url']);

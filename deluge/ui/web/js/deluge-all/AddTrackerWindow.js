@@ -1,7 +1,7 @@
 /*!
  * Deluge.AddTrackerWindow.js
  *
- * Copyright (c) Damien Churchill 2009-2010 <damoxc@gmail.com>
+ * Copyright (c) Damien Churchill 2009-2011 <damoxc@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,13 +29,13 @@
  * this exception statement from your version. If you delete this exception
  * statement from all source files in the program, then also delete it here.
  */
-Ext.ns('Deluge');
 
 /**
  * @class Deluge.AddTrackerWindow
  * @extends Ext.Window
  */
-Deluge.AddTrackerWindow = Ext.extend(Ext.Window, {
+Ext.define('Deluge.AddTrackerWindow', {
+    extend: 'Ext.Window',
 
     title: _('Add Tracker'),
     layout: 'fit',
@@ -51,10 +51,10 @@ Deluge.AddTrackerWindow = Ext.extend(Ext.Window, {
     iconCls: 'x-deluge-edit-trackers',
 
     initComponent: function() {
-        Deluge.AddTrackerWindow.superclass.initComponent.call(this);
+        this.callParent(arguments);
 
-        this.addButton(_('Cancel'), this.onCancelClick, this);
-        this.addButton(_('Add'), this.onAddClick, this);
+        //this.addButton(_('Cancel'), this.onCancelClick, this);
+        //this.addButton(_('Add'), this.onAddClick, this);
         this.addEvents('add');
 
         this.form = this.add({

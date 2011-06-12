@@ -1,7 +1,7 @@
 /*!
  * Deluge.add.AddWindow.js
  *
- * Copyright (c) Damien Churchill 2009-2010 <damoxc@gmail.com>
+ * Copyright (c) Damien Churchill 2009-2011 <damoxc@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,8 @@
  * statement from all source files in the program, then also delete it here.
  */
 
-Ext.namespace('Deluge.add');
-
-Deluge.add.AddWindow = Ext.extend(Deluge.add.Window, {
+Ext.define('Deluge.add.AddWindow', {
+    extend: 'Deluge.add.Window',
 
     title: _('Add Torrents'),
     layout: 'border',
@@ -46,10 +45,10 @@ Deluge.add.AddWindow = Ext.extend(Deluge.add.Window, {
     iconCls: 'x-deluge-add-window-icon',
 
     initComponent: function() {
-        Deluge.add.AddWindow.superclass.initComponent.call(this);
-
-        this.addButton(_('Cancel'), this.onCancelClick, this);
-        this.addButton(_('Add'), this.onAddClick, this);
+        this.callParent(arguments);
+        // FIXME: replace with docked toolbar
+        //this.addButton(_('Cancel'), this.onCancelClick, this);
+        //this.addButton(_('Add'), this.onAddClick, this);
 
         function torrentRenderer(value, p, r) {
             if (r.data['info_hash']) {

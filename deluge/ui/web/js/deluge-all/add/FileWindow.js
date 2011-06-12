@@ -1,7 +1,7 @@
 /*!
  * Deluge.add.File.js
  *
- * Copyright (c) Damien Churchill 2009-2010 <damoxc@gmail.com>
+ * Copyright (c) Damien Churchill 2009-2011 <damoxc@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,13 +29,13 @@
  * this exception statement from your version. If you delete this exception
  * statement from all source files in the program, then also delete it here.
  */
-Ext.ns('Deluge.add');
 
 /**
  * @class Deluge.add.FileWindow
  * @extends Deluge.add.Window
  */
-Deluge.add.FileWindow = Ext.extend(Deluge.add.Window, {
+Ext.define('Deluge.add.FileWindow', {
+    extend: 'Deluge.add.Window',
 
     title: _('Add from File'),
     layout: 'fit',
@@ -49,7 +49,7 @@ Deluge.add.FileWindow = Ext.extend(Deluge.add.Window, {
     iconCls: 'x-deluge-add-file',
 
     initComponent: function() {
-        Deluge.add.FileWindow.superclass.initComponent.call(this);
+        this.callParent(arguments);
         this.addButton(_('Add'), this.onAddClick, this);
 
         this.form = this.add({

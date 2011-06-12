@@ -1,7 +1,7 @@
 /*!
  * Deluge.details.FilesTab.js
  *
- * Copyright (c) Damien Churchill 2009-2010 <damoxc@gmail.com>
+ * Copyright (c) Damien Churchill 2009-2011 <damoxc@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,18 @@
  * statement from all source files in the program, then also delete it here.
  */
 
-Deluge.details.FilesTab = Ext.extend(Ext.ux.tree.TreeGrid, {
+Ext.define('Deluge.data.File', {
+    extend: 'Ext.data.Model',
+    fields: [
+        {name: 'filename', type: 'string'},
+        {name: 'size',     type: 'int'},
+        {name: 'progress', type: 'float'}
+    ]
+});
+
+Ext.define('Deluge.details.FilesTab', {
+
+    extend: 'Ext.tree.Panel',
 
     title: _('Files'),
 
@@ -44,18 +55,19 @@ Deluge.details.FilesTab = Ext.extend(Ext.ux.tree.TreeGrid, {
         header: _('Size'),
         width: 150,
         dataIndex: 'size',
-        tpl: new Ext.XTemplate('{size:this.fsize}', {
+        tpl: Ext.create('Ext.XTemplate', '{size:this.fsize}', {
             fsize: function(v) { return fsize(v); }
         })
     }, {
-        xtype: 'tgrendercolumn',
         header: _('Progress'),
         width: 150,
         dataIndex: 'progress',
-        renderer: function(v) {
-            var progress = v * 100;
-            return Deluge.progressBar(progress, this.col.width, progress.toFixed(2) + '%', 0);
-        }
+        tpl: Ext.create('Ext.XTemplate', '{progress:this.progress}', {
+            progress: function(v) {
+                var progress = v * 100;
+                return Deluge.progressBar(progress, this.col.width, progress.toFixed(2) + '%', 0);
+            }
+        })
     }, {
         header: _('Priority'),
         width: 150,
@@ -74,12 +86,7 @@ Deluge.details.FilesTab = Ext.extend(Ext.ux.tree.TreeGrid, {
         })
     }],
 
-    selModel: new Ext.tree.MultiSelectionModel(),
-
-    initComponent: function() {
-        Deluge.details.FilesTab.superclass.initComponent.call(this);
-        this.setRootNode(new Ext.tree.TreeNode({text: 'Files'}));
-    },
+    multiSelect: true,
 
     clear: function() {
         var root = this.getRootNode();

@@ -1,7 +1,7 @@
 /*!
  * Deluge.preferences.PreferencesWindow.js
  *
- * Copyright (c) Damien Churchill 2009-2010 <damoxc@gmail.com>
+ * Copyright (c) Damien Churchill 2009-2011 <damoxc@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,15 +29,18 @@
  * this exception statement from your version. If you delete this exception
  * statement from all source files in the program, then also delete it here.
  */
-Ext.namespace('Deluge.preferences');
 
-PreferencesRecord = Ext.data.Record.create([{name:'name', type:'string'}]);
+Ext.define('PreferencesRecord', {
+    extend: 'Ext.data.Model',
+    fields: [{name: 'name', type: 'string'}]
+});
 
 /**
  * @class Deluge.preferences.PreferencesWindow
  * @extends Ext.Window
  */
-Deluge.preferences.PreferencesWindow = Ext.extend(Ext.Window, {
+Ext.define('Deluge.preferences.PreferencesWindow', {
+    extend: 'Ext.Window',
 
     /**
      * @property {String} currentPage The currently selected page.
@@ -59,10 +62,12 @@ Deluge.preferences.PreferencesWindow = Ext.extend(Ext.Window, {
     pages: {},
 
     initComponent: function() {
-        Deluge.preferences.PreferencesWindow.superclass.initComponent.call(this);
+        this.callParent(arguments);
 
         this.list = new Ext.list.ListView({
-            store: new Ext.data.Store(),
+            store: Ext.create('Ext.data.Store', {
+                model: 'PreferencesRecord'
+            }),
             columns: [{
                 id: 'name',
                 renderer: fplain,
@@ -103,9 +108,9 @@ Deluge.preferences.PreferencesWindow = Ext.extend(Ext.Window, {
             cmargins: '5 5 5 5'
         });
 
-        this.addButton(_('Close'), this.onClose, this);
-        this.addButton(_('Apply'), this.onApply, this);
-        this.addButton(_('OK'), this.onOk, this);
+        //this.addButton(_('Close'), this.onClose, this);
+        //this.addButton(_('Apply'), this.onApply, this);
+        //this.addButton(_('OK'), this.onOk, this);
 
         this.optionsManager = new Deluge.OptionsManager();
         this.on('afterrender', this.onAfterRender, this);

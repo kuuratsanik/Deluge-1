@@ -1,7 +1,7 @@
 /*!
  * Deluge.preferences.QueuePage.js
  *
- * Copyright (c) Damien Churchill 2009-2010 <damoxc@gmail.com>
+ * Copyright (c) Damien Churchill 2009-2011 <damoxc@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,20 +29,19 @@
  * this exception statement from your version. If you delete this exception
  * statement from all source files in the program, then also delete it here.
  */
-Ext.namespace('Deluge.preferences');
 
 /**
  * @class Deluge.preferences.Queue
  * @extends Ext.form.FormPanel
  */
-Deluge.preferences.Queue = Ext.extend(Ext.form.FormPanel, {
+Ext.define('Deluge.preferences.Queue', {
+    extend: 'Ext.form.Panel',
 
     border: false,
     title: _('Queue'),
-    layout: 'form',
 
     initComponent: function() {
-        Deluge.preferences.Queue.superclass.initComponent.call(this);
+        this.callParent(arguments);
 
         var om = deluge.preferences.getOptionsManager();
 

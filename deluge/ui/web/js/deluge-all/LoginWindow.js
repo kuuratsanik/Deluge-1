@@ -1,7 +1,7 @@
 /*!
  * Deluge.LoginWindow.js
  *
- * Copyright (c) Damien Churchill 2009-2010 <damoxc@gmail.com>
+ * Copyright (c) Damien Churchill 2009-2011 <damoxc@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,9 @@
  * statement from all source files in the program, then also delete it here.
  */
 
-Deluge.LoginWindow = Ext.extend(Ext.Window, {
+Ext.define('Deluge.LoginWindow', {
+
+    extend: 'Ext.Window',
 
     firstShow:   true,
     bodyStyle:   'padding: 10px 5px;',
@@ -47,14 +49,14 @@ Deluge.LoginWindow = Ext.extend(Ext.Window, {
     height:      120,
 
     initComponent: function() {
-        Deluge.LoginWindow.superclass.initComponent.call(this);
+        this.callParent(arguments);
         this.on('show', this.onShow, this);
 
-        this.addButton({
-            text: _('Login'),
-            handler: this.onLogin,
-            scope: this
-        });
+//        this.addButton({
+//            text: _('Login'),
+//            handler: this.onLogin,
+//            scope: this
+//        });
 
         this.form = this.add({
             xtype: 'form',
@@ -96,7 +98,7 @@ Deluge.LoginWindow = Ext.extend(Ext.Window, {
         }
 
         if (skipCheck) {
-            return Deluge.LoginWindow.superclass.show.call(this);
+            return this.callParent(arguments);
         }
 
         deluge.client.auth.check_session({
