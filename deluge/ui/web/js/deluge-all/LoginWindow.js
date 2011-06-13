@@ -46,39 +46,46 @@ Ext.define('Deluge.LoginWindow', {
     resizable:   false,
     title:       _('Login'),
     width:       300,
-    height:      120,
+    height:      105,
 
     initComponent: function() {
         this.callParent(arguments);
         this.on('show', this.onShow, this);
 
-//        this.addButton({
-//            text: _('Login'),
-//            handler: this.onLogin,
-//            scope: this
-//        });
+        this.addDocked({
+            xtype: 'toolbar',
+            dock: 'bottom',
+            defaultType: 'button',
+            items: [
+                '->',
+                {text: _('Login'), handler: this.onLogin, scope: this}
+            ]
+        });
 
         this.form = this.add({
             xtype: 'form',
             baseCls: 'x-plain',
-            labelWidth: 120,
-            labelAlign: 'right',
-            defaults: {width: 110},
-            defaultType: 'textfield'
+            width: 300,
+            items: [{
+                xtype: 'textfield',
+                fieldLabel: _('Password:'),
+                labelSeparator : '',
+                name: 'password',
+                inputType: 'password',
+                labelWidth: 120,
+                labelAlign: 'right',
+                defaults: {width: 110},
+                grow: true,
+                growMin: '110',
+                growMax: '145',
+                listeners: {
+                    specialkey: {
+                        scope: this,
+                        fn: this.onSpecialKey
+                    }
+                }
+            }]
         });
-
-        this.passwordField = this.form.add({
-            xtype: 'textfield',
-            fieldLabel: _('Password:'),
-            labelSeparator : '',
-            grow: true,
-            growMin: '110',
-            growMax: '145',
-            id: '_password',
-            name: 'password',
-            inputType: 'password'
-        });
-        this.passwordField.on('specialkey', this.onSpecialKey, this);
     },
 
     logout: function() {
@@ -98,7 +105,7 @@ Ext.define('Deluge.LoginWindow', {
         }
 
         if (skipCheck) {
-            return this.callParent(arguments);
+            return this.callParent();
         }
 
         deluge.client.auth.check_session({
@@ -121,13 +128,14 @@ Ext.define('Deluge.LoginWindow', {
     },
 
     onLogin: function() {
-        var passwordField = this.passwordField;
-        deluge.client.auth.login(passwordField.getValue(), {
+        var f = this.form.getForm(),
+            p = f.getValues().password;;
+        deluge.client.auth.login(p, {
             success: function(result) {
                 if (result) {
                     deluge.events.fire('login');
                     this.hide();
-                    passwordField.setRawValue('');
+                    f.setValues({password: ''});
                 } else {
                     Ext.MessageBox.show({
                         title: _('Login Failed'),
@@ -135,7 +143,7 @@ Ext.define('Deluge.LoginWindow', {
                         buttons: Ext.MessageBox.OK,
                         modal: false,
                         fn: function() {
-                            passwordField.focus(true, 10);
+                            f.findField('password').focus(true, 10);
                         },
                         icon: Ext.MessageBox.WARNING,
                         iconCls: 'x-deluge-icon-warning'
@@ -154,6 +162,6 @@ Ext.define('Deluge.LoginWindow', {
     },
 
     onShow: function() {
-        this.passwordField.focus(true, 300);
+        this.form.getForm().findField('password').focus(true, 300);
     }
 });
