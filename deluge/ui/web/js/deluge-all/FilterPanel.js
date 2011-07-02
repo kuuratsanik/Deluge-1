@@ -1,7 +1,7 @@
 /*!
  * Deluge.FilterPanel.js
  *
- * Copyright (c) Damien Churchill 2009-2010 <damoxc@gmail.com>
+ * Copyright (c) Damien Churchill 2009-2011 <damoxc@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,16 +35,15 @@ Ext.ns('Deluge');
  * @class Deluge.FilterPanel
  * @extends Ext.list.ListView
  */
-Deluge.FilterPanel = Ext.extend(Ext.Panel, {
+Ext.define('Deluge.FilterPanel', {
+    extend: 'Ext.Panel',
 
     autoScroll: true,
-
     border: false,
-
     show_zero: null,
 
     initComponent: function() {
-        Deluge.FilterPanel.superclass.initComponent.call(this);
+        this.callParent(arguments);
         this.filterType = this.initialConfig.filter;
         var title = '';
         if (this.filterType == 'state') {
@@ -72,8 +71,8 @@ Deluge.FilterPanel = Ext.extend(Ext.Panel, {
             var tpl = '<div class="x-deluge-filter x-deluge-{filter:lowercase}">{filter} ({count})</div>';
         }
 
-        this.list = this.add({
-            xtype: 'listview',
+        this.grid = this.add({
+            xtype: 'grid',
             singleSelect: true,
             hideHeaders: true,
             reserveScrollOffset: true,
@@ -88,7 +87,7 @@ Deluge.FilterPanel = Ext.extend(Ext.Panel, {
                 dataIndex: 'filter'
             }]
         });
-        this.relayEvents(this.list, ['selectionchange']);
+        this.relayEvents(this.grid, ['selectionchange']);
     },
 
     /**
@@ -96,11 +95,13 @@ Deluge.FilterPanel = Ext.extend(Ext.Panel, {
      * @returns {String} the current filter state
      */
     getState: function() {
-        if (!this.list.getSelectionCount()) return;
+        var sm = this.grid.getSelectionModel()
+        if (!sm.hasSelection()) return;
 
-        var state = this.list.getSelectedRecords()[0];
-        if (state.id == 'All') return;
-        return state.id;
+        var state = sm.getLastSelected(),
+            stateId = state.getId();
+        if (stateId == 'All') return;
+        return stateId;
     },
 
     /**
@@ -115,7 +116,7 @@ Deluge.FilterPanel = Ext.extend(Ext.Panel, {
      * @returns {Ext.data.Store} the ListView store
      */
     getStore: function() {
-        return this.list.getStore();
+        return this.grid.getStore();
     },
 
     /**
@@ -138,16 +139,17 @@ Deluge.FilterPanel = Ext.extend(Ext.Panel, {
             states = newStates;
         }
 
-        var store = this.getStore();
-        var filters = {};
+        var store = this.getStore(),
+            sm = this.grid.getSelectionModel(),
+            filters = {};
         Ext.each(states, function(s, i) {
             var record = store.getById(s[0]);
             if (!record) {
-                record = new store.recordType({
+                var record = store.add({
                     filter: s[0],
                     count: s[1]
-                });
-                record.id = s[0];
+                })[0];
+                record.setId(s[0]);
                 store.insert(i, record);
             }
             record.beginEdit();
@@ -158,18 +160,18 @@ Deluge.FilterPanel = Ext.extend(Ext.Panel, {
         }, this);
 
         store.each(function(record) {
-            if (filters[record.id]) return;
-            var r = this.list.getSelectedRecords()[0];
+            if (filters[record.getId()]) return;
+            var r = sm.getLastSelected();
             store.remove(record);
             if (r.id == record.id) {
-                this.list.select(0);
+                sm.select(0);
             }
         }, this);
 
-        store.commitChanges();
+        store.sync();
 
-        if (!this.list.getSelectionCount()) {
-            this.list.select(0);
+        if (!sm.hasSelection()) {
+            sm.select(0);
         }
     }
 
