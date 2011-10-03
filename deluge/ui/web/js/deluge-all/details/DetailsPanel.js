@@ -70,7 +70,7 @@ Ext.define('Deluge.details.DetailsPanel', {
         });
 
         tab = tab || this.getActiveTab();
-        if (tab.update) tab.update(torrent.id);
+        if (tab.update) tab.update(torrent.getId());
     },
 
     /* Event Handlers */
