@@ -341,14 +341,7 @@ Ext.define('Deluge.TorrentGrid', {
         deluge.events.on('torrentsRemoved', this.onTorrentsRemoved, this);
         deluge.events.on('disconnect', this.onDisconnect, this);
 
-        this.on('rowcontextmenu', function(grid, rowIndex, e) {
-            e.stopEvent();
-            var selection = grid.getSelectionModel();
-            if (!selection.isSelected(rowIndex)) {
-                selection.selectRow(rowIndex);
-            }
-            deluge.menus.torrent.showAt(e.getPoint());
-        });
+        this.on('itemcontextmenu', this.onTorrentSelected, this);
     },
 
     /**
@@ -459,5 +452,15 @@ Ext.define('Deluge.TorrentGrid', {
             this.getStore().remove(record);
             delete this.torrents[torrentId];
         }, this);
+    },
+
+    onTorrentSelected: function(grid, record, item, i, e, opts) {
+        e.stopEvent();
+        var sm = grid.getSelectionModel();
+        if (!sm.hasSelection()) {
+            sm.select(record);
+        }
+        var point = e.getPoint();
+        deluge.menus.torrent.showAt(point.x, point.y);
     }
 });
