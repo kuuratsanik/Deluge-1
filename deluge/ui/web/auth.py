@@ -118,8 +118,7 @@ class Auth(JSONComponent):
         expires, expires_str = make_expires(config["session_timeout"])
         checksum = str(make_checksum(session_id))
 
-        request.addCookie('_session_id', session_id + checksum,
-                          path=request.base + "json", expires=expires_str)
+        request.addCookie('_session_id', session_id + checksum, path=request.base, expires=expires_str)
 
         log.debug("Creating session for %s", login)
         config = component.get("DelugeWeb").config
@@ -215,8 +214,7 @@ class Auth(JSONComponent):
             session["expires"] = expires
 
             _session_id = request.getCookie("_session_id")
-            request.addCookie('_session_id', _session_id,
-                              path=request.base + "json", expires=expires_str)
+            request.addCookie('_session_id', _session_id, path=request.base, expires=expires_str)
 
         if method:
             if not hasattr(method, "_json_export"):

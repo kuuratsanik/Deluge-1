@@ -22,7 +22,7 @@ from twisted.web import http, resource, server, static
 from deluge import common, component, configmanager
 from deluge.core.rpcserver import check_ssl_keys
 from deluge.ui.tracker_icons import TrackerIcons
-from deluge.ui.web.auth import Auth
+from deluge.ui.web.auth import Auth, AuthError, AUTH_LEVEL_DEFAULT
 from deluge.ui.web.common import Template, compress
 from deluge.ui.web.json_api import JSON, WebApi
 from deluge.ui.web.pluginmanager import PluginManager
@@ -56,6 +56,8 @@ CONFIG_DEFAULTS = {
     "pkey": "ssl/daemon.pkey",
     "cert": "ssl/daemon.cert"
 }
+
+PEERS_KEYS = ["peers"]
 
 UI_CONFIG_KEYS = (
     "theme", "sidebar_show_zero", "sidebar_multiple_filters",
@@ -173,6 +175,45 @@ class Tracker(resource.Resource):
         d.addCallback(self.on_got_icon, request)
         return server.NOT_DONE_YET
 
+class TorrentResource(resource.Resource):
+    """
+    Base class for exposing parts of a torrent's information
+    as a REST-ish interface.
+    """
+
+    def getChild(self, path, request):
+        request.torrent_id = path
+        return self
+
+    def send_response(self, response, request):
+        request.setHeader("content-type", "text/plain")
+        request.write(compress(json.dumps(response), request))
+        request.finish()
+
+class Peers(TorrentResource):
+    """
+    Returns a list of the peers that a torrent currently has in JSON format.
+    """
+
+    def on_got_peers(self, torrent, request):
+        peers = torrent["peers"]
+        self.send_response({
+            "peers": peers,
+            "total": len(peers)
+        }, request)
+
+    def render(self, request):
+        try:
+            component.get("Auth").check_request(request,
+                                                level=AUTH_LEVEL_DEFAULT)
+        except AuthError:
+            request.setResponseCode(http.FORBIDDEN)
+            return '<h1>Forbidden</h1>'
+
+        component.get("SessionProxy"
+            ).get_torrent_status(request.torrent_id, PEERS_KEYS
+            ).addCallback(self.on_got_peers, request)
+        return server.NOT_DONE_YET
 
 class Flag(resource.Resource):
     def getChild(self, path, request):  # NOQA
@@ -443,6 +484,9 @@ class TopLevel(resource.Resource):
         self.putChild("render", Render())
         self.putChild("resources", static.File(rpath("resources")))
         self.putChild("tracker", Tracker())
+
+        # Torrent REST resources
+        self.putChild("peers", Peers())
 
         theme = component.get("DelugeWeb").config["theme"]
         if not os.path.isfile(rpath("themes", "css", "xtheme-%s.css" % theme)):
