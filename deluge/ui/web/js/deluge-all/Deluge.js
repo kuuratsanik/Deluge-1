@@ -31,14 +31,21 @@
  */
 
 // Setup the state manager
-Ext.state.Manager.setProvider(new Ext.state.CookieProvider({
+var provider = Ext.state.CookieProvider({
     /**
      * By default, cookies will expire after 7 days. Provide
      * an expiry date 10 years in the future to approximate
      * a cookie that does not expire.
      */
     expires: new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 365 * 10))
-}));
+});
+try {
+    if ('localStorage' in window && window['localStorage'] !== null) {
+        provider = Ext.state.LocalStorageProvider;
+    }
+} catch (e) {
+};
+Ext.state.Manager.setProvider(new provider());
 
 // Add some additional functions to ext and setup some of the
 // configurable parameters
