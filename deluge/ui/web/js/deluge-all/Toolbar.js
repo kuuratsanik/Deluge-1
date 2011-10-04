@@ -164,11 +164,7 @@ Deluge.Toolbar = Ext.extend(Ext.Toolbar, {
     },
 
     onTorrentAction: function(item) {
-        var selection = deluge.torrents.getSelections();
-        var ids = [];
-        Ext.each(selection, function(record) {
-            ids.push(record.id);
-        });
+        var ids = deluge.torrents.getSelectedIds();
 
         switch (item.id) {
             case 'remove':
