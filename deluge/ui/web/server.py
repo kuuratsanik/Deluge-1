@@ -22,7 +22,7 @@ from twisted.web import http, resource, server, static
 from deluge import common, component, configmanager
 from deluge.core.rpcserver import check_ssl_keys
 from deluge.ui.tracker_icons import TrackerIcons
-from deluge.ui.web.auth import Auth, AuthError, AUTH_LEVEL_DEFAULT
+from deluge.ui.web.auth import Auth, secure
 from deluge.ui.web.common import Template, compress
 from deluge.ui.web.json_api import JSON, WebApi
 from deluge.ui.web.pluginmanager import PluginManager
@@ -202,14 +202,8 @@ class Peers(TorrentResource):
             "total": len(peers)
         }, request)
 
+    @secure
     def render(self, request):
-        try:
-            component.get("Auth").check_request(request,
-                                                level=AUTH_LEVEL_DEFAULT)
-        except AuthError:
-            request.setResponseCode(http.FORBIDDEN)
-            return '<h1>Forbidden</h1>'
-
         component.get("SessionProxy"
             ).get_torrent_status(request.torrent_id, PEERS_KEYS
             ).addCallback(self.on_got_peers, request)
