@@ -63,7 +63,7 @@ Ext.define('Deluge.FilterPanel', {
                 title += fl + p.substring(1) + ' ';
             });
         }
-        this.setTitle(_(title));
+        this.title(_(title));
 
         if (Deluge.FilterPanel.templates[this.filterType]) {
             var tpl = Deluge.FilterPanel.templates[this.filterType];
