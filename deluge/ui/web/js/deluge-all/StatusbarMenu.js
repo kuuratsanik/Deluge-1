@@ -40,7 +40,7 @@ Deluge.StatusbarMenu = Ext.extend(Ext.menu.Menu, {
 
     initComponent: function() {
         Deluge.StatusbarMenu.superclass.initComponent.call(this);
-        this.otherWin = new Deluge.OtherLimitWindow(this.initialConfig.otherWin || {});
+        this.otherWin = Ext.create('Deluge.OtherLimitWindow', this.initialConfig.otherWin || {});
 
         this.items.each(function(item) {
             if (item.getXType() != 'menucheckitem') return;

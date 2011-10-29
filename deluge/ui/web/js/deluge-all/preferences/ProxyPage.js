@@ -42,14 +42,14 @@ Ext.define('Deluge.preferences.Proxy', {
 
     initComponent: function() {
         this.callParent(arguments);
-        this.proxy = this.add(new Deluge.preferences.ProxyField({
+        this.proxy = this.add(Ext.create('Deluge.preferences.ProxyField', {
             title: _('Proxy'),
             name: 'proxy'
         }));
         this.proxy.on('change', this.onProxyChange, this);
         deluge.preferences.getOptionsManager().bind('proxy', this.proxy);
 
-        this.i2p_proxy = this.add(new Deluge.preferences.ProxyI2PField({
+        this.i2p_proxy = this.add(Ext.create('Deluge.preferences.ProxyI2PField',{
             title: _('I2P Proxy'),
             name: 'i2p_proxy'
         }));
