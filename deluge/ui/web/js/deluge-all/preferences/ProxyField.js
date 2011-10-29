@@ -50,7 +50,7 @@ Deluge.preferences.ProxyField = Ext.extend(Ext.form.FieldSet, {
             name: 'proxytype',
             mode: 'local',
             width: 150,
-            store: new Ext.data.ArrayStore({
+            store: Ext.create('Ext.data.Store', {
                 fields: ['id', 'text'],
                 data: [
                     [0, _('None')],

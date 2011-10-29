@@ -50,25 +50,32 @@ Ext.define('Deluge.add.FileWindow', {
 
     initComponent: function() {
         this.callParent(arguments);
-        this.addButton(_('Add'), this.onAddClick, this);
+        this.addDocked({
+            xtype: 'toolbar',
+            dock: 'bottom',
+            defaultType: 'button',
+            items: [
+                '->',
+                {text: _('Add'), handler: this.onAddClick, scope: this}
+            ]
+        });
 
         this.form = this.add({
             xtype: 'form',
+            width: 300,
+            height: 24,
             baseCls: 'x-plain',
-            labelWidth: 35,
             autoHeight: true,
-            fileUpload: true,
+
             items: [{
-                xtype: 'fileuploadfield',
+                xtype: 'filefield',
                 id: 'torrentFile',
-                width: 280,
-                height: 24,
+                anchor: '100%',
                 emptyText: _('Select a torrent'),
+                labelWidth: 35,
                 fieldLabel: _('File'),
                 name: 'file',
-                buttonCfg: {
-                    text: _('Browse') + '...'
-                }
+                buttonText: _('Browse') + '...'
             }]
         });
     },

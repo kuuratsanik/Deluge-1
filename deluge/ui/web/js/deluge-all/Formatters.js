@@ -168,10 +168,10 @@ Deluge.Formatters = {
         return value.toLowerCase().replace('.', '_');
     }
 }
-var fsize = Deluge.Formatters.size;
-var fsize_short = Deluge.Formatters.sizeShort;
-var fspeed = Deluge.Formatters.speed;
-var ftime = Deluge.Formatters.timeRemaining;
-var fdate = Deluge.Formatters.date;
-var fplain = Deluge.Formatters.plain;
+window.fsize = Deluge.Formatters.size;
+window.fsize_short = Deluge.Formatters.sizeShort;
+window.fspeed = Deluge.Formatters.speed;
+window.ftime = Deluge.Formatters.timeRemaining;
+window.fdate = Deluge.Formatters.date;
+window.fplain = Deluge.Formatters.plain;
 Ext.util.Format.cssClassEscape = Deluge.Formatters.cssClassEscape;

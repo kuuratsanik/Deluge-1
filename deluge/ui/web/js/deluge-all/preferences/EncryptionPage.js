@@ -58,7 +58,7 @@ Deluge.preferences.Encryption = Ext.extend(Ext.form.FormPanel, {
             labelSeparator : '',
             mode: 'local',
             width: 150,
-            store: new Ext.data.ArrayStore({
+            store: Ext.create('Ext.data.Store', {
                 fields: ['id', 'text'],
                 data: [
                     [0, _('Forced')],
@@ -76,7 +76,7 @@ Deluge.preferences.Encryption = Ext.extend(Ext.form.FormPanel, {
             labelSeparator : '',
             mode: 'local',
             width: 150,
-            store: new Ext.data.SimpleStore({
+            store: Ext.create('Ext.data.Store', {
                 fields: ['id', 'text'],
                 data: [
                     [0, _('Forced')],
@@ -94,7 +94,7 @@ Deluge.preferences.Encryption = Ext.extend(Ext.form.FormPanel, {
             labelSeparator : '',
             mode: 'local',
             width: 150,
-            store: new Ext.data.SimpleStore({
+            store: Ext.create('Ext.data.Store', {
                 fields: ['id', 'text'],
                 data: [
                     [0, _('Handshake')],
