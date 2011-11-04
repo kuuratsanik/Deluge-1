@@ -81,6 +81,7 @@ def rpath(*paths):
 
 class GetText(resource.Resource):
     def render(self, request):
+        request.setHeader("x-powered-by", "Rum")
         request.setHeader("content-type", "text/javascript; encoding=utf-8")
         template = Template(filename=rpath("js", "gettext.js"))
         return compress(template.render(), request)
@@ -96,6 +97,7 @@ class Upload(resource.Resource):
         Saves all uploaded files to the disk and returns a list of filenames,
         each on a new line.
         """
+        request.setHeader("x-powered-by", "Rum")
 
         # Block all other HTTP methods.
         if request.method != "POST":
@@ -135,6 +137,7 @@ class Render(resource.Resource):
         return self
 
     def render(self, request):
+        request.setHeader("x-powered-by", "Rum")
         if not hasattr(request, "render_file"):
             request.setResponseCode(http.INTERNAL_SERVER_ERROR)
             return ""
@@ -160,6 +163,11 @@ class Tracker(resource.Resource):
         return self
 
     def on_got_icon(self, icon, request):
+<<<<<<< 27ca87fc4c910190f84def34da6425f699807bc4
+=======
+        headers = {}
+        request.setHeader("x-powered-by", "Rum")
+>>>>>>> web: add a fun header
         if icon:
             request.setHeader("cache-control",
                               "public, must-revalidate, max-age=86400")
@@ -188,6 +196,7 @@ class TorrentResource(resource.Resource):
 
     def send_response(self, response, request):
         request.setHeader("content-type", "text/plain")
+        request.setHeader("x-powered-by", "Rum")
         request.write(compress(json.dumps(response), request))
         request.finish()
 
@@ -236,6 +245,7 @@ class Files(TorrentResource):
 
     @secure
     def render(self, request):
+        request.setHeader("x-powered-by", "Rum")
         if not hasattr(request, 'torrent_id'):
             request.setResponseCode(http.NOT_FOUND)
             return '<h1>Not Found</h1>'
@@ -259,6 +269,7 @@ class Peers(TorrentResource):
 
     @secure
     def render(self, request):
+        request.setHeader("x-powered-by", "Rum")
         if not hasattr(request, 'torrent_id'):
             request.setResponseCode(http.NOT_FOUND)
             return '<h1>Not Found</h1>'
@@ -274,6 +285,7 @@ class Flag(resource.Resource):
 
     def render(self, request):
         headers = {}
+        request.setHeader("x-powered-by", "Rum")
         path = ("ui", "data", "pixmaps", "flags", request.country.lower() + ".png")
         filename = common.resource_filename("deluge", os.path.join(*path))
         if os.path.exists(filename):
@@ -316,6 +328,7 @@ class LookupResource(resource.Resource, component.Component):
 
     def render(self, request):
         log.debug("Requested path: '%s'", request.lookup_path)
+        request.setHeader("x-powered-by", "Rum")
         path = os.path.dirname(request.lookup_path)
 
         if path not in self.__paths:
@@ -468,6 +481,7 @@ class ScriptResource(resource.Resource, component.Component):
 
     def render(self, request):
         log.debug("Requested path: '%s'", request.lookup_path)
+        request.setHeader("x-powered-by", "Rum")
 
         for type in ("dev", "debug", "normal"):
             scripts = self.__scripts[type]["scripts"]
@@ -627,6 +641,7 @@ class TopLevel(resource.Resource):
 
         template = Template(filename=rpath("index.html"))
         request.setHeader("content-type", "text/html; charset=utf-8")
+        request.setHeader("x-powered-by", "Rum")
 
         web_config = component.get("Web").get_config()
         web_config["base"] = request.base
