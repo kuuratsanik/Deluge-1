@@ -57,7 +57,7 @@ from deluge.ui.client import client, Client
 from deluge.ui.coreconfig import CoreConfig
 from deluge.ui.sessionproxy import SessionProxy
 
-from deluge.ui.web.common import _, compress
+from deluge.ui.web.common import Resource, _, compress
 json = common.json
 
 log = logging.getLogger(__name__)
@@ -103,14 +103,14 @@ class JSONException(Exception):
         self.inner_exception = inner_exception
         Exception.__init__(self, str(inner_exception))
 
-class JSON(resource.Resource, component.Component):
+class JSON(Resource, component.Component):
     """
     A Twisted Web resource that exposes a JSON-RPC interface for web clients \
     to use.
     """
 
     def __init__(self):
-        resource.Resource.__init__(self)
+        Resource.__init__(self)
         component.Component.__init__(self, "JSON")
         self._remote_methods = []
         self._local_methods = {}
@@ -275,7 +275,6 @@ class JSON(resource.Resource, component.Component):
     def _send_response(self, request, response):
         response = json.dumps(response)
         request.setHeader("content-type", "application/x-json")
-        request.setHeader("x-powered-by", "Rum")
         request.write(compress(response, request))
         request.finish()
 
@@ -283,6 +282,7 @@ class JSON(resource.Resource, component.Component):
         """
         Handles all the POST requests made to the /json controller.
         """
+        Resource.render(self, request)
 
         if request.method != "POST":
             request.setResponseCode(http.NOT_ALLOWED)
