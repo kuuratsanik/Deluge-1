@@ -35,6 +35,7 @@ Ext.define('Deluge.details.DetailsTab', {
     extend: 'Ext.Panel',
 
     title: _('Details'),
+    autoScroll: true,
     fields: {},
     autoScroll: true,
     queuedItems: {},
@@ -42,6 +43,7 @@ Ext.define('Deluge.details.DetailsTab', {
 
     initComponent: function() {
         this.callParent(arguments);
+<<<<<<< bc4e39b7eadf51c79b60e2a58d264591aa920555
         this.addItem('torrent_name', _('Name:'));
         this.addItem('hash', _('Hash:'));
         this.addItem('path', _('Download Folder:'));
@@ -50,6 +52,18 @@ Ext.define('Deluge.details.DetailsTab', {
         this.addItem('comment', _('Comment:'));
         this.addItem('status', _('Status:'));
         this.addItem('tracker', _('Tracker:'));
+=======
+        this.addItem('torrent_name', _('Name'));
+        this.addItem('hash', _('Hash'));
+        this.addItem('path', _('Path'));
+        this.addItem('size', _('Total Size'));
+        this.addItem('files', _('# of files'));
+        this.addItem('comment', _('Comment'));
+        this.addItem('status', _('Status'));
+        this.addItem('tracker', _('Tracker'));
+        this.addItem('owner', _('Owner'));
+        this.addItem('shared', _('Shared'));
+>>>>>>> details: add the missing items to the details tab
     },
 
     onRender: function(ct, position) {
@@ -101,7 +115,9 @@ Ext.define('Deluge.details.DetailsTab', {
             files: torrent.num_files,
             status: torrent.message,
             tracker: torrent.tracker_host,
-            comment: torrent.comment
+            comment: torrent.comment,
+            owner: torrent.owner,
+            shared: torrent.shared
         };
 
         for (var field in this.fields) {
