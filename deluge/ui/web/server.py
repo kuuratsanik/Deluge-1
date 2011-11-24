@@ -514,7 +514,8 @@ class TopLevel(Resource):
     __stylesheets = [
         "resources/css/ext-all-gray.css",
 #        "css/ext-extensions.css",
-        "css/deluge.css"
+        "css/deluge.css",
+        "css/icons.css"
     ]
 
     def __init__(self):
