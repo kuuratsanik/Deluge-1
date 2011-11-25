@@ -35,7 +35,7 @@ Ext.define('Deluge.details.PeersTab', {
     title: _('Peers'),
     cls: 'x-deluge-peers',
     viewConfig: {
-        loadMask: false,
+        loadMask: false
     },
     invalidateScrollerOnRefresh: false,
 
