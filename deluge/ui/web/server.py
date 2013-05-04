@@ -546,6 +546,11 @@ class TopLevel(Resource):
         js.add_script("ext-extensions.js", rpath("js", "extjs", "ext-extensions.js"))
         js.add_script("deluge-all.js", rpath("js", "deluge-all.js"))
 
+        #add compat scripts
+        #js.add_script("ext3-core-compat.js", rpath("js", "ext3-core-compat.js"),"dev")
+        #js.add_script("ext3-compat.js", rpath("js", "ext3-compat.js"),"dev")
+
+
         self.putChild("js", js)
 
         self.putChild("json", JSON())
@@ -561,7 +566,7 @@ class TopLevel(Resource):
         theme = component.get("DelugeWeb").config["theme"]
         if not os.path.isfile(rpath("themes", "css", "xtheme-%s.css" % theme)):
             theme = CONFIG_DEFAULTS.get("theme")
-        self.__stylesheets.insert(1, "themes/css/xtheme-%s.css" % theme)
+        #self.__stylesheets.insert(1, "themes/css/xtheme-%s.css" % theme)
 
     @property
     def stylesheets(self):
@@ -633,10 +638,10 @@ class TopLevel(Resource):
             else:
                 dev = False
 
-        if dev:
-            mode = 'dev'
-        elif debug:
+        if debug:
             mode = 'debug'
+        elif dev:
+            mode = 'dev'
         else:
             mode = None
 

@@ -39,13 +39,23 @@ Ext.define('Deluge.data.File', {
     ]
 });
 
+Ext.define('Deluge.store.Files', {
+    extend: 'Ext.data.TreeStore',
+    model: 'Deluge.data.File',
+    proxy: {
+        type: 'memory'
+    }
+});
+
 Ext.define('Deluge.details.FilesTab', {
-
     extend: 'Ext.tree.Panel',
-
     title: _('Files'),
+    store: 'Deluge.store.Files',
 
+    autoScroll: true,
+    multiSelect: true,
     rootVisible: false,
+    useArrows: true,
 
     columns: [{
         xtype: 'treecolumn',
@@ -89,18 +99,6 @@ Ext.define('Deluge.details.FilesTab', {
             }
         })
     }],
-
-    store: Ext.create('Ext.data.TreeStore', {
-        model: 'Deluge.data.File',
-        proxy: {
-            type: 'memory'
-        }
-    }),
-
-    autoScroll: true,
-    multiSelect: true,
-    rootVisible: false,
-    useArrows: true,
 
     clear: function() {
         this.getStore().removeAll();

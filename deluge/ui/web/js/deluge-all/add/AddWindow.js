@@ -75,7 +75,7 @@ Ext.define('Deluge.add.AddWindow', {
                 model: 'Deluge.data.AddTorrent'
             }),
             columns: [{
-                id: 'torrent',
+                //id: 'torrent',
                 width: 150,
                 sortable: true,
                 renderer: torrentRenderer,
