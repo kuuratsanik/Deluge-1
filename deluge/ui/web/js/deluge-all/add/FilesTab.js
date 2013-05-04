@@ -68,7 +68,7 @@ Ext.define('Deluge.add.FilesTab', {
         dataIndex: 'download',
         tpl: Ext.create('Ext.XTemplate', '{download:this.format}', {
             format: function(v) {
-                return '<div rel="chkbox" class="x-grid3-check-col'+(v?'-on':'')+'"> </div>';
+                return '<div rel="chkbox" class="x-grid-check-col'+(v?'-on':'')+'"> </div>';
             }
         })
     }],

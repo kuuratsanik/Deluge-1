@@ -64,8 +64,8 @@ Deluge.preferences.Plugins = Ext.extend(Ext.Panel, {
         this.pluginTemplate.compile();
 
         var checkboxRenderer = function(v, p, record){
-            p.css += ' x-grid3-check-col-td';
-            return '<div class="x-grid3-check-col'+(v?'-on':'')+'"> </div>';
+            p.css += ' x-grid-check-col-td';
+            return '<div class="x-grid-check-col'+(v?'-on':'')+'"> </div>';
         }
 
 
@@ -86,7 +86,7 @@ Deluge.preferences.Plugins = Ext.extend(Ext.Panel, {
                 sortable: true,
                 tpl: Ext.create('Ext.XTemplate', '{enabled:this.getCheckbox}', {
                     getCheckbox: function(v) {
-                        return '<div class="x-grid3-check-col'+(v?'-on':'')+'" rel="chkbox"> </div>';
+                        return '<div class="x-grid-check-col'+(v?'-on':'')+'" rel="chkbox"> </div>';
                     }
                 }),
                 dataIndex: 'enabled'

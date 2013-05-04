@@ -43,7 +43,9 @@ Ext.define('Deluge.add.OptionsTab', {
     border:     false,
     bodyStyle:  'padding: 5px',
     disabled:   true,
-    labelWidth: 1,
+    defaults: {
+        labelWidth: 1,
+    },
 
     initComponent: function() {
         this.callParent(arguments);
@@ -56,8 +58,9 @@ Ext.define('Deluge.add.OptionsTab', {
             border: false,
             autoHeight: true,
             defaultType: 'textfield',
-            labelWidth: 1,
-            fieldLabel: '',
+            defaults: {
+                labelWidth: 1,
+            },
             style: 'padding-bottom: 5px; margin-bottom: 0px;'
         });
         this.optionsManager.bind('download_location', fieldset.add({
@@ -66,23 +69,24 @@ Ext.define('Deluge.add.OptionsTab', {
             width: 400,
             labelSeparator: ''
         }));
-        var fieldset = this.add({
-            xtype: 'fieldset',
-            title: _('Move Completed Location'),
-            border: false,
-            autoHeight: true,
-            defaultType: 'togglefield',
-            labelWidth: 1,
-            fieldLabel: '',
-            style: 'padding-bottom: 5px; margin-bottom: 0px;'
-        });
-        var field = fieldset.add({
-            fieldLabel: '',
-            name: 'move_completed_path',
-            width: 425
-        });
-        this.optionsManager.bind('move_completed', field.toggle)
-        this.optionsManager.bind('move_completed_path', field.input)
+        //~ fieldset = this.add({
+            //~ xtype: 'fieldset',
+            //~ title: _('Move Completed Location'),
+            //~ border: false,
+            //~ autoHeight: true,
+            //~ defaultType: 'togglefield',
+            //~ defaults: {
+                //~ labelWidth: 1,
+            //~ },
+            //~ style: 'padding-bottom: 5px; margin-bottom: 0px;'
+        //~ });
+        //~ var field = fieldset.add({
+            //~ fieldLabel: '',
+            //~ name: 'move_completed_path',
+            //~ width: 425
+        //~ });
+        //~ this.optionsManager.bind('move_completed', field.toggle);
+        //~ this.optionsManager.bind('move_completed_path', field.input);
 
         var panel = this.add({
             border: false,

@@ -289,5 +289,6 @@ deluge.ui = {
 }
 
 Ext.onReady(function(e) {
+    //Ext.Compat.showErrors = true;
     deluge.ui.initialize();
 });
