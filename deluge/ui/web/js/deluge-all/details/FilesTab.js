@@ -42,6 +42,8 @@ Ext.define('Deluge.data.File', {
 Ext.define('Deluge.store.Files', {
     extend: 'Ext.data.TreeStore',
     model: 'Deluge.data.File',
+    store: 'Files',
+
     proxy: {
         type: 'memory'
     }
@@ -50,7 +52,7 @@ Ext.define('Deluge.store.Files', {
 Ext.define('Deluge.details.FilesTab', {
     extend: 'Ext.tree.Panel',
     title: _('Files'),
-    store: 'Deluge.store.Files',
+    requires: ['Deluge.store.Files'],
 
     autoScroll: true,
     multiSelect: true,
