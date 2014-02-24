@@ -29,19 +29,18 @@
  * this exception statement from your version. If you delete this exception
  * statement from all source files in the program, then also delete it here.
  */
-Ext.namespace('Deluge.preferences');
 
 /**
  * @class Deluge.preferences.Encryption
  * @extends Ext.form.FormPanel
  */
-Deluge.preferences.Encryption = Ext.extend(Ext.form.FormPanel, {
-
+Ext.define('Deluge.preferences.Encryption', {
+    extend: 'Ext.form.Panel',
     border: false,
     title: _('Encryption'),
 
     initComponent: function() {
-        Deluge.preferences.Encryption.superclass.initComponent.call(this);
+        this.callParent(arguments);
 
         var optMan = deluge.preferences.getOptionsManager();
 
