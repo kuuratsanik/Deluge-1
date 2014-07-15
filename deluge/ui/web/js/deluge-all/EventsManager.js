@@ -41,8 +41,8 @@ Ext.define('Deluge.EventsManager', {
     toRegister: [],
 
     constructor: function() {
-        this.on('login', this.onLogin, this);
         this.callParent(arguments);
+        this.on('login', this.onLogin, this);
     },
 
     /**

@@ -70,9 +70,9 @@ Deluge.OptionsManager = Ext.extend(Ext.util.Observable, {
              */
             'reset': true
         });
+        Deluge.OptionsManager.superclass.constructor.call(this);
         this.on('changed', this.onChange, this);
 
-        Deluge.OptionsManager.superclass.constructor.call(this);
     },
 
     /**
