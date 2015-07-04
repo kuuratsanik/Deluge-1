@@ -3,12 +3,11 @@ import os
 import shutil
 import sys
 
-import gtk
-
 import bbfreeze.recipes
 import deluge.common
 import icon
 from bbfreeze import Freezer
+from gi.repository import Gtk  # NOQA
 
 # Get build_version from installed deluge
 build_version = deluge.common.get_version()
@@ -19,11 +18,11 @@ if python_path.endswith("Scripts"):
 python_path += os.path.sep
 
 print "Python Path: %s" % python_path
-gtk_root = os.path.join(gtk.__path__[0], "..\\runtime\\")
+gtk_root = os.path.join(os.path.dirname(sys.executable), "\\Lib\\site-packages\\gnome")
 
 # Include python modules not picked up automatically by bbfreeze
-includes = ("libtorrent", "cairo", "pangocairo", "atk", "pango", "twisted.internet.utils",
-            "gio", "gzip", "email.mime.multipart", "email.mime.text")
+includes = ("libtorrent", "twisted.internet.utils",
+            "gzip", "email.mime.multipart", "email.mime.text")
 excludes = ("numpy", "OpenGL", "psyco", "win32ui")
 
 dst = "..\\build-win32\\deluge-bbfreeze-" + build_version + "\\"
@@ -80,27 +79,6 @@ def ignored_files(adir, filenames):
         and filename not in locale_include_list
     ]
 shutil.copytree(gtk_locale, os.path.join(dst, 'share/locale'), ignore=ignored_files)
-
-# copy gtk theme files
-theme_include_list = [
-    [gtk_root, "share/icons/hicolor/index.theme"],
-    [gtk_root, "lib/gtk-2.0/2.10.0/engines"],
-    [gtk_root, "share/themes/MS-Windows"],
-    ["DelugeStart Theme", "lib/gtk-2.0/2.10.0/engines/libmurrine.dll"],
-    ["DelugeStart Theme", "share/themes/DelugeStart"],
-    ["DelugeStart Theme", "etc/gtk-2.0/gtkrc"]
-]
-for path_root, path in theme_include_list:
-    full_path = os.path.join(path_root, path)
-    if os.path.isdir(full_path):
-        shutil.copytree(full_path, os.path.join(dst, path))
-    else:
-        dst_dir = os.path.join(dst, os.path.dirname(path))
-        try:
-            os.makedirs(dst_dir)
-        except:
-            pass
-        shutil.copy(full_path, dst_dir)
 
 file = open('VERSION.tmp', 'w')
 file.write("build_version = \"%s\"" % build_version)
