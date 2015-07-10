@@ -50,7 +50,7 @@ virtualenv:
 # We use xvfb for the GTKUI tests
 before_script:
   - export PYTHONPATH=$PYTHONPATH:$PWD
-#  - python -c "import libtorrent as lt; print lt.version"
+  - python -c "import libtorrent as lt; print lt.version"
 #  - export DISPLAY=:99.0
 #  - sh -e /etc/init.d/xvfb start
 
