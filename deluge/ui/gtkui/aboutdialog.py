@@ -7,23 +7,23 @@
 # See LICENSE for more details.
 #
 
-import gtk
-import pygtk
+from gi.repository import Gtk
+import gi
 
 import common
 import deluge.common
 from deluge.ui.client import client
 
-pygtk.require('2.0')
+gi.require_version('Gtk', '3.0')
 
 
 class AboutDialog:
     def __init__(self):
         def url_hook(dialog, url):
             deluge.common.open_url_in_browser(url)
-        gtk.about_dialog_set_url_hook(url_hook)
-        self.about = gtk.AboutDialog()
-        self.about.set_position(gtk.WIN_POS_CENTER)
+        Gtk.about_dialog_set_url_hook(url_hook)
+        self.about = Gtk.AboutDialog()
+        self.about.set_position(Gtk.WindowPosition.CENTER)
         self.about.set_name("Deluge")
         self.about.set_program_name(_("Deluge"))
 
@@ -250,7 +250,7 @@ class AboutDialog:
         self.about.set_website_label("deluge-torrent.org")
 
         self.about.set_icon(common.get_deluge_icon())
-        self.about.set_logo(gtk.gdk.pixbuf_new_from_file(
+        self.about.set_logo(GdkPixbuf.Pixbuf.new_from_file(
             deluge.common.get_pixmap("deluge-about.png")
         ))
 

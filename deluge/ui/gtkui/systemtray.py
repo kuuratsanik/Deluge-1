@@ -10,7 +10,7 @@
 import logging
 import os
 
-import gtk
+from gi.repository import Gtk
 
 import common
 import deluge.common
@@ -20,7 +20,7 @@ from deluge.ui.client import client
 from deluge.ui.gtkui import dialogs
 
 try:
-    import appindicator
+    from gi.repository import AppIndicator3 as appindicator
 except ImportError:
     appindicator = None
 
@@ -62,7 +62,7 @@ class SystemTray(component.Component):
 
     def enable(self):
         """Enables the system tray icon."""
-        self.builder = gtk.Builder()
+        self.builder = Gtk.Builder()
         self.builder.add_from_file(deluge.common.resource_filename(
             "deluge.ui.gtkui", os.path.join("glade", "tray_menu.ui"))
         )
@@ -80,8 +80,7 @@ class SystemTray(component.Component):
 
         if appindicator and self.config["enable_appindicator"]:
             log.debug("Enabling the Application Indicator...")
-            self.indicator = appindicator.Indicator("deluge", "deluge",
-                                                    appindicator.CATEGORY_APPLICATION_STATUS)
+            self.indicator = appindicator.Indicator.new("deluge", "deluge", appindicator.IndicatorCategory.APPLICATION_STATUS)
             try:
                 self.indicator.set_property("title", _("Deluge"))
             except TypeError:
@@ -99,15 +98,15 @@ class SystemTray(component.Component):
                 self.builder.get_object("menuitem_show_deluge").set_active(False)
 
             # Show the Application Indicator
-            self.indicator.set_status(appindicator.STATUS_ACTIVE)
+            self.indicator.set_status(appindicator.IndicatorStatus.ACTIVE)
 
         else:
             log.debug("Enabling the system tray icon..")
             if deluge.common.windows_check() or deluge.common.osx_check():
-                self.tray = gtk.status_icon_new_from_pixbuf(common.get_logo(32))
+                self.tray = Gtk.status_icon_new_from_pixbuf(common.get_logo(32))
             else:
                 try:
-                    self.tray = gtk.status_icon_new_from_icon_name("deluge")
+                    self.tray = Gtk.status_icon_new_from_icon_name("deluge")
                 except:
                     log.warning("Update PyGTK to 2.10 or greater for SystemTray..")
                     return
@@ -171,7 +170,7 @@ class SystemTray(component.Component):
     def shutdown(self):
         if self.config["enable_system_tray"]:
             if appindicator and self.config["enable_appindicator"]:
-                self.indicator.set_status(appindicator.STATUS_PASSIVE)
+                self.indicator.set_status(appindicator.IndicatorStatus.PASSIVE)
             else:
                 self.tray.set_visible(False)
 
@@ -272,7 +271,7 @@ class SystemTray(component.Component):
                     self.window.window.disconnect(self._sig_win_show)
                     log.debug("Disabling the application indicator..")
 
-                self.indicator.set_status(appindicator.STATUS_PASSIVE)
+                self.indicator.set_status(appindicator.IndicatorStatus.PASSIVE)
                 del self.indicator
             else:
                 log.debug("Disabling the system tray icon..")
@@ -323,7 +322,7 @@ class SystemTray(component.Component):
         else:
             self.builder.get_object("menuitem_show_deluge").set_active(False)
 
-        popup_function = gtk.status_icon_position_menu
+        popup_function = Gtk.status_icon_position_menu
         if deluge.common.windows_check():
             popup_function = None
             button = 0
@@ -357,7 +356,7 @@ class SystemTray(component.Component):
         self.window.quit(shutdown=True)
 
     def on_tray_setbwdown(self, widget, data=None):
-        if isinstance(widget, gtk.RadioMenuItem):
+        if isinstance(widget, Gtk.RadioMenuItem):
             #ignore previous radiomenuitem value
             if not widget.get_active():
                 return
@@ -366,7 +365,7 @@ class SystemTray(component.Component):
                         "downloading.svg")
 
     def on_tray_setbwup(self, widget, data=None):
-        if isinstance(widget, gtk.RadioMenuItem):
+        if isinstance(widget, Gtk.RadioMenuItem):
             #ignore previous radiomenuitem value
             if not widget.get_active():
                 return

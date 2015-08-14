@@ -963,10 +963,10 @@ def setup_translations(setup_gettext=True, setup_pygtk=False):
                 libintl.gettext.restype = ctypes.c_char_p
 
             # Use glade for plugins that still uses it
-            import gtk
-            import gtk.glade
-            gtk.glade.bindtextdomain(domain, translations_path)
-            gtk.glade.textdomain(domain)
+            #~ import gtk
+            #~ import gtk.glade
+            #~ gtk.glade.bindtextdomain(domain, translations_path)
+            #~ gtk.glade.textdomain(domain)
         except Exception as ex:
             log.error("Unable to initialize glade translation!")
             log.exception(ex)
