@@ -12,6 +12,7 @@ import os
 import sys
 import warnings
 
+from gi.repository import GObject, Gdk
 from twisted.internet import gtk3reactor
 from twisted.internet.error import ReactorAlreadyInstalledError
 
@@ -47,7 +48,7 @@ from deluge.ui.tracker_icons import TrackerIcons
 from deluge.ui.ui import _UI
 
 
-# GObject.set_prgname("deluge")
+GObject.set_prgname("deluge")
 
 log = logging.getLogger(__name__)
 
@@ -174,7 +175,7 @@ class GtkUI(object):
                     return 1
             SetConsoleCtrlHandler(win_handler)
 
-        if deluge.common.osx_check():
+        if deluge.common.osx_check() and Gdk.WINDOWING == "quartz":
             import gtkosx_application
             self.osxapp = gtkosx_application.gtkosx_application_get()
 
@@ -235,7 +236,7 @@ class GtkUI(object):
         self.statusbar = StatusBar()
         self.addtorrentdialog = AddTorrentDialog()
 
-        if deluge.common.osx_check():
+        if deluge.common.osx_check() and Gdk.WINDOWING == "quartz":
             def nsapp_open_file(osxapp, filename):
                 # Will be raised at app launch (python opening main script)
                 if filename.endswith('Deluge-bin'):
