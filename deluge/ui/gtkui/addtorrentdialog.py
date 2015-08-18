@@ -81,12 +81,12 @@ class AddTorrentDialog(component.Component):
 
         self.previous_selected_torrent = None
 
-        self.listview_torrents = self.builder.get_object("listview_torrents")
+        self.treeview_torrents = self.builder.get_object("treeview_torrents")
         self.listview_files = self.builder.get_object("listview_files")
 
         render = Gtk.CellRendererText()
         column = Gtk.TreeViewColumn(_("Torrent"), render, text=1)
-        self.listview_torrents.append_column(column)
+        self.treeview_torrents.append_column(column)
 
         render = Gtk.CellRendererToggle()
         render.connect("toggled", self._on_file_toggled)
@@ -111,11 +111,11 @@ class AddTorrentDialog(component.Component):
         column.set_cell_data_func(render, cell_data_size, 2)
         self.listview_files.append_column(column)
 
-        self.listview_torrents.set_model(self.torrent_liststore)
+        self.treeview_torrents.set_model(self.torrent_liststore)
         self.listview_files.set_model(self.files_treestore)
 
         self.listview_files.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
-        self.listview_torrents.get_selection().connect("changed", self._on_torrent_changed)
+        self.treeview_torrents.get_selection().connect("changed", self._on_torrent_changed)
 
         self.setup_move_completed_path_chooser()
         self.setup_download_location_path_chooser()
@@ -199,14 +199,14 @@ class AddTorrentDialog(component.Component):
             new_row = self.torrent_liststore.append([info.info_hash, info.name, filename])
             self.files[info.info_hash] = info.files
             self.infos[info.info_hash] = info.filedata
-            self.listview_torrents.get_selection().select_iter(new_row)
+            self.treeview_torrents.get_selection().select_iter(new_row)
 
             self.set_default_options()
             self.save_torrent_options(new_row)
 
-        (model, row) = self.listview_torrents.get_selection().get_selected()
+        (model, row) = self.treeview_torrents.get_selection().get_selected()
         if not row and new_row:
-            self.listview_torrents.get_selection().select_iter(new_row)
+            self.treeview_torrents.get_selection().select_iter(new_row)
 
         self.builder.get_object("label_torrent_count").set_text("Torrents (%d)" % len(self.torrent_liststore))
 
@@ -240,13 +240,13 @@ class AddTorrentDialog(component.Component):
                 [info_hash, name, uri])
             self.files[info_hash] = []
             self.infos[info_hash] = None
-            self.listview_torrents.get_selection().select_iter(new_row)
+            self.treeview_torrents.get_selection().select_iter(new_row)
             self.set_default_options()
             self.save_torrent_options(new_row)
 
-        (model, row) = self.listview_torrents.get_selection().get_selected()
+        (model, row) = self.treeview_torrents.get_selection().get_selected()
         if not row and new_row:
-            self.listview_torrents.get_selection().select_iter(new_row)
+            self.treeview_torrents.get_selection().select_iter(new_row)
 
     def _on_torrent_changed(self, treeselection):
         (model, row) = treeselection.get_selected()
@@ -287,7 +287,7 @@ class AddTorrentDialog(component.Component):
                     file, file["path"], i, file["download"], split_files
                 )
             self.add_files(None, split_files)
-        # FIXME add back expand_row 
+        # FIXME add back expand_row
         self.listview_files.expand_all()
 
     def prepare_file(self, file, file_name, file_num, download, files_storage):
@@ -699,7 +699,7 @@ class AddTorrentDialog(component.Component):
 
     def _on_button_remove_clicked(self, widget):
         log.debug("_on_button_remove_clicked")
-        (model, row) = self.listview_torrents.get_selection().get_selected()
+        (model, row) = self.treeview_torrents.get_selection().get_selected()
         if row is None:
             return
 
@@ -722,7 +722,7 @@ class AddTorrentDialog(component.Component):
         self.hide()
 
     def add_torrents(self):
-        (model, row) = self.listview_torrents.get_selection().get_selected()
+        (model, row) = self.treeview_torrents.get_selection().get_selected()
         if row is not None:
             self.save_torrent_options(row)
 
@@ -756,7 +756,7 @@ class AddTorrentDialog(component.Component):
 
     def _on_button_apply_clicked(self, widget):
         log.debug("_on_button_apply_clicked")
-        (model, row) = self.listview_torrents.get_selection().get_selected()
+        (model, row) = self.treeview_torrents.get_selection().get_selected()
         if row is None:
             return
 
@@ -775,7 +775,7 @@ class AddTorrentDialog(component.Component):
 
     def _on_button_revert_clicked(self, widget):
         log.debug("_on_button_revert_clicked")
-        (model, row) = self.listview_torrents.get_selection().get_selected()
+        (model, row) = self.treeview_torrents.get_selection().get_selected()
         if row is None:
             return
 
@@ -810,7 +810,7 @@ class AddTorrentDialog(component.Component):
         itr = self.files_treestore.get_iter(path)
 
         # Get the torrent_id
-        (model, row) = self.listview_torrents.get_selection().get_selected()
+        (model, row) = self.treeview_torrents.get_selection().get_selected()
         torrent_id = model[row][0]
 
         if "mapped_files" not in self.options[torrent_id]:
@@ -901,7 +901,7 @@ class AddTorrentDialog(component.Component):
 
                 # We need to re-expand the view because it might contracted
                 # if we change the root iter
-                # FIXME add back expand_row 
+                # FIXME add back expand_row
                 self.listview_files.expand_all()
             else:
                 # This was a simple folder rename without any splits, so just
