@@ -464,7 +464,7 @@
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
-                                            <property name="xalign">0.5</property>
+                                            <property name="xalign">0</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
                                           <packing>
@@ -481,7 +481,7 @@
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                            <property name="xalign">0.5</property>
+                                            <property name="xalign">0</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
                                           <packing>
@@ -499,13 +499,14 @@
                                             <property name="tooltip_text" translatable="yes">The pieces bar
 will increase bandwidth use between client
 and daemon (does not apply in Standalone mode).</property>
-                                            <property name="xalign">0.5</property>
+                                            <property name="xalign">0</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="toggled" handler="on_piecesbar_toggle_toggled" swapped="no"/>
                                             <child>
                                               <object class="GtkLabel" id="label62">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
+                                                <property name="xalign">0</property>
                                                 <property name="label" translatable="yes">Show a pieces bar in Status tab</property>
                                                 <property name="use_markup">True</property>
                                               </object>
@@ -731,6 +732,21 @@ and daemon (does not apply in Standalone mode).</property>
                                                         <property name="height">1</property>
                                                       </packing>
                                                     </child>
+                                                    <child>
+                                                      <placeholder/>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
+                                                    </child>
                                                   </object>
                                                 </child>
                                               </object>
@@ -797,7 +813,7 @@ and daemon (does not apply in Standalone mode).</property>
                                             <property name="can_focus">False</property>
                                             <property name="receives_default">False</property>
                                             <property name="use_underline">True</property>
-                                            <property name="xalign">0.5</property>
+                                            <property name="xalign">0</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="toggled" handler="on_toggle" swapped="no"/>
                                           </object>
@@ -872,7 +888,7 @@ and daemon (does not apply in Standalone mode).</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="receives_default">False</property>
                                                 <property name="use_underline">True</property>
-                                                <property name="xalign">0.5</property>
+                                                <property name="xalign">0</property>
                                                 <property name="draw_indicator">True</property>
                                               </object>
                                             </child>
@@ -897,7 +913,7 @@ and daemon (does not apply in Standalone mode).</property>
                                                 <property name="can_focus">False</property>
                                                 <property name="receives_default">False</property>
                                                 <property name="use_underline">True</property>
-                                                <property name="xalign">0.5</property>
+                                                <property name="xalign">0</property>
                                                 <property name="draw_indicator">True</property>
                                               </object>
                                             </child>
@@ -923,7 +939,7 @@ and daemon (does not apply in Standalone mode).</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">False</property>
                                                 <property name="use_underline">True</property>
-                                                <property name="xalign">0.5</property>
+                                                <property name="xalign">0</property>
                                                 <property name="draw_indicator">True</property>
                                                 <signal name="toggled" handler="on_toggle" swapped="no"/>
                                               </object>
@@ -1036,7 +1052,7 @@ and daemon (does not apply in Standalone mode).</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">False</property>
-                                                <property name="xalign">0.5</property>
+                                                <property name="xalign">0</property>
                                                 <property name="draw_indicator">True</property>
                                               </object>
                                             </child>
@@ -1093,7 +1109,7 @@ and daemon (does not apply in Standalone mode).</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
-                                            <property name="xalign">0.5</property>
+                                            <property name="xalign">0</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="toggled" handler="on_checkbutton_language_toggled" swapped="no"/>
                                           </object>
@@ -1202,7 +1218,7 @@ and daemon (does not apply in Standalone mode).</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
-                                            <property name="xalign">0.5</property>
+                                            <property name="xalign">0</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="toggled" handler="on_toggle" swapped="no"/>
                                           </object>
@@ -1220,7 +1236,7 @@ and daemon (does not apply in Standalone mode).</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
-                                            <property name="xalign">0.5</property>
+                                            <property name="xalign">0</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="toggled" handler="on_toggle" swapped="no"/>
                                           </object>
@@ -1239,7 +1255,7 @@ and daemon (does not apply in Standalone mode).</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
                                             <property name="tooltip_text" translatable="yes">Delete the copy of the torrent file created when the torrent is removed</property>
-                                            <property name="xalign">0.5</property>
+                                            <property name="xalign">0</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
                                           <packing>
@@ -1277,28 +1293,8 @@ and daemon (does not apply in Standalone mode).</property>
                                             </child>
                                           </object>
                                           <packing>
-                                            <property name="left_attach">1</property>
+                                            <property name="left_attach">0</property>
                                             <property name="top_attach">1</property>
-                                            <property name="width">1</property>
-                                            <property name="height">1</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkAlignment" id="alignment12">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="left_padding">15</property>
-                                            <child>
-                                              <object class="GtkBox" id="hbox_move_completed_to_path_chooser">
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
-                                                <property name="spacing">5</property>
-                                              </object>
-                                            </child>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">2</property>
-                                            <property name="top_attach">3</property>
                                             <property name="width">1</property>
                                             <property name="height">1</property>
                                           </packing>
@@ -1317,11 +1313,73 @@ and daemon (does not apply in Standalone mode).</property>
                                             </child>
                                           </object>
                                           <packing>
-                                            <property name="left_attach">2</property>
+                                            <property name="left_attach">0</property>
                                             <property name="top_attach">5</property>
                                             <property name="width">1</property>
                                             <property name="height">1</property>
                                           </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkAlignment" id="alignment12">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="left_padding">15</property>
+                                            <child>
+                                              <object class="GtkBox" id="hbox_move_completed_to_path_chooser">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="spacing">5</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">3</property>
+                                            <property name="width">1</property>
+                                            <property name="height">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
                                         </child>
                                       </object>
                                     </child>
@@ -1371,7 +1429,7 @@ and daemon (does not apply in Standalone mode).</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
                                             <property name="tooltip_text" translatable="yes">Prioritize first and last pieces of files in torrent</property>
-                                            <property name="xalign">0.5</property>
+                                            <property name="xalign">0</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
                                           <packing>
@@ -1393,7 +1451,7 @@ sequence instead of rarest first.
 Enabling sequential download will affect the piece
 distribution negatively in the swarm. It should be
 used sparingly.</property>
-                                            <property name="xalign">0.5</property>
+                                            <property name="xalign">0</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
                                           <packing>
@@ -1409,7 +1467,7 @@ used sparingly.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
-                                            <property name="xalign">0.5</property>
+                                            <property name="xalign">0</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
                                           <packing>
@@ -1426,7 +1484,7 @@ used sparingly.</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
                                             <property name="tooltip_text" translatable="yes">Pre-allocate the disk space for the torrent files</property>
-                                            <property name="xalign">0.5</property>
+                                            <property name="xalign">0</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
                                           <packing>
@@ -1482,7 +1540,7 @@ used sparingly.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
-                                            <property name="xalign">0.5</property>
+                                            <property name="xalign">0</property>
                                             <property name="draw_indicator">True</property>
                                             <signal name="toggled" handler="on_toggle" swapped="no"/>
                                           </object>
@@ -1503,7 +1561,7 @@ used sparingly.</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">False</property>
-                                                <property name="xalign">0.5</property>
+                                                <property name="xalign">0</property>
                                                 <property name="draw_indicator">True</property>
                                               </object>
                                             </child>
@@ -1632,79 +1690,6 @@ used sparingly.</property>
                                               </packing>
                                             </child>
                                             <child>
-                                              <object class="GtkLabel" id="label58">
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
-                                                <property name="xalign">0</property>
-                                                <property name="label" translatable="yes">Connection Attempts per Second:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left_attach">3</property>
-                                                <property name="top_attach">5</property>
-                                                <property name="width">1</property>
-                                                <property name="height">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="label57">
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
-                                                <property name="xalign">0</property>
-                                                <property name="label" translatable="yes">Half-Open Connections:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left_attach">3</property>
-                                                <property name="top_attach">4</property>
-                                                <property name="width">1</property>
-                                                <property name="height">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="label17">
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
-                                                <property name="tooltip_text" translatable="yes">The maximum upload speed for all torrents.  Set -1 for unlimited.</property>
-                                                <property name="xalign">0</property>
-                                                <property name="label" translatable="yes">Upload Speed:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left_attach">3</property>
-                                                <property name="top_attach">3</property>
-                                                <property name="width">1</property>
-                                                <property name="height">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="label16">
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
-                                                <property name="tooltip_text" translatable="yes">The maximum number of connections allowed.  Set -1 for unlimited.</property>
-                                                <property name="xalign">0</property>
-                                                <property name="label" translatable="yes">Connections:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left_attach">3</property>
-                                                <property name="top_attach">0</property>
-                                                <property name="width">1</property>
-                                                <property name="height">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="label15">
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
-                                                <property name="tooltip_text" translatable="yes">The maximum upload slots for all torrents.  Set -1 for unlimited.</property>
-                                                <property name="xalign">0</property>
-                                                <property name="label" translatable="yes">Upload Slots:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left_attach">4</property>
-                                                <property name="top_attach">1</property>
-                                                <property name="width">1</property>
-                                                <property name="height">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
                                               <object class="GtkSpinButton" id="spin_max_connections_global">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
@@ -1723,21 +1708,6 @@ used sparingly.</property>
                                               <packing>
                                                 <property name="left_attach">1</property>
                                                 <property name="top_attach">0</property>
-                                                <property name="width">1</property>
-                                                <property name="height">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="label14">
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
-                                                <property name="tooltip_text" translatable="yes">The maximum download speed for all torrents.  Set -1 for unlimited.</property>
-                                                <property name="xalign">0</property>
-                                                <property name="label" translatable="yes">Download Speed:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left_attach">5</property>
-                                                <property name="top_attach">2</property>
                                                 <property name="width">1</property>
                                                 <property name="height">1</property>
                                               </packing>
@@ -1833,6 +1803,160 @@ used sparingly.</property>
                                                 <property name="height">1</property>
                                               </packing>
                                             </child>
+                                            <child>
+                                              <object class="GtkLabel" id="label16">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="tooltip_text" translatable="yes">The maximum number of connections allowed.  Set -1 for unlimited.</property>
+                                                <property name="xalign">0</property>
+                                                <property name="label" translatable="yes">Connections:</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">0</property>
+                                                <property name="top_attach">0</property>
+                                                <property name="width">1</property>
+                                                <property name="height">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel" id="label15">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="tooltip_text" translatable="yes">The maximum upload slots for all torrents.  Set -1 for unlimited.</property>
+                                                <property name="xalign">0</property>
+                                                <property name="label" translatable="yes">Upload Slots:</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">0</property>
+                                                <property name="top_attach">1</property>
+                                                <property name="width">1</property>
+                                                <property name="height">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel" id="label14">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="tooltip_text" translatable="yes">The maximum download speed for all torrents.  Set -1 for unlimited.</property>
+                                                <property name="xalign">0</property>
+                                                <property name="label" translatable="yes">Download Speed:</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">0</property>
+                                                <property name="top_attach">2</property>
+                                                <property name="width">1</property>
+                                                <property name="height">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel" id="label17">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="tooltip_text" translatable="yes">The maximum upload speed for all torrents.  Set -1 for unlimited.</property>
+                                                <property name="xalign">0</property>
+                                                <property name="label" translatable="yes">Upload Speed:</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">0</property>
+                                                <property name="top_attach">3</property>
+                                                <property name="width">1</property>
+                                                <property name="height">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel" id="label57">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="xalign">0</property>
+                                                <property name="label" translatable="yes">Half-Open Connections:</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">0</property>
+                                                <property name="top_attach">4</property>
+                                                <property name="width">1</property>
+                                                <property name="height">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel" id="label58">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="xalign">0</property>
+                                                <property name="label" translatable="yes">Connection Attempts per Second:</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">0</property>
+                                                <property name="top_attach">5</property>
+                                                <property name="width">1</property>
+                                                <property name="height">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
                                           </object>
                                           <packing>
                                             <property name="expand">True</property>
@@ -1852,7 +1976,7 @@ used sparingly.</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">False</property>
-                                                <property name="xalign">0.5</property>
+                                                <property name="xalign">0</property>
                                                 <property name="active">True</property>
                                                 <property name="draw_indicator">True</property>
                                               </object>
@@ -1877,7 +2001,7 @@ used sparingly.</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">False</property>
                                                 <property name="tooltip_text" translatable="yes">If checked, the estimated TCP/IP overhead is drained from the rate limiters, to avoid exceeding the limits with the total traffic</property>
-                                                <property name="xalign">0.5</property>
+                                                <property name="xalign">0</property>
                                                 <property name="active">True</property>
                                                 <property name="draw_indicator">True</property>
                                               </object>
@@ -1973,62 +2097,6 @@ used sparingly.</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkLabel" id="label18">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="xalign">0</property>
-                                            <property name="label" translatable="yes">Connections:</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">2</property>
-                                            <property name="top_attach">0</property>
-                                            <property name="width">1</property>
-                                            <property name="height">1</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel" id="label24">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="xalign">0</property>
-                                            <property name="label" translatable="yes">Upload Slots:</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">3</property>
-                                            <property name="top_attach">1</property>
-                                            <property name="width">1</property>
-                                            <property name="height">1</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel" id="label31">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="xalign">0</property>
-                                            <property name="label" translatable="yes">Download Speed:</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">4</property>
-                                            <property name="top_attach">2</property>
-                                            <property name="width">1</property>
-                                            <property name="height">1</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel" id="label32">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="xalign">0</property>
-                                            <property name="label" translatable="yes">Upload Speed:</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">4</property>
-                                            <property name="top_attach">3</property>
-                                            <property name="width">1</property>
-                                            <property name="height">1</property>
-                                          </packing>
-                                        </child>
-                                        <child>
                                           <object class="GtkSpinButton" id="spin_max_download_per_torrent">
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
@@ -2095,6 +2163,92 @@ used sparingly.</property>
                                             <property name="width">1</property>
                                             <property name="height">1</property>
                                           </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="label18">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="xalign">0</property>
+                                            <property name="label" translatable="yes">Connections:</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">0</property>
+                                            <property name="width">1</property>
+                                            <property name="height">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="label24">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="xalign">0</property>
+                                            <property name="label" translatable="yes">Upload Slots:</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">1</property>
+                                            <property name="width">1</property>
+                                            <property name="height">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="label31">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="xalign">0</property>
+                                            <property name="label" translatable="yes">Download Speed:</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">2</property>
+                                            <property name="width">1</property>
+                                            <property name="height">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="label32">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="xalign">0</property>
+                                            <property name="label" translatable="yes">Upload Speed:</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">3</property>
+                                            <property name="width">1</property>
+                                            <property name="height">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
                                         </child>
                                       </object>
                                     </child>
@@ -2177,7 +2331,7 @@ used sparingly.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
-                                            <property name="xalign">0.5</property>
+                                            <property name="xalign">0</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
                                           <packing>
@@ -2268,34 +2422,6 @@ used sparingly.</property>
                                               </packing>
                                             </child>
                                             <child>
-                                              <object class="GtkLabel" id="label27">
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
-                                                <property name="xalign">0</property>
-                                                <property name="label" translatable="yes">Total active seeding:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left_attach">2</property>
-                                                <property name="top_attach">2</property>
-                                                <property name="width">1</property>
-                                                <property name="height">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="label48">
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
-                                                <property name="xalign">0</property>
-                                                <property name="label" translatable="yes">Total active:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left_attach">2</property>
-                                                <property name="top_attach">0</property>
-                                                <property name="width">1</property>
-                                                <property name="height">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
                                               <object class="GtkSpinButton" id="spin_downloading">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
@@ -2314,6 +2440,20 @@ used sparingly.</property>
                                               </packing>
                                             </child>
                                             <child>
+                                              <object class="GtkLabel" id="label48">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="xalign">0</property>
+                                                <property name="label" translatable="yes">Total active:</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">0</property>
+                                                <property name="top_attach">0</property>
+                                                <property name="width">1</property>
+                                                <property name="height">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
                                               <object class="GtkLabel" id="label42">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
@@ -2321,11 +2461,43 @@ used sparingly.</property>
                                                 <property name="label" translatable="yes">Total active downloading:</property>
                                               </object>
                                               <packing>
-                                                <property name="left_attach">3</property>
+                                                <property name="left_attach">0</property>
                                                 <property name="top_attach">1</property>
                                                 <property name="width">1</property>
                                                 <property name="height">1</property>
                                               </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel" id="label27">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="xalign">0</property>
+                                                <property name="label" translatable="yes">Total active seeding:</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">0</property>
+                                                <property name="top_attach">2</property>
+                                                <property name="width">1</property>
+                                                <property name="height">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
                                             </child>
                                           </object>
                                           <packing>
@@ -2341,7 +2513,7 @@ used sparingly.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
-                                            <property name="xalign">0.5</property>
+                                            <property name="xalign">0</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
                                           <packing>
@@ -2357,7 +2529,7 @@ used sparingly.</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
-                                            <property name="xalign">0.5</property>
+                                            <property name="xalign">0</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
                                           <packing>
@@ -2426,34 +2598,6 @@ used sparingly.</property>
                                               </packing>
                                             </child>
                                             <child>
-                                              <object class="GtkLabel" id="label54">
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
-                                                <property name="xalign">0</property>
-                                                <property name="label" translatable="yes">Seed Time Ratio:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left_attach">1</property>
-                                                <property name="top_attach">1</property>
-                                                <property name="width">1</property>
-                                                <property name="height">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="label55">
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
-                                                <property name="xalign">0</property>
-                                                <property name="label" translatable="yes">Seed Time (m):</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left_attach">2</property>
-                                                <property name="top_attach">2</property>
-                                                <property name="width">1</property>
-                                                <property name="height">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
                                               <object class="GtkSpinButton" id="spin_share_ratio_limit">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
@@ -2506,6 +2650,43 @@ used sparingly.</property>
                                                 <property name="height">1</property>
                                               </packing>
                                             </child>
+                                            <child>
+                                              <object class="GtkLabel" id="label55">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="xalign">0</property>
+                                                <property name="label" translatable="yes">Seed Time (m):</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">0</property>
+                                                <property name="top_attach">2</property>
+                                                <property name="width">1</property>
+                                                <property name="height">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel" id="label54">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="xalign">0</property>
+                                                <property name="label" translatable="yes">Seed Time Ratio:</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">0</property>
+                                                <property name="top_attach">1</property>
+                                                <property name="width">1</property>
+                                                <property name="height">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
                                           </object>
                                           <packing>
                                             <property name="expand">True</property>
@@ -2524,7 +2705,7 @@ used sparingly.</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">False</property>
-                                                <property name="xalign">0.5</property>
+                                                <property name="xalign">0</property>
                                                 <property name="draw_indicator">True</property>
                                                 <signal name="toggled" handler="on_toggle" swapped="no"/>
                                               </object>
@@ -2577,7 +2758,7 @@ used sparingly.</property>
                                                 <property name="sensitive">False</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">False</property>
-                                                <property name="xalign">0.5</property>
+                                                <property name="xalign">0</property>
                                                 <property name="draw_indicator">True</property>
                                               </object>
                                             </child>
@@ -3102,20 +3283,6 @@ used sparingly.</property>
                                               </packing>
                                             </child>
                                             <child>
-                                              <object class="GtkLabel" id="label8">
-                                                <property name="visible">True</property>
-                                                <property name="can_focus">False</property>
-                                                <property name="xalign">1</property>
-                                                <property name="label" translatable="yes">Outgoing:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left_attach">2</property>
-                                                <property name="top_attach">1</property>
-                                                <property name="width">1</property>
-                                                <property name="height">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
                                               <object class="GtkLabel" id="label7">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
@@ -3123,8 +3290,22 @@ used sparingly.</property>
                                                 <property name="label" translatable="yes">Incoming:</property>
                                               </object>
                                               <packing>
-                                                <property name="left_attach">3</property>
+                                                <property name="left_attach">0</property>
                                                 <property name="top_attach">0</property>
+                                                <property name="width">1</property>
+                                                <property name="height">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel" id="label8">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="xalign">1</property>
+                                                <property name="label" translatable="yes">Outgoing:</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">0</property>
+                                                <property name="top_attach">1</property>
                                                 <property name="width">1</property>
                                                 <property name="height">1</property>
                                               </packing>
@@ -3149,8 +3330,7 @@ used sparingly.</property>
                                                   <object class="GtkLabel" id="label9">
                                                     <property name="visible">True</property>
                                                     <property name="can_focus">False</property>
-                                                    <property name="xalign">0</property>
-                                                    <property name="xpad">5</property>
+                                                    <property name="xalign">1</property>
                                                     <property name="label" translatable="yes">Level:</property>
                                                   </object>
                                                   <packing>
@@ -3237,7 +3417,7 @@ used sparingly.</property>
                                             <property name="receives_default">False</property>
                                             <property name="tooltip_text" translatable="yes">Universal Plug and Play</property>
                                             <property name="use_underline">True</property>
-                                            <property name="xalign">0.5</property>
+                                            <property name="xalign">0</property>
                                             <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
@@ -3257,7 +3437,7 @@ used sparingly.</property>
                                             <property name="receives_default">False</property>
                                             <property name="tooltip_text" translatable="yes">NAT Port Mapping Protocol</property>
                                             <property name="use_underline">True</property>
-                                            <property name="xalign">0.5</property>
+                                            <property name="xalign">0</property>
                                             <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
@@ -3277,7 +3457,7 @@ used sparingly.</property>
                                             <property name="receives_default">False</property>
                                             <property name="tooltip_text" translatable="yes">Exchanges peers between clients. (Disabling requires restart)</property>
                                             <property name="use_underline">True</property>
-                                            <property name="xalign">0.5</property>
+                                            <property name="xalign">0</property>
                                             <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
@@ -3297,12 +3477,12 @@ used sparingly.</property>
                                             <property name="receives_default">False</property>
                                             <property name="tooltip_text" translatable="yes">Exchanges trackers between clients. (Disabling requires restart)</property>
                                             <property name="use_underline">True</property>
-                                            <property name="xalign">0.5</property>
+                                            <property name="xalign">0</property>
                                             <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
                                           <packing>
-                                            <property name="left_attach">2</property>
+                                            <property name="left_attach">1</property>
                                             <property name="top_attach">1</property>
                                             <property name="width">1</property>
                                             <property name="height">1</property>
@@ -3316,11 +3496,11 @@ used sparingly.</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
                                             <property name="tooltip_text" translatable="yes">Local Service Discovery finds local peers on your network.</property>
-                                            <property name="xalign">0.5</property>
+                                            <property name="xalign">0</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
                                           <packing>
-                                            <property name="left_attach">3</property>
+                                            <property name="left_attach">2</property>
                                             <property name="top_attach">1</property>
                                             <property name="width">1</property>
                                             <property name="height">1</property>
@@ -3335,11 +3515,11 @@ used sparingly.</property>
                                             <property name="receives_default">False</property>
                                             <property name="tooltip_text" translatable="yes">Distributed hash table may improve the amount of active connections.</property>
                                             <property name="use_underline">True</property>
-                                            <property name="xalign">0.5</property>
+                                            <property name="xalign">0</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
                                           <packing>
-                                            <property name="left_attach">1</property>
+                                            <property name="left_attach">0</property>
                                             <property name="top_attach">1</property>
                                             <property name="width">1</property>
                                             <property name="height">1</property>
@@ -3384,11 +3564,14 @@ Requires a Hex value.</property>
                                             </child>
                                           </object>
                                           <packing>
-                                            <property name="left_attach">4</property>
+                                            <property name="left_attach">0</property>
                                             <property name="top_attach">2</property>
-                                            <property name="width">1</property>
+                                            <property name="width">2</property>
                                             <property name="height">1</property>
                                           </packing>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
                                         </child>
                                       </object>
                                     </child>
@@ -3530,7 +3713,7 @@ Requires a Hex value.</property>
                                           <object class="GtkLabel" id="label_proxy_port">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="xalign">1</property>
+                                            <property name="xalign">0</property>
                                             <property name="label" translatable="yes">Port:</property>
                                           </object>
                                           <packing>
@@ -3593,22 +3776,8 @@ Requires a Hex value.</property>
                                             </child>
                                           </object>
                                           <packing>
-                                            <property name="left_attach">2</property>
+                                            <property name="left_attach">1</property>
                                             <property name="top_attach">0</property>
-                                            <property name="width">1</property>
-                                            <property name="height">1</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel" id="label_proxy_user">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="xalign">0</property>
-                                            <property name="label" translatable="yes">Username:</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">3</property>
-                                            <property name="top_attach">1</property>
                                             <property name="width">1</property>
                                             <property name="height">1</property>
                                           </packing>
@@ -3622,12 +3791,12 @@ Requires a Hex value.</property>
                                             <property name="receives_default">False</property>
                                             <property name="tooltip_text" translatable="yes">Hostnames should be attempted to be resolved through
 the proxy instead of using the local DNS service</property>
-                                            <property name="xalign">0.5</property>
+                                            <property name="xalign">0</property>
                                             <property name="active">True</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
                                           <packing>
-                                            <property name="left_attach">4</property>
+                                            <property name="left_attach">1</property>
                                             <property name="top_attach">5</property>
                                             <property name="width">1</property>
                                             <property name="height">1</property>
@@ -3646,11 +3815,97 @@ the proxy instead of using the local DNS service</property>
                                             <property name="draw_indicator">True</property>
                                           </object>
                                           <packing>
-                                            <property name="left_attach">4</property>
+                                            <property name="left_attach">1</property>
                                             <property name="top_attach">6</property>
                                             <property name="width">1</property>
                                             <property name="height">1</property>
                                           </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="label_proxy_user">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="xalign">0</property>
+                                            <property name="label" translatable="yes">Username:</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">1</property>
+                                            <property name="width">1</property>
+                                            <property name="height">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
                                         </child>
                                       </object>
                                     </child>
@@ -3723,20 +3978,6 @@ the proxy instead of using the local DNS service</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkLabel" id="label_i2p_port">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="xalign">1</property>
-                                            <property name="label" translatable="yes">Port:</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">2</property>
-                                            <property name="top_attach">1</property>
-                                            <property name="width">1</property>
-                                            <property name="height">1</property>
-                                          </packing>
-                                        </child>
-                                        <child>
                                           <object class="GtkAlignment" id="alignment_i2p_port">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
@@ -3759,6 +4000,26 @@ the proxy instead of using the local DNS service</property>
                                             <property name="width">1</property>
                                             <property name="height">1</property>
                                           </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="label_i2p_port">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="xalign">1</property>
+                                            <property name="label" translatable="yes">Port:</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">1</property>
+                                            <property name="width">1</property>
+                                            <property name="height">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
                                         </child>
                                       </object>
                                     </child>
@@ -3803,7 +4064,7 @@ the proxy instead of using the local DNS service</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes">Attempt to hide client identity and only use proxy  for incoming connections.</property>
-                                        <property name="xalign">0.5</property>
+                                        <property name="xalign">0</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                     </child>
@@ -3894,22 +4155,6 @@ the proxy instead of using the local DNS service</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkLabel" id="label115">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="has_tooltip">True</property>
-                                            <property name="tooltip_text" translatable="yes">The number of seconds from the last cached write to a piece in the write cache, to when it's forcefully flushed to disk. Default is 60 seconds.</property>
-                                            <property name="xalign">0</property>
-                                            <property name="label" translatable="yes">Cache Expiry (seconds):</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">1</property>
-                                            <property name="top_attach">1</property>
-                                            <property name="width">1</property>
-                                            <property name="height">1</property>
-                                          </packing>
-                                        </child>
-                                        <child>
                                           <object class="GtkSpinButton" id="spin_cache_size">
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
@@ -3943,6 +4188,22 @@ the proxy instead of using the local DNS service</property>
                                           </object>
                                           <packing>
                                             <property name="left_attach">1</property>
+                                            <property name="top_attach">1</property>
+                                            <property name="width">1</property>
+                                            <property name="height">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="label115">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="has_tooltip">True</property>
+                                            <property name="tooltip_text" translatable="yes">The number of seconds from the last cached write to a piece in the write cache, to when it's forcefully flushed to disk. Default is 60 seconds.</property>
+                                            <property name="xalign">0</property>
+                                            <property name="label" translatable="yes">Cache Expiry (seconds):</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
                                             <property name="top_attach">1</property>
                                             <property name="width">1</property>
                                             <property name="height">1</property>
@@ -4027,23 +4288,8 @@ the proxy instead of using the local DNS service</property>
                                                         <property name="label" translatable="yes">Writes:</property>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">1</property>
+                                                        <property name="left_attach">0</property>
                                                         <property name="top_attach">1</property>
-                                                        <property name="width">1</property>
-                                                        <property name="height">1</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
-                                                      <object class="GtkLabel" id="label124">
-                                                        <property name="visible">True</property>
-                                                        <property name="can_focus">False</property>
-                                                        <property name="tooltip_text" translatable="yes">The ratio (blocks_written - writes) / blocks_written represents the number of saved write operations per total write operations, i.e. a kind of cache hit ratio for the write cache.</property>
-                                                        <property name="xalign">0</property>
-                                                        <property name="label" translatable="yes">Write Cache Hit Ratio:</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left_attach">2</property>
-                                                        <property name="top_attach">2</property>
                                                         <property name="width">1</property>
                                                         <property name="height">1</property>
                                                       </packing>
@@ -4062,19 +4308,6 @@ the proxy instead of using the local DNS service</property>
                                                       </packing>
                                                     </child>
                                                     <child>
-                                                      <object class="GtkLabel" id="label_cache_writes">
-                                                        <property name="visible">True</property>
-                                                        <property name="can_focus">False</property>
-                                                        <property name="xalign">1</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left_attach">1</property>
-                                                        <property name="top_attach">1</property>
-                                                        <property name="width">1</property>
-                                                        <property name="height">1</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
                                                       <object class="GtkLabel" id="label_cache_write_hit_ratio">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">False</property>
@@ -4083,6 +4316,34 @@ the proxy instead of using the local DNS service</property>
                                                       <packing>
                                                         <property name="left_attach">1</property>
                                                         <property name="top_attach">2</property>
+                                                        <property name="width">1</property>
+                                                        <property name="height">1</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkLabel" id="label124">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="tooltip_text" translatable="yes">The ratio (blocks_written - writes) / blocks_written represents the number of saved write operations per total write operations, i.e. a kind of cache hit ratio for the write cache.</property>
+                                                        <property name="xalign">0</property>
+                                                        <property name="label" translatable="yes">Write Cache Hit Ratio:</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="left_attach">0</property>
+                                                        <property name="top_attach">2</property>
+                                                        <property name="width">1</property>
+                                                        <property name="height">1</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkLabel" id="label_cache_writes">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="xalign">1</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="left_attach">1</property>
+                                                        <property name="top_attach">1</property>
                                                         <property name="width">1</property>
                                                         <property name="height">1</property>
                                                       </packing>
@@ -4148,23 +4409,8 @@ the proxy instead of using the local DNS service</property>
                                                         <property name="label" translatable="yes">Blocks Read Hit:</property>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">1</property>
+                                                        <property name="left_attach">0</property>
                                                         <property name="top_attach">1</property>
-                                                        <property name="width">1</property>
-                                                        <property name="height">1</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
-                                                      <object class="GtkLabel" id="label122">
-                                                        <property name="visible">True</property>
-                                                        <property name="can_focus">False</property>
-                                                        <property name="tooltip_text" translatable="yes">The cache hit ratio for the read cache.</property>
-                                                        <property name="xalign">0</property>
-                                                        <property name="label" translatable="yes">Read Cache Hit Ratio:</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left_attach">2</property>
-                                                        <property name="top_attach">3</property>
                                                         <property name="width">1</property>
                                                         <property name="height">1</property>
                                                       </packing>
@@ -4183,19 +4429,6 @@ the proxy instead of using the local DNS service</property>
                                                       </packing>
                                                     </child>
                                                     <child>
-                                                      <object class="GtkLabel" id="label_cache_blocks_read_hit">
-                                                        <property name="visible">True</property>
-                                                        <property name="can_focus">False</property>
-                                                        <property name="xalign">1</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left_attach">1</property>
-                                                        <property name="top_attach">1</property>
-                                                        <property name="width">1</property>
-                                                        <property name="height">1</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
                                                       <object class="GtkLabel" id="label_cache_read_hit_ratio">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">False</property>
@@ -4204,6 +4437,19 @@ the proxy instead of using the local DNS service</property>
                                                       <packing>
                                                         <property name="left_attach">1</property>
                                                         <property name="top_attach">3</property>
+                                                        <property name="width">1</property>
+                                                        <property name="height">1</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkLabel" id="label_cache_reads">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="xalign">1</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="left_attach">1</property>
+                                                        <property name="top_attach">2</property>
                                                         <property name="width">1</property>
                                                         <property name="height">1</property>
                                                       </packing>
@@ -4218,20 +4464,36 @@ the proxy instead of using the local DNS service</property>
                                                         <property name="label" translatable="yes">Reads:</property>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">2</property>
+                                                        <property name="left_attach">0</property>
                                                         <property name="top_attach">2</property>
                                                         <property name="width">1</property>
                                                         <property name="height">1</property>
                                                       </packing>
                                                     </child>
                                                     <child>
-                                                      <object class="GtkLabel" id="label_cache_reads">
+                                                      <object class="GtkLabel" id="label122">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">False</property>
+                                                        <property name="tooltip_text" translatable="yes">The cache hit ratio for the read cache.</property>
+                                                        <property name="xalign">0</property>
+                                                        <property name="label" translatable="yes">Read Cache Hit Ratio:</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="left_attach">0</property>
+                                                        <property name="top_attach">3</property>
+                                                        <property name="width">1</property>
+                                                        <property name="height">1</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkLabel" id="label_cache_blocks_read_hit">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="xalign">1</property>
                                                       </object>
                                                       <packing>
                                                         <property name="left_attach">1</property>
-                                                        <property name="top_attach">2</property>
+                                                        <property name="top_attach">1</property>
                                                         <property name="width">1</property>
                                                         <property name="height">1</property>
                                                       </packing>
@@ -4296,7 +4558,7 @@ the proxy instead of using the local DNS service</property>
                                                         <property name="label" translatable="yes">Read Cache Size:</property>
                                                       </object>
                                                       <packing>
-                                                        <property name="left_attach">1</property>
+                                                        <property name="left_attach">0</property>
                                                         <property name="top_attach">1</property>
                                                         <property name="width">1</property>
                                                         <property name="height">1</property>
@@ -4478,7 +4740,7 @@ the proxy instead of using the local DNS service</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">False</property>
-                                                <property name="xalign">0.5</property>
+                                                <property name="xalign">0</property>
                                                 <property name="draw_indicator">True</property>
                                               </object>
                                             </child>
@@ -4781,7 +5043,7 @@ the proxy instead of using the local DNS service</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="xalign">0.5</property>
+                                        <property name="xalign">0</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                     </child>
@@ -4824,7 +5086,7 @@ the proxy instead of using the local DNS service</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
-                                        <property name="xalign">0.5</property>
+                                        <property name="xalign">0</property>
                                         <property name="draw_indicator">True</property>
                                       </object>
                                     </child>
@@ -5083,77 +5345,6 @@ the proxy instead of using the local DNS service</property>
                                                       </packing>
                                                     </child>
                                                     <child>
-                                                      <object class="GtkLabel" id="label85">
-                                                        <property name="visible">True</property>
-                                                        <property name="can_focus">False</property>
-                                                        <property name="xalign">0</property>
-                                                        <property name="yalign">0</property>
-                                                        <property name="label" translatable="yes">Details:</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left_attach">2</property>
-                                                        <property name="top_attach">4</property>
-                                                        <property name="width">1</property>
-                                                        <property name="height">1</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
-                                                      <object class="GtkLabel" id="label84">
-                                                        <property name="visible">True</property>
-                                                        <property name="can_focus">False</property>
-                                                        <property name="xalign">0</property>
-                                                        <property name="label" translatable="yes">Version:</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left_attach">2</property>
-                                                        <property name="top_attach">1</property>
-                                                        <property name="width">1</property>
-                                                        <property name="height">1</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
-                                                      <object class="GtkLabel" id="label82">
-                                                        <property name="visible">True</property>
-                                                        <property name="can_focus">False</property>
-                                                        <property name="xalign">0</property>
-                                                        <property name="label" translatable="yes">Author:</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left_attach">3</property>
-                                                        <property name="top_attach">0</property>
-                                                        <property name="width">1</property>
-                                                        <property name="height">1</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
-                                                      <object class="GtkLabel" id="label86">
-                                                        <property name="visible">True</property>
-                                                        <property name="can_focus">False</property>
-                                                        <property name="xalign">0</property>
-                                                        <property name="label" translatable="yes">Homepage:</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left_attach">4</property>
-                                                        <property name="top_attach">3</property>
-                                                        <property name="width">1</property>
-                                                        <property name="height">1</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
-                                                      <object class="GtkLabel" id="label87">
-                                                        <property name="visible">True</property>
-                                                        <property name="can_focus">False</property>
-                                                        <property name="xalign">0</property>
-                                                        <property name="label" translatable="yes">Author Email:</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left_attach">4</property>
-                                                        <property name="top_attach">2</property>
-                                                        <property name="width">1</property>
-                                                        <property name="height">1</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
                                                       <object class="GtkLabel" id="label_plugin_homepage">
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">False</property>
@@ -5178,6 +5369,122 @@ the proxy instead of using the local DNS service</property>
                                                         <property name="width">1</property>
                                                         <property name="height">1</property>
                                                       </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkLabel" id="label82">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="xalign">0</property>
+                                                        <property name="label" translatable="yes">Author:</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="left_attach">0</property>
+                                                        <property name="top_attach">0</property>
+                                                        <property name="width">1</property>
+                                                        <property name="height">1</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkLabel" id="label84">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="xalign">0</property>
+                                                        <property name="label" translatable="yes">Version:</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="left_attach">0</property>
+                                                        <property name="top_attach">1</property>
+                                                        <property name="width">1</property>
+                                                        <property name="height">1</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkLabel" id="label87">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="xalign">0</property>
+                                                        <property name="label" translatable="yes">Author Email:</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="left_attach">0</property>
+                                                        <property name="top_attach">2</property>
+                                                        <property name="width">1</property>
+                                                        <property name="height">1</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkLabel" id="label86">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="xalign">0</property>
+                                                        <property name="label" translatable="yes">Homepage:</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="left_attach">0</property>
+                                                        <property name="top_attach">3</property>
+                                                        <property name="width">1</property>
+                                                        <property name="height">1</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkLabel" id="label85">
+                                                        <property name="visible">True</property>
+                                                        <property name="can_focus">False</property>
+                                                        <property name="xalign">0</property>
+                                                        <property name="yalign">0</property>
+                                                        <property name="label" translatable="yes">Details:</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="left_attach">0</property>
+                                                        <property name="top_attach">4</property>
+                                                        <property name="width">1</property>
+                                                        <property name="height">1</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
                                                     </child>
                                                   </object>
                                                 </child>
