@@ -201,5 +201,7 @@ Ext.define('Deluge.FilterPanel', {
 });
 
 Deluge.FilterPanel.templates = {
-    'tracker_host':  '<div class="x-deluge-filter" style="background-image: url(' + deluge.config.base + 'tracker/{filter});">{filter} ({count})</div>'
-}
+    // FIXME: issue trying to get icon for tracker All filter.
+    //'tracker_host':  '<div class="x-deluge-filter" style="background-image: url(' + deluge.config.base + 'tracker/{filter});">{filter} ({count})</div>'
+    'tracker_host':  '<div class="x-deluge-filter" >{filter} ({count})</div>'
+};

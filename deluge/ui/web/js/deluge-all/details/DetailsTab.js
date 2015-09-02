@@ -43,7 +43,6 @@ Ext.define('Deluge.details.DetailsTab', {
 
     initComponent: function() {
         this.callParent(arguments);
-<<<<<<< bc4e39b7eadf51c79b60e2a58d264591aa920555
         this.addItem('torrent_name', _('Name:'));
         this.addItem('hash', _('Hash:'));
         this.addItem('path', _('Download Folder:'));
@@ -52,18 +51,8 @@ Ext.define('Deluge.details.DetailsTab', {
         this.addItem('comment', _('Comment:'));
         this.addItem('status', _('Status:'));
         this.addItem('tracker', _('Tracker:'));
-=======
-        this.addItem('torrent_name', _('Name'));
-        this.addItem('hash', _('Hash'));
-        this.addItem('path', _('Path'));
-        this.addItem('size', _('Total Size'));
-        this.addItem('files', _('# of files'));
-        this.addItem('comment', _('Comment'));
-        this.addItem('status', _('Status'));
-        this.addItem('tracker', _('Tracker'));
         this.addItem('owner', _('Owner'));
         this.addItem('shared', _('Shared'));
->>>>>>> details: add the missing items to the details tab
     },
 
     onRender: function(ct, position) {

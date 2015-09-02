@@ -103,7 +103,9 @@ Ext.define('Deluge.details.FilesTab', {
     }],
 
     clear: function() {
-        this.getStore().removeAll();
+        // FIXME: TypeError: store.indexOf is not a function
+        //          store.fireEvent('bulkremove', store, [me], [store.indexOf(me)], false);
+        //this.getStore().removeAll();
     },
 
     update: function(torrentId) {

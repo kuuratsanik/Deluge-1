@@ -72,28 +72,44 @@ Ext.define('Deluge.Sidebar', {
 
     createFilter: function(filter, states) {
         var panel = Ext.create('Deluge.FilterPanel', {
-            filter: filter
+            filter: filter,
+            // FIXME an attemp to fix panel.header click
+            //~ listeners: {
+                //~ click: function() {
+                    //~ console.log("SFS")
+                    //~ var s = panel.getStore(),
+                    //~ sm = panel.getSelectionModel();
+
+                    //~ if (!deluge.config.sidebar_multiple_filters) {
+                        //~ deluge.ui.update();
+                    //~ };
+                    //~ if (!sm.hasSelection() && s.count() > 0) {
+                        //~ sm.select([s.first()]);
+                    //~ };
+            //~ }}
         });
         panel.on('selectionchange', function(view, nodes) {
             deluge.ui.update();
         });
+
         this.add(panel);
 
         this.doLayout();
         this.panels[filter] = panel;
 
-        panel.header.on('click', function(header) {
-            var s = panel.getStore(),
-                sm = panel.getSelectionModel();
+        //~ panel.header.on('click', function(header) {
+            //~ var s = panel.getStore(),
+                //~ sm = panel.getSelectionModel();
 
-            if (!deluge.config.sidebar_multiple_filters) {
-                deluge.ui.update();
-            }
+            //~ if (!deluge.config.sidebar_multiple_filters) {
+                //~ deluge.ui.update();
+            //~ }
 
-            if (!sm.hasSelection() && s.count() > 0) {
-                sm.select([s.first()]);
-            }
-        });
+            //~ if (!sm.hasSelection() && s.count() > 0) {
+                //~ sm.select([s.first()]);
+            //~ }
+        //~ });
+
         this.fireEvent('filtercreate', this, panel);
 
         panel.updateStates(states);
