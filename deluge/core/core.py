@@ -411,6 +411,7 @@ class Core(component.Component):
         """Pause all torrents in the session"""
         for torrent in self.torrentmanager.torrents.values():
             torrent.pause()
+        component.get("EventManager").emit(SessionPausedEvent())
 
     @export
     def resume_all_torrents(self):
