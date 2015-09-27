@@ -48,8 +48,14 @@ from deluge.common import utf8_encoded
 
 
 DEFAULT_CONFIG = {
-    "commands": []
+    "commands": [],
+    "extra_status_keys": []
 }
+
+DEFAULT_STATUS_KEYS = [
+    "name",
+    "save_path"
+]
 
 EXECUTE_ID = 0
 EXECUTE_EVENT = 1
@@ -104,32 +110,32 @@ class Core(CorePluginBase):
 
         log.debug("Execute core plugin enabled!")
 
+    def fetch_torrent_status(self, torrent_id):
+        status_keys = DEFAULT_STATUS_KEYS + self.config["extra_status_keys"]
+        status = component.get("Core").get_torrent_status(torrent_id, status_keys)
+        status_values = [utf8_encoded(torrent_id)]
+        for status_key in status:
+            status_values.append(utf8_encoded(status[status_key]))
+        return status_values
+
     def on_preremoved(self, torrent_id):
-        # Get and store the torrent info before it is removed
-        torrent = component.get("TorrentManager").torrents[torrent_id]
-        info = torrent.get_status(["name", "save_path"])
-        self.preremoved_cache[torrent_id] = [utf8_encoded(torrent_id), utf8_encoded(info["name"]),
-                                              utf8_encoded(info["save_path"])]
+        # Store the torrent status values before it is removed.
+        self.preremoved_cache[torrent_id] = self.fetch_torrent_status_values(torrent_id)
 
     def execute_commands(self, torrent_id, event):
         if event == "added" and not self.torrent_manager.session_started:
             return
         elif event == "removed":
-            torrent_id, torrent_name, save_path = self.preremoved_cache.pop(torrent_id)
+            tid_status = self.preremoved_cache.pop(torrent_id)
         else:
-            torrent = component.get("TorrentManager").torrents[torrent_id]
-            info = torrent.get_status(["name", "save_path"])
-            # getProcessOutputAndValue requires args to be str
-            torrent_id = utf8_encoded(torrent_id)
-            torrent_name = utf8_encoded(info["name"])
-            save_path = utf8_encoded(info["save_path"])
+            tid_status = self.fetch_torrent_status(torrent_id)
 
         log.debug("[execute] Running commands for %s", event)
 
         def log_error(result, command):
             (stdout, stderr, exit_code) = result
             if exit_code:
-                log.warn("[execute] command '%s' failed with exit code %d", command, exit_code)
+                log.warn("[execute] Command '%s' failed with exit code %d", command, exit_code)
                 if stdout:
                     log.warn("[execute] stdout: %s", stdout)
                 if stderr:
@@ -137,15 +143,15 @@ class Core(CorePluginBase):
 
         # Go through and execute all the commands
         for command in self.config["commands"]:
-            if command[EXECUTE_EVENT] == event:
-                command = os.path.expandvars(command[EXECUTE_COMMAND])
-                command = os.path.expanduser(command)
-                if os.path.isfile(command) and os.access(command, os.X_OK):
-                    log.debug("[execute] Running %s", command)
-                    d = getProcessOutputAndValue(command, (torrent_id, torrent_name, save_path), env=os.environ)
-                    d.addCallback(log_error, command)
-                else:
-                    log.error("[execute] Execute script not found or not executable")
+            if command[EXECUTE_EVENT] != event:
+                continue
+            command = os.path.expanduser(os.path.expandvars(command[EXECUTE_COMMAND]))
+            if os.path.isfile(command) and os.access(command, os.X_OK):
+                log.debug("[execute] Running %s with variables: %s", command, tid_status)
+                d = getProcessOutputAndValue(command, tid_status, env=os.environ)
+                d.addCallback(log_error, command)
+            else:
+                log.error("[execute] Execute script '%s' not found or not executable", command)
 
     def disable(self):
         self.config.save()
