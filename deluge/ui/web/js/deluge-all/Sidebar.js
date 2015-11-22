@@ -53,7 +53,7 @@ Deluge.Sidebar = Ext.extend(Ext.Panel, {
             region: 'west',
             cls: 'deluge-sidebar',
             title: _('Filters'),
-            layout: 'accordion',
+            layout: 'ux.accordionvbox',
             split: true,
             width: 200,
             minSize: 100,
