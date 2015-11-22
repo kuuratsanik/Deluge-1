@@ -99,7 +99,7 @@
      * @constructor
      * @param {Object} config Configuration options
      */
-    Deluge.TorrentGrid = Ext.extend(Ext.grid.GridPanel, {
+    Deluge.TorrentGrid = Ext.extend(Ext.ux.grid.livegrid.GridPanel, {
 
         // object to store contained torrent ids
         torrents: {},
