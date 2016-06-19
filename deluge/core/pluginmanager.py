@@ -79,9 +79,17 @@ class PluginManager(deluge.pluginmanagerbase.PluginManagerBase, component.Compon
         return d
 
     def get_status(self, torrent_id, fields):
-        """Return the value of status fields for the selected torrent_id."""
+        """Get the value of status fields for the selected torrent_id.
+
+        Args:
+            torrent_id (str): The torrent ID.
+            fields (list): The fields to get status for, if empty all status fields returned.
+
+        Returns:
+            dict: The key-value pair for status fields.
+        """
         status = {}
-        if len(fields) == 0:
+        if not fields:
             fields = self.status_fields.keys()
         for field in fields:
             try:
