@@ -7,14 +7,13 @@
 # See LICENSE for more details.
 #
 
+from __future__ import division
+
 import base64
 import logging
 import os
-from urlparse import urljoin
 
 import gi
-import twisted.web.client
-import twisted.web.error
 from gi.repository import Gdk, GObject, Gtk
 
 import deluge.common
@@ -67,7 +66,6 @@ class AddTorrentDialog(component.Component):
             'on_chk_move_completed_toggled': self._on_chk_move_completed_toggled
         })
 
-        self.torrent_liststore = Gtk.ListStore(str, str, str)
         # download?, path, filesize, sequence number, inconsistent?
         self.files_treestore = Gtk.TreeStore(
             bool, str, GObject.TYPE_UINT64, GObject.TYPE_INT64, bool, str)
@@ -111,7 +109,9 @@ class AddTorrentDialog(component.Component):
         column.set_cell_data_func(render, cell_data_size, 2)
         self.listview_files.append_column(column)
 
+        self.torrent_liststore = Gtk.ListStore(str, str, str)
         self.treeview_torrents.set_model(self.torrent_liststore)
+        self.treeview_torrents.set_tooltip_column(2)
         self.listview_files.set_model(self.files_treestore)
 
         self.listview_files.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
@@ -275,6 +275,10 @@ class AddTorrentDialog(component.Component):
 
         self.previous_selected_torrent = row
 
+    def _on_torrent_name_edit(self, w, row, new_name):
+        # TODO: Update torrent name
+        pass
+
     def _on_switch_page(self, widget, page, page_num):
         # Save the torrent options when switching notebook pages
         self.save_torrent_options()
@@ -282,23 +286,24 @@ class AddTorrentDialog(component.Component):
     def prepare_file_store(self, files):
         with listview_replace_treestore(self.listview_files):
             split_files = {}
-            for i, file in enumerate(files):
+            for i, _file in enumerate(files):
                 self.prepare_file(
-                    file, file['path'], i, file['download'], split_files
+                    _file, _file['path'], i, _file['download'], split_files
                 )
             self.add_files(None, split_files)
         # FIXME add back expand_row
+        # self.listview_files.expand_row('0', False)
         self.listview_files.expand_all()
 
-    def prepare_file(self, file, file_name, file_num, download, files_storage):
+    def prepare_file(self, _file, file_name, file_num, download, files_storage):
         first_slash_index = file_name.find(os.path.sep)
         if first_slash_index == -1:
-            files_storage[file_name] = (file_num, file, download)
+            files_storage[file_name] = (file_num, _file, download)
         else:
             file_name_chunk = file_name[:first_slash_index + 1]
             if file_name_chunk not in files_storage:
                 files_storage[file_name_chunk] = {}
-            self.prepare_file(file, file_name[first_slash_index + 1:],
+            self.prepare_file(_file, file_name[first_slash_index + 1:],
                               file_num, download, files_storage[file_name_chunk])
 
     def add_files(self, parent_iter, split_files):
@@ -407,22 +412,15 @@ class AddTorrentDialog(component.Component):
         options['move_completed_path'] = self.move_completed_path_chooser.get_text()
         options['pre_allocate_storage'] = self.builder.get_object('chk_pre_alloc').get_active()
         options['move_completed'] = self.builder.get_object('chk_move_completed').get_active()
-        options['max_download_speed'] = \
-            self.builder.get_object('spin_maxdown').get_value()
-        options['max_upload_speed'] = \
-            self.builder.get_object('spin_maxup').get_value()
-        options['max_connections'] = \
-            self.builder.get_object('spin_maxconnections').get_value_as_int()
-        options['max_upload_slots'] = \
-            self.builder.get_object('spin_maxupslots').get_value_as_int()
-        options['add_paused'] = \
-            self.builder.get_object('chk_paused').get_active()
-        options['prioritize_first_last_pieces'] = \
-            self.builder.get_object('chk_prioritize').get_active()
-        options['sequential_download'] = \
-            self.builder.get_object('chk_sequential_download').get_active() or False
-        options['move_completed'] = \
-            self.builder.get_object('chk_move_completed').get_active()
+        options['max_download_speed'] = self.builder.get_object('spin_maxdown').get_value()
+        options['max_upload_speed'] = self.builder.get_object('spin_maxup').get_value()
+        options['max_connections'] = self.builder.get_object('spin_maxconnections').get_value_as_int()
+        options['max_upload_slots'] = self.builder.get_object('spin_maxupslots').get_value_as_int()
+        options['add_paused'] = self.builder.get_object('chk_paused').get_active()
+        options['prioritize_first_last_pieces'] = self.builder.get_object('chk_prioritize').get_active()
+        options['sequential_download'] = self.builder.get_object(
+            'chk_sequential_download').get_active() or False
+        options['move_completed'] = self.builder.get_object('chk_move_completed').get_active()
         options['seed_mode'] = self.builder.get_object('chk_seed_mode').get_active()
 
         self.options[torrent_id] = options
@@ -436,13 +434,13 @@ class AddTorrentDialog(component.Component):
             for i, file_dict in enumerate(self.files[torrent_id]):
                 file_dict['download'] = files_priorities[i]
 
-    def build_priorities(self, iter, priorities):
-        while iter is not None:
-            if self.files_treestore.iter_has_child(iter):
-                self.build_priorities(self.files_treestore.iter_children(iter), priorities)
-            elif not self.files_treestore.get_value(iter, 1).endswith(os.path.sep):
-                priorities[self.files_treestore.get_value(iter, 3)] = self.files_treestore.get_value(iter, 0)
-            iter = self.files_treestore.iter_next(iter)
+    def build_priorities(self, _iter, priorities):
+        while _iter is not None:
+            if self.files_treestore.iter_has_child(_iter):
+                self.build_priorities(self.files_treestore.iter_children(_iter), priorities)
+            elif not self.files_treestore.get_value(_iter, 1).endswith(os.path.sep):
+                priorities[self.files_treestore.get_value(_iter, 3)] = self.files_treestore.get_value(_iter, 0)
+            _iter = self.files_treestore.iter_next(_iter)
         return priorities
 
     def set_default_options(self):
@@ -496,35 +494,35 @@ class AddTorrentDialog(component.Component):
             self.toggle_iter(row)
         self.update_treeview_toggles(self.files_treestore.get_iter_first())
 
-    def toggle_iter(self, iter, toggle_to=None):
+    def toggle_iter(self, _iter, toggle_to=None):
         if toggle_to is None:
-            toggle_to = not self.files_treestore.get_value(iter, 0)
-        self.files_treestore.set_value(iter, 0, toggle_to)
-        if self.files_treestore.iter_has_child(iter):
-            child = self.files_treestore.iter_children(iter)
+            toggle_to = not self.files_treestore.get_value(_iter, 0)
+        self.files_treestore.set_value(_iter, 0, toggle_to)
+        if self.files_treestore.iter_has_child(_iter):
+            child = self.files_treestore.iter_children(_iter)
             while child is not None:
                 self.toggle_iter(child, toggle_to)
                 child = self.files_treestore.iter_next(child)
 
-    def update_treeview_toggles(self, iter):
+    def update_treeview_toggles(self, _iter):
         toggle_inconsistent = -1
         this_level_toggle = None
-        while iter is not None:
-            if self.files_treestore.iter_has_child(iter):
-                toggle = self.update_treeview_toggles(self.files_treestore.iter_children(iter))
+        while _iter is not None:
+            if self.files_treestore.iter_has_child(_iter):
+                toggle = self.update_treeview_toggles(self.files_treestore.iter_children(_iter))
                 if toggle == toggle_inconsistent:
-                    self.files_treestore.set_value(iter, 4, True)
+                    self.files_treestore.set_value(_iter, 4, True)
                 else:
-                    self.files_treestore.set_value(iter, 0, toggle)
+                    self.files_treestore.set_value(_iter, 0, toggle)
                     # set inconsistent to false
-                    self.files_treestore.set_value(iter, 4, False)
+                    self.files_treestore.set_value(_iter, 4, False)
             else:
-                toggle = self.files_treestore.get_value(iter, 0)
+                toggle = self.files_treestore.get_value(_iter, 0)
             if this_level_toggle is None:
                 this_level_toggle = toggle
             elif this_level_toggle != toggle:
                 this_level_toggle = toggle_inconsistent
-            iter = self.files_treestore.iter_next(iter)
+            _iter = self.files_treestore.iter_next(_iter)
         return this_level_toggle
 
     def _on_button_file_clicked(self, widget):
@@ -581,7 +579,7 @@ class AddTorrentDialog(component.Component):
         entry.grab_focus()
 
         text = (Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).wait_for_text() or
-                Gtk.Clipboard.get().wait_for_text())
+                Gtk.Clipboard.get().wait_for_text()).strip()
         if text:
             text = text.strip()
             if deluge.common.is_url(text) or deluge.common.is_magnet(text):
@@ -626,11 +624,11 @@ class AddTorrentDialog(component.Component):
 
         # Create a tmp file path
         import tempfile
-        (tmp_handle, tmp_file) = tempfile.mkstemp()
+        tmp_fd, tmp_file = tempfile.mkstemp(prefix='deluge_url.', suffix='.torrent')
 
         def on_part(data, current_length, total_length):
             if total_length:
-                percent = float(current_length) / float(total_length)
+                percent = current_length / total_length
                 pb.set_fraction(percent)
                 pb.set_text('%.2f%% (%s / %s)' % (
                     percent * 100,
@@ -641,28 +639,20 @@ class AddTorrentDialog(component.Component):
                 pb.set_text('%s' % deluge.common.fsize(current_length))
 
         def on_download_success(result):
-            log.debug('Download success!')
             self.add_from_files([result])
             dialog.destroy()
 
         def on_download_fail(result):
-            if result.check(twisted.web.error.PageRedirect):
-                new_url = urljoin(url, result.getErrorMessage().split(' to ')[1])
-                result = download_file(new_url, tmp_file, on_part)
-                result.addCallbacks(on_download_success, on_download_fail)
-            elif result.check(twisted.web.client.PartialDownloadError):
-                result = download_file(url, tmp_file, on_part, allow_compression=False)
-                result.addCallbacks(on_download_success, on_download_fail)
-            else:
-                log.debug('Download failed: %s', result)
-                dialog.destroy()
-                ErrorDialog(
-                    _('Download Failed'), '%s %s' % (_('Failed to download:'), url),
-                    details=result.getErrorMessage(), parent=self.dialog
-                ).run()
+            log.debug('Download failed: %s', result)
+            dialog.destroy()
+            ErrorDialog(
+                _('Download Failed'), '%s %s' % (_('Failed to download:'), url),
+                details=result.getErrorMessage(), parent=self.dialog
+            ).run()
             return result
 
         d = download_file(url, tmp_file, on_part)
+        os.close(tmp_fd)
         d.addCallbacks(on_download_success, on_download_fail)
 
     def _on_button_hash_clicked(self, widget):
@@ -674,8 +664,15 @@ class AddTorrentDialog(component.Component):
         dialog.set_default_response(Gtk.ResponseType.OK)
         dialog.set_transient_for(self.dialog)
         entry.grab_focus()
+
+        text = (Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).wait_for_text() or
+                Gtk.Clipboard.get().wait_for_text()).strip()
+        if deluge.common.is_infohash(text):
+            entry.set_text(text)
+
         dialog.show_all()
         response = dialog.run()
+        infohash = entry.get_text().strip()
         if response == Gtk.ResponseType.OK and len(entry.get_text()) == 40:
             trackers = []
             b = textview.get_buffer()
@@ -687,9 +684,7 @@ class AddTorrentDialog(component.Component):
             # Convert the information to a magnet uri, this is just easier to
             # handle this way.
             log.debug('trackers: %s', trackers)
-            magnet = deluge.common.create_magnet_uri(
-                infohash=entry.get_text().decode('utf-8'),
-                trackers=trackers)
+            magnet = deluge.common.create_magnet_uri(infohash, infohash, trackers)
             log.debug('magnet uri: %s', magnet)
             self.add_from_magnets([magnet])
 
@@ -750,8 +745,13 @@ class AddTorrentDialog(component.Component):
                                         options))
             row = self.torrent_liststore.iter_next(row)
 
-        def on_torrents_added(torrent_ids):
-            log.info('Added %d torrents', len(torrent_ids))
+        def on_torrents_added(errors):
+            if errors:
+                log.info('Failed to add %d out of %d torrents.', len(errors), len(torrents_to_add))
+                for e in errors:
+                    log.info('Torrent add failed: %s', e)
+            else:
+                log.info('Successfully added %d torrents.', len(torrents_to_add))
         client.core.add_torrent_files(torrents_to_add).addCallback(on_torrents_added)
 
     def _on_button_apply_clicked(self, widget):
@@ -902,6 +902,7 @@ class AddTorrentDialog(component.Component):
                 # We need to re-expand the view because it might contracted
                 # if we change the root iter
                 # FIXME add back expand_row
+                # self.listview_files.expand_row('0', False)
                 self.listview_files.expand_all()
             else:
                 # This was a simple folder rename without any splits, so just

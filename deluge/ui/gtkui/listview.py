@@ -23,8 +23,12 @@ signal_new('button-press-event', Gtk.TreeViewColumn, SIGNAL_RUN_LAST, TYPE_NONE,
 log = logging.getLogger(__name__)
 
 
-class ListViewColumnState:
-    """Used for saving/loading column state"""
+class ListViewColumnState:  # pylint: disable=old-style-class
+    """
+    Class used for saving/loading column state.
+
+    Note: This must be old style class to avoid breaking existing user state file.
+    """
     def __init__(self, name, position, width, visible, sort, sort_order):
         self.name = name
         self.position = position
@@ -40,13 +44,13 @@ class TreeModel(GObject.Object, Gtk.TreeModel):
         Gtk.TreeModel.__init__(self, filter)
 
 
-class ListView:
+class ListView(object):
     """ListView is used to make custom GtkTreeViews.  It supports the adding
     and removing of columns, creating a menu for a column toggle list and
     support for 'status_field's which are used while updating the columns data.
     """
 
-    class ListViewColumn:
+    class ListViewColumn(object):
         """Holds information regarding a column in the ListView"""
         def __init__(self, name, column_indices):
             # Name is how a column is identified and is also the header
@@ -183,7 +187,6 @@ class ListView:
         model_filter.set_visible_column(
             self.columns['filter'].column_indices[0])
         self.model_filter = Gtk.TreeModelSort(model=model_filter)
-
         self.model_filter.connect('sort-column-changed', self.on_model_sort_changed)
         self.model_filter.connect('row-inserted', self.on_model_row_inserted)
         self.treeview.set_model(self.model_filter)
@@ -217,14 +220,14 @@ class ListView:
 
             def record_position(model, path, iter, data):
                 # FIXME: TypeError: 'TreePath' object does not support indexing
-                # Verify
+                # Verify (old code: ` = path[0]`)
                 self.last_sort_order[model[iter][self.unique_column_id]] = int(str(model.get_path(iter)))
             model.foreach(record_position, None)
 
-    def on_model_row_inserted(self, model, path, iter):
+    def on_model_row_inserted(self, model, path, _iter):
         if self.unique_column_id:
             self.last_sort_order.setdefault(
-                model[iter][self.unique_column_id], len(model) - 1)
+                model[_iter][self.unique_column_id], len(model) - 1)
 
     def stabilize_sort_func(self, sort_func):
         def stabilized(model, iter1, iter2, data):
@@ -313,7 +316,7 @@ class ListView:
 
     def get_state_field_column(self, field):
         """Returns the column number for the state field"""
-        for column in self.columns.keys():
+        for column in self.columns:
             if self.columns[column].status_field is None:
                 continue
 
@@ -441,9 +444,10 @@ class ListView:
         # Store a copy of this columns state in case it's re-added
         state = self.create_column_state(self.columns[header].column)
         self.removed_columns_state.append(state)
-
-        # Start by removing this column from the treeview
-        self.treeview.remove_column(self.columns[header].column)
+        # Only remove column if column is associated with the treeview. This avoids
+        # warning on shutdown when GTKUI is closed before plugins try to remove columns
+        if self.columns[header].column.get_tree_view() is not None:
+            self.treeview.remove_column(self.columns[header].column)
         # Get the column indices
         column_indices = self.columns[header].column_indices
         # Delete the column
@@ -479,7 +483,7 @@ class ListView:
         """Adds a column to the ListView"""
         # Add the column types to liststore_columns
         column_indices = []
-        if type(col_types) is list:
+        if isinstance(col_types, list):
             for col_type in col_types:
                 self.liststore_columns.append(col_type)
                 column_indices.append(len(self.liststore_columns) - 1)
@@ -529,7 +533,7 @@ class ListView:
         column.set_clickable(True)
         column.set_resizable(True)
         column.set_expand(False)
-        column.set_min_width(10)
+        column.set_min_width(20)
         column.set_reorderable(True)
         column.set_visible(not hidden)
         # FIXME: Check for errors with button press, related new signal
@@ -588,7 +592,6 @@ class ListView:
     def add_bool_column(self, header, col_type=bool, hidden=False,
                         position=None, status_field=None, sortid=0,
                         column_type='bool', tooltip=None, default=True):
-
         """Add a bool column to the listview"""
         render = Gtk.CellRendererToggle()
         self.add_column(header, render, col_type, hidden, position,
@@ -608,38 +611,42 @@ class ListView:
 
         return True
 
-    def add_progress_column(self, header, col_types=[float, str], sortid=0,
+    def add_progress_column(self, header, col_types=None, sortid=0,
                             hidden=False, position=None, status_field=None,
                             function=None, column_type='progress',
-                            tooltip=None, default=True):
+                            tooltip=None, sort_func=None, default=True):
         """Add a progress column to the listview."""
 
+        if col_types is None:
+            col_types = [float, str]
         render = Gtk.CellRendererProgress()
         self.add_column(header, render, col_types, hidden, position,
                         status_field, sortid, function=function,
                         column_type=column_type, value=0, text=1,
-                        tooltip=tooltip, default=default)
+                        tooltip=tooltip, sort_func=sort_func, default=default)
 
         return True
 
-    def add_texticon_column(self, header, col_types=[str, str], sortid=1,
+    def add_texticon_column(self, header, col_types=None, sortid=1,
                             hidden=False, position=None, status_field=None,
-                            column_type='texticon', function=None,
+                            column_type='texticon', function=None, sort_func=None,
                             tooltip=None, default=True, default_sort=False):
         """Adds a texticon column to the listview."""
+        if col_types is None:
+            col_types = [str, str]
         render1 = Gtk.CellRendererPixbuf()
         render2 = Gtk.CellRendererText()
 
         self.add_column(header, (render1, render2), col_types, hidden, position,
                         status_field, sortid, column_type=column_type,
                         function=function, pixbuf=0, text=1, tooltip=tooltip,
-                        default=default, default_sort=default_sort)
+                        sort_func=sort_func, default=default, default_sort=default_sort)
 
         return True
 
-    def on_keypress_search_by_name(self, model, column, key, iter):
+    def on_keypress_search_by_name(self, model, column, key, _iter):
         torrent_name_col = self.columns['Name'].column_indices[1]
-        return not model[iter][torrent_name_col].lower().startswith(key.lower())
+        return not model[_iter][torrent_name_col].lower().startswith(key.lower())
 
     def restore_columns_order_from_state(self):
         if self.state is None:
@@ -671,8 +678,7 @@ class ListView:
                 continue
             column = find_column(col_state.name)
             if not column:
-                log.debug("Could not find column matching \"%s\" on state." %
-                          col_state.name)
+                log.debug('Could not find column matching "%s" on state.', col_state.name)
                 # The cases where I've found that the column could not be found
                 # is when not using the english locale, ie, the default one, or
                 # when changing locales between runs.

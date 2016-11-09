@@ -7,6 +7,8 @@
 # See LICENSE for more details.
 #
 
+from __future__ import division
+
 import base64
 import logging
 import os.path
@@ -23,7 +25,11 @@ from deluge.ui.gtkui.torrentview_data_funcs import cell_data_size
 log = logging.getLogger(__name__)
 
 
-class CreateTorrentDialog:
+class CreateTorrentDialog(object):
+
+    def __init__(self):
+        pass
+
     def show(self):
         self.builder = Gtk.Builder()
 
@@ -119,7 +125,7 @@ class CreateTorrentDialog:
         model = self.builder.get_object('combo_piece_size').get_model()
         for index, value in enumerate(model):
             psize = self.parse_piece_size_text(value[0])
-            pieces = size / psize
+            pieces = size // psize
             if pieces < 2048 or (index + 1) == len(model):
                 self.builder.get_object('combo_piece_size').set_active(index)
                 break
@@ -309,7 +315,7 @@ class CreateTorrentDialog:
                 self._on_create_torrent_progress(piece_count, num_pieces)
                 if piece_count == num_pieces:
                     from twisted.internet import reactor
-                    reactor.callLater(0.5, torrent_created)  # pylint: disable-msg=E1101
+                    reactor.callLater(0.5, torrent_created)
 
             client.register_event_handler('CreateTorrentProgressEvent', on_create_torrent_progress_event)
 
@@ -365,10 +371,10 @@ class CreateTorrentDialog:
             trackers=trackers)
 
         if add_to_session:
-            client.core.add_torrent_file(
-                os.path.split(target)[-1],
-                base64.encodestring(open(target, 'rb').read()),
-                {'download_location': os.path.split(path)[0]})
+            with open(target, 'rb') as _file:
+                filedump = base64.encodestring(_file.read())
+            client.core.add_torrent_file(os.path.split(target)[-1], filedump,
+                                         {'download_location': os.path.split(path)[0]})
 
     def _on_create_torrent_progress(self, value, num_pieces):
         percent = float(value) / float(num_pieces)

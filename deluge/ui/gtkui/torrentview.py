@@ -10,6 +10,7 @@
 """The torrent view component that lists all torrents in the session."""
 
 import logging
+from locale import strcoll
 
 import gi
 from gi.repository import Gdk, GObject, Gtk
@@ -21,12 +22,19 @@ from deluge.ui.gtkui import torrentview_data_funcs as funcs
 from deluge.ui.gtkui.listview import ListView
 from deluge.ui.gtkui.removetorrentdialog import RemoveTorrentDialog
 
-# FIXME: remove this code if unneeded
-# warnings.filterwarnings('error', message='*equal comparison failed*')
-
 gi.require_version('Gtk', '3.0')
 
 log = logging.getLogger(__name__)
+
+
+def str_nocase_sort(model, iter1, iter2, data):
+    """
+    Sort string column data with locale.strcoll which (allegedly) uses ISO 14651.
+
+    """
+    v1 = model[iter1][data].lower()
+    v2 = model[iter2][data].lower()
+    return strcoll(v1, v2)
 
 
 def queue_peer_seed_sort_function(v1, v2):
@@ -71,6 +79,17 @@ def seed_peer_column_sort(model, iter1, iter2, data):
         v4 = model[iter2][data + 1]   # total seeds/peers
         return queue_peer_seed_sort_function(v2, v4)
     return queue_peer_seed_sort_function(v1, v3)
+
+
+def progress_sort(model, iter1, iter2, sort_column_id):
+    progress1 = model[iter1][sort_column_id]
+    progress2 = model[iter2][sort_column_id]
+    # Progress value is equal, so sort on state
+    if progress1 == progress2:
+        state1 = model[iter1][sort_column_id + 1]
+        state2 = model[iter2][sort_column_id + 1]
+        return cmp(state1, state2)
+    return cmp(progress1, progress2)
 
 
 class SearchBox(object):
@@ -246,7 +265,8 @@ class TorrentView(ListView, component.Component):
         self.add_progress_column(_('Progress'),
                                  status_field=['progress', 'state'],
                                  col_types=[float, str],
-                                 function=funcs.cell_data_progress)
+                                 function=funcs.cell_data_progress,
+                                 sort_func=progress_sort)
         self.add_func_column(_('Seeds'), funcs.cell_data_peer, [int, int],
                              status_field=['num_seeds', 'total_seeds'],
                              sort_func=seed_peer_column_sort, default=False)
@@ -255,9 +275,9 @@ class TorrentView(ListView, component.Component):
                              sort_func=seed_peer_column_sort, default=False)
         self.add_func_column(_('Seeds:Peers'), funcs.cell_data_ratio_seeds_peers, [float],
                              status_field=['seeds_peers_ratio'], default=False)
-        self.add_func_column(_('Down Speed'), funcs.cell_data_speed_down, [float],
+        self.add_func_column(_('Down Speed'), funcs.cell_data_speed_down, [int],
                              status_field=['download_payload_rate'])
-        self.add_func_column(_('Up Speed'), funcs.cell_data_speed_up, [float],
+        self.add_func_column(_('Up Speed'), funcs.cell_data_speed_up, [int],
                              status_field=['upload_payload_rate'])
         self.add_func_column(_('Down Limit'), funcs.cell_data_speed_limit_down, [float],
                              status_field=['max_download_speed'], default=False)
@@ -269,9 +289,9 @@ class TorrentView(ListView, component.Component):
                              status_field=['ratio'], default=False)
         self.add_func_column(_('Avail'), funcs.cell_data_ratio_avail, [float],
                              status_field=['distributed_copies'], default=False)
-        self.add_func_column(_('Added'), funcs.cell_data_date, [int],
+        self.add_func_column(_('Added'), funcs.cell_data_date_added, [int],
                              status_field=['time_added'], default=False)
-        self.add_func_column(_('Completed'), funcs.cell_data_date, [int],
+        self.add_func_column(_('Completed'), funcs.cell_data_date_completed, [int],
                              status_field=['completed_time'], default=False)
         self.add_func_column(_('Complete Seen'), funcs.cell_data_date_or_never, [int],
                              status_field=['last_seen_complete'], default=False)
@@ -302,13 +322,6 @@ class TorrentView(ListView, component.Component):
         self.treeview.connect('key-press-event', self.on_key_press_event)
         self.treeview.connect('columns-changed', self.on_columns_changed_event)
 
-        client.register_event_handler('TorrentStateChangedEvent', self.on_torrentstatechanged_event)
-        client.register_event_handler('TorrentAddedEvent', self.on_torrentadded_event)
-        client.register_event_handler('TorrentRemovedEvent', self.on_torrentremoved_event)
-        client.register_event_handler('SessionPausedEvent', self.on_sessionpaused_event)
-        client.register_event_handler('SessionResumedEvent', self.on_sessionresumed_event)
-        client.register_event_handler('TorrentQueueChangedEvent', self.on_torrentqueuechanged_event)
-
         self.search_box = SearchBox(self)
         self.permanent_status_keys = ['owner']
         self.columns_to_update = []
@@ -327,6 +340,13 @@ class TorrentView(ListView, component.Component):
         component.get('SessionProxy').get_torrents_status(
             {}, status_fields).addCallback(self._on_session_state)
 
+        client.register_event_handler('TorrentStateChangedEvent', self.on_torrentstatechanged_event)
+        client.register_event_handler('TorrentAddedEvent', self.on_torrentadded_event)
+        client.register_event_handler('TorrentRemovedEvent', self.on_torrentremoved_event)
+        client.register_event_handler('SessionPausedEvent', self.on_sessionpaused_event)
+        client.register_event_handler('SessionResumedEvent', self.on_sessionresumed_event)
+        client.register_event_handler('TorrentQueueChangedEvent', self.on_torrentqueuechanged_event)
+
     def _on_session_state(self, state):
         self.add_rows(state)
         self.got_state = True
@@ -339,7 +359,15 @@ class TorrentView(ListView, component.Component):
     def stop(self):
         """Stops the torrentview"""
         # We need to clear the liststore
-        self.treeview.get_selection().unselect_all()
+        client.deregister_event_handler('TorrentStateChangedEvent', self.on_torrentstatechanged_event)
+        client.deregister_event_handler('TorrentAddedEvent', self.on_torrentadded_event)
+        client.deregister_event_handler('TorrentRemovedEvent', self.on_torrentremoved_event)
+        client.deregister_event_handler('SessionPausedEvent', self.on_sessionpaused_event)
+        client.deregister_event_handler('SessionResumedEvent', self.on_sessionresumed_event)
+        client.deregister_event_handler('TorrentQueueChangedEvent', self.on_torrentqueuechanged_event)
+
+        if self.treeview.get_selection():
+            self.treeview.get_selection().unselect_all()
         self.liststore.clear()
         self.prev_status = {}
         self.filter = None
@@ -347,14 +375,14 @@ class TorrentView(ListView, component.Component):
 
     def shutdown(self):
         """Called when GtkUi is exiting"""
-        if self.window.visible():
-            self.save_state()
+        self.save_state()
 
     def save_state(self):
         """
         Saves the state of the torrent view.
         """
-        ListView.save_state(self, 'torrentview.state')
+        if self.window.visible():
+            ListView.save_state(self, 'torrentview.state')
 
     def remove_column(self, header):
         """Removes the column with the name 'header' from the torrentview"""
@@ -400,7 +428,6 @@ class TorrentView(ListView, component.Component):
     def send_status_request(self, columns=None, select_row=False):
         # Store the 'status_fields' we need to send to core
         status_keys = self.set_columns_to_update(columns)
-        # print "status_keys:", status_keys
 
         # If there is nothing in status_keys then we must not continue
         if status_keys is []:
@@ -492,7 +519,6 @@ class TorrentView(ListView, component.Component):
                     if row[i] != row_value:
                         to_update.append(i)
                         to_update.append(row_value)
-
                 # Update fields in the liststore
                 if to_update:
                     self.liststore.set(row.iter, *to_update)
@@ -591,7 +617,7 @@ class TorrentView(ListView, component.Component):
         """Returns data stored in self.status, it may not be complete"""
         try:
             return self.status[torrent_id]
-        except:
+        except KeyError:
             return {}
 
     def get_visible_torrents(self):
@@ -601,32 +627,13 @@ class TorrentView(ListView, component.Component):
     def on_button_press_event(self, widget, event):
         """This is a callback for showing the right-click context menu."""
         log.debug('on_button_press_event')
-        # print "widget:", widget
-        # print "event:", type(event)
-        # print "event:", dir(event)
         # We only care about right-clicks
         if event.button == 3:
             x, y = event.get_coords()
-            # print "X: %d, Y: %d" % (x, y)
             path = self.treeview.get_path_at_pos(int(x), int(y))
-            # print "Path:", path
-            # print "Path:", dir(path)
             if not path:
                 return
-
             row = self.model_filter.get_iter(path[0])
-            # print "row:", row
-            # print "row:", dir(row)
-            # print "stamp:", row.stamp
-
-            # print "VALID:", self.model_filter.iter_is_valid(row)
-
-            # print "model:", type(self.treeview.get_model())
-            # print "model:", dir(self.treeview.get_model())
-            # print "string_from_iter:", self.treeview.get_model().get_string_from_iter(row)
-            # print "path2:", self.treeview.get_path(row)
-
-            # print "VAL:", self.liststore.get_value(row, 0)
 
             if self.get_selected_torrents():
                 if self.model_filter.get_value(row, self.columns['torrent_id'].column_indices[0]) \
@@ -656,9 +663,8 @@ class TorrentView(ListView, component.Component):
         self.save_state()
 
     def on_torrentadded_event(self, torrent_id, from_state):
-        if not from_state:
-            self.add_rows([torrent_id])
-            self.update()
+        self.add_rows([torrent_id])
+        self.update()
 
     def on_torrentremoved_event(self, torrent_id):
         self.remove_row(torrent_id)
@@ -666,7 +672,7 @@ class TorrentView(ListView, component.Component):
     def on_torrentstatechanged_event(self, torrent_id, state):
         # Update the torrents state
         for row in self.liststore:
-            if not torrent_id == row[self.columns['torrent_id'].column_indices[0]]:
+            if torrent_id != row[self.columns['torrent_id'].column_indices[0]]:
                 continue
 
             for name in self.columns_to_update:

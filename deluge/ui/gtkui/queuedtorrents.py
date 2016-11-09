@@ -30,8 +30,7 @@ class QueuedTorrents(component.Component):
         self.config = ConfigManager('gtkui.conf')
         self.builder = Gtk.Builder()
         self.builder.add_from_file(deluge.common.resource_filename(
-            'deluge.ui.gtkui', os.path.join('glade', 'queuedtorrents.ui'))
-        )
+            'deluge.ui.gtkui', os.path.join('glade', 'queuedtorrents.ui')))
         self.builder.get_object('chk_autoadd').set_active(self.config['autoadd_queued'])
         self.dialog = self.builder.get_object('queued_torrents_dialog')
         self.dialog.set_icon(get_logo(32))
@@ -50,6 +49,7 @@ class QueuedTorrents(component.Component):
 
         self.liststore = Gtk.ListStore(str, str)
         self.treeview.set_model(self.liststore)
+        self.treeview.set_tooltip_column(1)
 
     def run(self):
         self.dialog.set_transient_for(component.get('MainWindow').window)
@@ -65,7 +65,7 @@ class QueuedTorrents(component.Component):
         # We only want the add button sensitive if we're connected to a host
         self.builder.get_object('button_add').set_sensitive(True)
 
-        if self.config['autoadd_queued'] or self.config['classic_mode']:
+        if self.config['autoadd_queued'] or self.config['standalone']:
             self.on_button_add_clicked(None)
         else:
             self.run()
@@ -83,7 +83,11 @@ class QueuedTorrents(component.Component):
         # Update the liststore
         self.liststore.clear()
         for torrent in self.queue:
-            self.liststore.append([os.path.split(torrent)[1], torrent])
+            if deluge.common.is_magnet(torrent):
+                magnet = deluge.common.get_magnet_info(torrent)
+                self.liststore.append([magnet['name'], torrent])
+            else:
+                self.liststore.append([os.path.split(torrent)[1], torrent])
 
         # Update the status bar
         self.update_status_bar()
@@ -146,8 +150,8 @@ class QueuedTorrents(component.Component):
 
     def on_button_add_clicked(self, widget):
         # Add all the torrents in the liststore
-        def add_torrent(model, path, iter, data):
-            torrent_path = model.get_value(iter, 1).decode('utf-8')
+        def add_torrent(model, path, _iter, data):
+            torrent_path = model.get_value(_iter, 1).decode('utf-8')
             process_args([torrent_path])
 
         self.liststore.foreach(add_torrent, None)

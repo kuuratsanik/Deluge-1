@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2007 Marcos Pinto ('markybob') <markybob@gmail.com>
+# Copyright (C) 2007 Marcos Mobley ('markybob') <markybob@gmail.com>
 #
 # This file is part of Deluge and is licensed under GNU General Public License 3.0, or later, with
 # the additional special exception to link portions of this program with the OpenSSL library.
@@ -17,7 +17,7 @@ from deluge.ui.gtkui.common import get_deluge_icon
 gi.require_version('Gtk', '3.0')
 
 
-class AboutDialog:
+class AboutDialog(object):
     def __init__(self):
         def url_hook(dialog, url):
             open_url_in_browser(url)
@@ -29,16 +29,17 @@ class AboutDialog:
 
         version = get_version()
 
-        self.about.set_copyright(_('Copyright %s-%s Deluge Team') % (2007, 2015))
+        self.about.set_copyright(
+            _('Copyright %(year_start)s-%(year_end)s Deluge Team') % {'year_start': 2007, 'year_end': 2015})
         self.about.set_comments(
-            _('A peer-to-peer file sharing program\nutilizing the BitTorrent protocol.')
-            + '\n\n' + _('Client:') + ' %s\n' % version)
+            _('A peer-to-peer file sharing program\nutilizing the BitTorrent protocol.') +
+            '\n\n' + _('Client:') + ' %s\n' % version)
         self.about.set_version(version)
         self.about.set_authors([
             _('Current Developers:'), 'Andrew Resch', 'Damien Churchill',
             'John Garland', 'Calum Lind', '', 'libtorrent (libtorrent.org):',
             'Arvid Norberg', '', _('Past Developers or Contributors:'),
-            'Zach Tibbitts', 'Alon Zakai', 'Marcos Pinto', 'Alex Dedul',
+            'Zach Tibbitts', 'Alon Zakai', 'Marcos Mobley', 'Alex Dedul',
             'Sadrul Habib Chowdhury', 'Ido Abramovich', 'Martijn Voncken'
         ])
         self.about.set_artists(['Andrew Wedderburn', 'Andrew Resch'])
@@ -136,7 +137,7 @@ class AboutDialog:
             'Major Kong', 'Malaki', 'malde', 'Malte Lenz', 'Mantas Kriaučiūnas',
             'Mara Sorella', 'Marcin', 'Marcin Falkiewicz', 'marcobra',
             'Marco da Silva', 'Marco de Moulin', 'Marco Rodrigues', 'Marcos',
-            'Marcos Escalier', 'Marcos Pinto', 'Marcus Ekstrom',
+            'Marcos Escalier', 'Marcos Mobley', 'Marcus Ekstrom',
             'Marek Dębowski', 'Mário Buči', 'Mario Munda', 'Marius Andersen',
             'Marius Hudea', 'Marius Mihai', 'Mariusz Cielecki',
             'Mark Krapivner', 'marko-markovic', 'Markus Brummer',
@@ -166,7 +167,7 @@ class AboutDialog:
             'Pål-Eivind Johnsen', 'pano', 'Paolo Naldini', 'Paracelsus',
             'Patryk13_03', 'Patryk Skorupa', 'PattogoTehen', 'Paul Lange',
             'Pavcio', 'Paweł Wysocki', 'Pedro Brites Moita',
-            'Pedro Clemente Pereira Neto', "Pekka \"PEXI\" Niemistö", 'Penegal',
+            'Pedro Clemente Pereira Neto', 'Pekka \"PEXI\" Niemistö', 'Penegal',
             'Penzo', 'perdido', 'Peter Kotrcka', 'Peter Skov',
             'Peter Van den Bosch', 'Petter Eklund', 'Petter Viklund',
             'phatsphere', 'Phenomen', 'Philipi', 'Philippides Homer', 'phoenix',
@@ -253,7 +254,7 @@ class AboutDialog:
         self.about.set_logo(GdkPixbuf.Pixbuf.new_from_file(get_pixmap('deluge-about.png')))
 
         if client.connected():
-            if not client.is_classicmode():
+            if not client.is_standalone():
                 self.about.set_comments(
                     self.about.get_comments() + _('Server:') + ' %coreversion%\n')
 
@@ -271,7 +272,7 @@ class AboutDialog:
                 self.about.set_comments(c)
                 client.core.get_libtorrent_version().addCallback(on_lt_version)
 
-            if not client.is_classicmode():
+            if not client.is_standalone():
                 client.daemon.info().addCallback(on_info)
             else:
                 client.core.get_libtorrent_version().addCallback(on_lt_version)

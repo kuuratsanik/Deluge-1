@@ -15,16 +15,19 @@ from twisted.internet import defer
 
 import deluge.component as component
 from deluge.common import is_url, resource_filename
+from deluge.configmanager import ConfigManager
 from deluge.ui.client import client
 from deluge.ui.gtkui.common import get_deluge_icon
 
 log = logging.getLogger(__name__)
 
 
-class EditTrackersDialog:
+class EditTrackersDialog(object):
     def __init__(self, torrent_id, parent=None):
         self.torrent_id = torrent_id
         self.builder = Gtk.Builder()
+        self.gtkui_config = ConfigManager('gtkui.conf')
+
         # Main dialog
         self.builder.add_from_file(resource_filename(
             'deluge.ui.gtkui', os.path.join('glade', 'edit_trackers.ui')
@@ -46,6 +49,8 @@ class EditTrackersDialog:
         self.edit_tracker_entry.set_transient_for(self.dialog)
         self.dialog.set_icon(get_deluge_icon())
 
+        self.load_edit_trackers_dialog_state()
+
         if parent is not None:
             self.dialog.set_transient_for(parent)
 
@@ -59,7 +64,8 @@ class EditTrackersDialog:
             'on_button_remove_clicked': self.on_button_remove_clicked,
             'on_button_down_clicked': self.on_button_down_clicked,
             'on_button_add_ok_clicked': self.on_button_add_ok_clicked,
-            'on_button_add_cancel_clicked': self.on_button_add_cancel_clicked
+            'on_button_add_cancel_clicked': self.on_button_add_cancel_clicked,
+            'on_edit_trackers_dialog_configure_event': self.on_edit_trackers_dialog_configure_event
         })
 
         # Create a liststore for tier, url
@@ -92,6 +98,19 @@ class EditTrackersDialog:
         self.deferred = defer.Deferred()
         return self.deferred
 
+    def __del__(self):
+        del self.gtkui_config
+
+    def load_edit_trackers_dialog_state(self):
+        w = self.gtkui_config['edit_trackers_dialog_width']
+        h = self.gtkui_config['edit_trackers_dialog_height']
+        if w is not None and h is not None:
+            self.dialog.resize(w, h)
+
+    def on_edit_trackers_dialog_configure_event(self, widget, event):
+        self.gtkui_config['edit_trackers_dialog_width'] = event.width
+        self.gtkui_config['edit_trackers_dialog_height'] = event.height
+
     def _on_delete_event(self, widget, event):
         self.deferred.callback(Gtk.ResponseType.DELETE_EVENT)
         self.dialog.destroy()
@@ -121,6 +140,7 @@ class EditTrackersDialog:
         self.old_trackers = list(status['trackers'])
         for tracker in self.old_trackers:
             self.add_tracker(tracker['tier'], tracker['url'])
+        self.treeview.set_cursor((0))
         self.dialog.show()
 
     def add_tracker(self, tier, url):
@@ -152,9 +172,11 @@ class EditTrackersDialog:
             self.builder.get_object('entry_edit_tracker').set_text(tracker)
             self.edit_tracker_entry.show()
             self.builder.get_object('edit_tracker_entry').grab_focus()
+            self.dialog.set_sensitive(False)
 
     def on_button_edit_cancel_clicked(self, widget):
         log.debug('on_button_edit_cancel_clicked')
+        self.dialog.set_sensitive(True)
         self.edit_tracker_entry.hide()
 
     def on_button_edit_ok_clicked(self, widget):
@@ -162,6 +184,7 @@ class EditTrackersDialog:
         selected = self.get_selected()
         tracker = self.builder.get_object('entry_edit_tracker').get_text()
         self.liststore.set_value(selected, 1, tracker)
+        self.dialog.set_sensitive(True)
         self.edit_tracker_entry.hide()
 
     def on_button_up_clicked(self, widget):
@@ -170,7 +193,7 @@ class EditTrackersDialog:
         num_rows = self.liststore.iter_n_children(None)
         if selected is not None and num_rows > 1:
             tier = self.liststore.get_value(selected, 0)
-            if not tier > 0:
+            if tier <= 0:
                 return
             new_tier = tier - 1
             # Now change the tier for this tracker

@@ -18,23 +18,27 @@ from urlparse import urlparse
 
 import twisted.internet.error
 from twisted.internet import reactor
-from twisted.internet.protocol import ClientFactory, Factory, Protocol
+from twisted.internet.protocol import ClientFactory, Factory, Protocol, connectionDone
 
 import deluge.component as component
-from deluge.common import is_magnet, is_url, windows_check
+from deluge.common import decode_string, is_magnet, is_url, windows_check
 from deluge.configmanager import ConfigManager, get_config_dir
 from deluge.ui.client import client
 
 try:
     import rencode
 except ImportError:
-    import deluge.rencode as rencode
+    import deluge.rencode as rencode  # pylint: disable=ungrouped-imports
 
 log = logging.getLogger(__name__)
 
 
 class IPCProtocolServer(Protocol):
-    def dataReceived(self, data):  # NOQA
+
+    def __init__(self):
+        pass
+
+    def dataReceived(self, data):  # NOQA: N802
         config = ConfigManager('gtkui.conf')
         data = rencode.loads(data, decode_utf8=True)
         if not data or config['focus_main_window_on_add']:
@@ -43,11 +47,15 @@ class IPCProtocolServer(Protocol):
 
 
 class IPCProtocolClient(Protocol):
-    def connectionMade(self):  # NOQA
+
+    def __init__(self):
+        pass
+
+    def connectionMade(self):  # NOQA: N802
         self.transport.write(rencode.dumps(self.factory.args))
         self.transport.loseConnection()
 
-    def connectionLost(self, reason):  # NOQA
+    def connectionLost(self, reason=connectionDone):  # NOQA: N802
         reactor.stop()
         self.factory.stop = True
 
@@ -58,7 +66,7 @@ class IPCClientFactory(ClientFactory):
     def __init__(self):
         self.stop = False
 
-    def clientConnectionFailed(self, connector, reason):  # NOQA
+    def clientConnectionFailed(self, connector, reason):  # NOQA: N802
         log.warning('Connection to running instance failed.')
         reactor.stop()
 
@@ -66,6 +74,7 @@ class IPCClientFactory(ClientFactory):
 class IPCInterface(component.Component):
     def __init__(self, args):
         component.Component.__init__(self, 'IPCInterface')
+        self.listener = None
         ipc_dir = get_config_dir('ipc')
         if not os.path.exists(ipc_dir):
             os.makedirs(ipc_dir)
@@ -83,14 +92,16 @@ class IPCInterface(component.Component):
                 self.factory.protocol = IPCProtocolServer
                 import random
                 port = random.randrange(20000, 65535)
-                reactor.listenTCP(port, self.factory)
+                self.listener = reactor.listenTCP(port, self.factory)
                 # Store the port number in the socket file
-                open(socket, 'w').write(str(port))
+                with open(socket, 'w') as _file:
+                    _file.write(str(port))
                 # We need to process any args when starting this process
                 process_args(args)
             else:
                 # Send to existing deluge process
-                port = int(open(socket, 'r').readline())
+                with open(socket) as _file:
+                    port = int(_file.readline())
                 self.factory = ClientFactory()
                 self.factory.args = args
                 self.factory.protocol = IPCProtocolClient
@@ -99,7 +110,7 @@ class IPCInterface(component.Component):
                 sys.exit(0)
         else:
             # Find and remove any restart tempfiles
-            restart_tempfile = glob(os.path.join(ipc_dir, 'tmp*deluge'))
+            restart_tempfile = glob(os.path.join(ipc_dir, 'restart.*'))
             for f in restart_tempfile:
                 os.remove(f)
             lockfile = socket + '.lock'
@@ -124,7 +135,7 @@ class IPCInterface(component.Component):
             try:
                 self.factory = Factory()
                 self.factory.protocol = IPCProtocolServer
-                reactor.listenUNIX(socket, self.factory, wantPID=True)
+                self.listener = reactor.listenUNIX(socket, self.factory, wantPID=True)
             except twisted.internet.error.CannotListenError as ex:
                 log.info('Deluge is already running! Sending arguments to running instance...')
                 self.factory = IPCClientFactory()
@@ -143,7 +154,7 @@ class IPCInterface(component.Component):
                     else:
                         log.warning('Restarting Deluge... (%s)', ex)
                         # Create a tempfile to keep track of restart
-                        mkstemp('deluge', dir=ipc_dir)
+                        mkstemp(prefix='restart.', dir=ipc_dir)
                         os.execv(sys.argv[0], sys.argv)
             else:
                 process_args(args)
@@ -152,6 +163,8 @@ class IPCInterface(component.Component):
         if windows_check():
             import win32api
             win32api.CloseHandle(self.mutex)
+        if self.listener:
+            return self.listener.stopListening()
 
 
 def process_args(args):
@@ -191,7 +204,7 @@ def process_args(args):
             log.debug('Attempting to add file (%s) from external source...', arg)
             if urlparse(arg).scheme == 'file':
                 arg = url2pathname(urlparse(arg).path)
-            path = os.path.abspath(arg)
+            path = os.path.abspath(decode_string(arg))
 
             if not os.path.exists(path):
                 log.error('No such file: %s', path)
@@ -201,5 +214,6 @@ def process_args(args):
                 component.get('AddTorrentDialog').add_from_files([path])
                 component.get('AddTorrentDialog').show(config['focus_add_dialog'])
             else:
-                client.core.add_torrent_file(os.path.split(path)[-1],
-                                             base64.encodestring(open(path, 'rb').read()), None)
+                with open(path, 'rb') as _file:
+                    filedump = base64.encodestring(_file.read())
+                client.core.add_torrent_file(os.path.split(path)[-1], filedump, None)

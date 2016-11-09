@@ -13,7 +13,8 @@ from deluge.configmanager import ConfigManager
 from deluge.ui.client import client
 
 
-class NewReleaseDialog:
+class NewReleaseDialog(object):
+
     def __init__(self):
         pass
 
@@ -42,7 +43,7 @@ class NewReleaseDialog:
                 builder.get_object('label_server_version').show()
                 builder.get_object('label_server_version_text').show()
 
-            if not client.is_classicmode():
+            if not client.is_standalone():
                 builder.get_object('label_client_version_text').set_label(_('<i>Client Version</i>'))
                 client.daemon.info().addCallback(on_info)
 

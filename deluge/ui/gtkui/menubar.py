@@ -108,6 +108,7 @@ class MenuBar(component.Component):
         self.main_builder.get_object('menuitem_statusbar').set_active(self.config['show_statusbar'])
         self.main_builder.get_object('sidebar_show_zero').set_active(self.config['sidebar_show_zero'])
         self.main_builder.get_object('sidebar_show_trackers').set_active(self.config['sidebar_show_trackers'])
+        self.main_builder.get_object('sidebar_show_owners').set_active(self.config['sidebar_show_owners'])
 
         # Connect main window Signals #
         component.get('MainWindow').connect_signals({
@@ -132,7 +133,8 @@ class MenuBar(component.Component):
             'on_menuitem_community_activate': self.on_menuitem_community_activate,
             'on_menuitem_about_activate': self.on_menuitem_about_activate,
             'on_menuitem_sidebar_zero_toggled': self.on_menuitem_sidebar_zero_toggled,
-            'on_menuitem_sidebar_trackers_toggled': self.on_menuitem_sidebar_trackers_toggled
+            'on_menuitem_sidebar_trackers_toggled': self.on_menuitem_sidebar_trackers_toggled,
+            'on_menuitem_sidebar_owners_toggled': self.on_menuitem_sidebar_owners_toggled
         })
 
         # Connect menubar signals
@@ -156,11 +158,6 @@ class MenuBar(component.Component):
             'menuitem_addtorrent'
         ]
 
-        client.register_event_handler('TorrentStateChangedEvent', self.on_torrentstatechanged_event)
-        client.register_event_handler('TorrentResumedEvent', self.on_torrentresumed_event)
-        client.register_event_handler('SessionPausedEvent', self.on_sessionpaused_event)
-        client.register_event_handler('SessionResumedEvent', self.on_sessionresumed_event)
-
     def start(self):
         for widget in self.change_sensitivity:
             self.main_builder.get_object(widget).set_sensitive(True)
@@ -179,9 +176,9 @@ class MenuBar(component.Component):
                 self.builder.get_object(widget).hide()
                 self.builder.get_object(widget).set_no_show_all(True)
 
-        self.main_builder.get_object('separatormenuitem').set_visible(not self.config['classic_mode'])
-        self.main_builder.get_object('menuitem_quitdaemon').set_visible(not self.config['classic_mode'])
-        self.main_builder.get_object('menuitem_connectionmanager').set_visible(not self.config['classic_mode'])
+        self.main_builder.get_object('separatormenuitem').set_visible(not self.config['standalone'])
+        self.main_builder.get_object('menuitem_quitdaemon').set_visible(not self.config['standalone'])
+        self.main_builder.get_object('menuitem_connectionmanager').set_visible(not self.config['standalone'])
 
         # Show the Torrent menu because we're connected to a host
         self.menu_torrent.show()
@@ -191,8 +188,18 @@ class MenuBar(component.Component):
             client.core.get_known_accounts().addCallback(
                 self._on_known_accounts).addErrback(self._on_known_accounts_fail)
 
+        client.register_event_handler('TorrentStateChangedEvent', self.on_torrentstatechanged_event)
+        client.register_event_handler('TorrentResumedEvent', self.on_torrentresumed_event)
+        client.register_event_handler('SessionPausedEvent', self.on_sessionpaused_event)
+        client.register_event_handler('SessionResumedEvent', self.on_sessionresumed_event)
+
     def stop(self):
         log.debug('MenuBar stopping')
+
+        client.deregister_event_handler('TorrentStateChangedEvent', self.on_torrentstatechanged_event)
+        client.deregister_event_handler('TorrentResumedEvent', self.on_torrentresumed_event)
+        client.deregister_event_handler('SessionPausedEvent', self.on_sessionpaused_event)
+        client.deregister_event_handler('SessionResumedEvent', self.on_sessionresumed_event)
 
         for widget in self.change_sensitivity:
             self.main_builder.get_object(widget).set_sensitive(False)
@@ -337,6 +344,9 @@ class MenuBar(component.Component):
                 del self.move_storage_dialog
                 del self.move_storage_dialog_hbox
 
+            if response_id == Gtk.ResponseType.CANCEL:
+                on_core_result(None)
+
             if response_id == Gtk.ResponseType.OK:
                 log.debug('Moving torrents to %s',
                           self.move_storage_path_chooser.get_text())
@@ -478,6 +488,10 @@ class MenuBar(component.Component):
         self.config['sidebar_show_trackers'] = widget.get_active()
         component.get('FilterTreeView').update()
 
+    def on_menuitem_sidebar_owners_toggled(self, widget):
+        self.config['sidebar_show_owners'] = widget.get_active()
+        component.get('FilterTreeView').update()
+
     def _on_known_accounts(self, known_accounts):
         known_accounts_to_log = []
         for account in known_accounts:
@@ -538,7 +552,7 @@ class MenuBar(component.Component):
                 update_torrents.append(torrent_id)
 
         if update_torrents:
-            log.debug("Setting torrent owner \"%s\" on %s", username, update_torrents)
+            log.debug('Setting torrent owner "%s" on %s', username, update_torrents)
 
             def failed_change_owner(failure):
                 ErrorDialog(

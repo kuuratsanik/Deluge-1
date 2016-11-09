@@ -31,7 +31,7 @@ class RemoveTorrentDialog(object):
 
     """
     def __init__(self, torrent_ids, delete_files=False):
-        if type(torrent_ids) != list and type(torrent_ids) != tuple:
+        if not isinstance(torrent_ids, list) and not isinstance(torrent_ids, tuple):
             raise TypeError('requires a list of torrent_ids')
 
         if not torrent_ids:
@@ -41,8 +41,7 @@ class RemoveTorrentDialog(object):
 
         self.builder = Gtk.Builder()
         self.builder.add_from_file(deluge.common.resource_filename(
-            'deluge.ui.gtkui', os.path.join('glade', 'remove_torrent_dialog.ui'))
-        )
+            'deluge.ui.gtkui', os.path.join('glade', 'remove_torrent_dialog.ui')))
 
         self.__dialog = self.builder.get_object('remove_torrent_dialog')
         self.__dialog.set_transient_for(component.get('MainWindow').window)
@@ -71,7 +70,7 @@ class RemoveTorrentDialog(object):
             if errors:
                 log.info('Error(s) occured when trying to delete torrent(s).')
                 for t_id, e_msg in errors:
-                    log.warn('Error removing torrent %s : %s' % (t_id, e_msg))
+                    log.warn('Error removing torrent %s : %s', t_id, e_msg)
 
         d = client.core.remove_torrents(self.__torrent_ids, remove_data)
         d.addCallback(on_removed_finished)

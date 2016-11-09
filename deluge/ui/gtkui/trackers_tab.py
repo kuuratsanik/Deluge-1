@@ -11,19 +11,10 @@ import logging
 
 import deluge.component as component
 from deluge.common import ftime
+from deluge.ui.gtkui.tab_data_funcs import fcount, ftranslate, fyes_no
 from deluge.ui.gtkui.torrentdetails import Tab
 
 log = logging.getLogger(__name__)
-
-
-def fcount(value):
-    return '%s' % len(value)
-
-
-def ftranslate(text):
-    if text:
-        text = _(text)
-    return text
 
 
 class TrackersTab(Tab):
@@ -42,6 +33,7 @@ class TrackersTab(Tab):
             (builder.get_object('summary_tracker'), None, ('tracker_host',)),
             (builder.get_object('summary_tracker_status'), ftranslate, ('tracker_status',)),
             (builder.get_object('summary_tracker_total'), fcount, ('trackers',)),
+            (builder.get_object('summary_private'), fyes_no, ('private',)),
         ]
 
         self.status_keys = [status for widget in self.label_widgets for status in widget[2]]
@@ -71,16 +63,7 @@ class TrackersTab(Tab):
 
         # Update all the label widgets
         for widget in self.label_widgets:
-            if widget[1] is None:
-                txt = status[widget[2][0]]
-            else:
-                try:
-                    args = [status[key] for key in widget[2]]
-                except KeyError as ex:
-                    log.debug('Unable to get status value: %s', ex)
-                    continue
-                txt = widget[1](*args)
-
+            txt = self.get_status_for_widget(widget, status)
             if widget[0].get_text() != txt:
                 widget[0].set_text(txt)
 

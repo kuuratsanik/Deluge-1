@@ -7,6 +7,8 @@
 # See LICENSE for more details.
 #
 
+from __future__ import division
+
 import cPickle
 import logging
 import os.path
@@ -341,39 +343,37 @@ class FilesTab(Tab):
             show_file(filepath, timestamp=timestamp)
 
     # The following 3 methods create the folder/file view in the treeview
-    def prepare_file_store(self, files):
+    def prepare_file_store(self, torrent_files):
         split_files = {}
-        i = 0
-        for file in files:
-            self.prepare_file(file, file['path'], i, split_files)
-            i += 1
+        for index, torrent_file in enumerate(torrent_files):
+            self.prepare_file(torrent_file, torrent_file['path'], index, split_files)
         self.add_files(None, split_files)
 
-    def prepare_file(self, file, file_name, file_num, files_storage):
+    def prepare_file(self, torrent_file, file_name, file_num, files_storage):
         first_slash_index = file_name.find('/')
         if first_slash_index == -1:
-            files_storage[file_name] = (file_num, file)
+            files_storage[file_name] = (file_num, torrent_file)
         else:
             file_name_chunk = file_name[:first_slash_index + 1]
             if file_name_chunk not in files_storage:
                 files_storage[file_name_chunk] = {}
-            self.prepare_file(file, file_name[first_slash_index + 1:],
+            self.prepare_file(torrent_file, file_name[first_slash_index + 1:],
                               file_num, files_storage[file_name_chunk])
 
     def add_files(self, parent_iter, split_files):
-        ret = 0
+        chunk_size_total = 0
         for key, value in split_files.iteritems():
             if key.endswith('/'):
                 chunk_iter = self.treestore.append(parent_iter,
                                                    [key, 0, '', 0, 0, -1, Gtk.STOCK_DIRECTORY])
                 chunk_size = self.add_files(chunk_iter, value)
                 self.treestore.set(chunk_iter, 1, chunk_size)
-                ret += chunk_size
+                chunk_size_total += chunk_size
             else:
-                self.treestore.append(parent_iter, [key,
-                                      value[1]['size'], '', 0, 0, value[0], Gtk.STOCK_FILE])
-                ret += value[1]['size']
-        return ret
+                self.treestore.append(parent_iter,
+                                      [key, value[1]['size'], '', 0, 0, value[0], Gtk.STOCK_FILE])
+                chunk_size_total += value[1]['size']
+        return chunk_size_total
 
     def update_files(self):
         with listview_replace_treestore(self.listview):
@@ -418,24 +418,24 @@ class FilesTab(Tab):
             return
 
         def get_completed_bytes(row):
-            bytes = 0
+            completed_bytes = 0
             parent = self.treestore.iter_parent(row)
             while row:
                 if self.treestore.iter_children(row):
-                    bytes += get_completed_bytes(self.treestore.iter_children(row))
+                    completed_bytes += get_completed_bytes(self.treestore.iter_children(row))
                 else:
-                    bytes += self.treestore[row][1] * (float(self.treestore[row][3]) / 100.0)
+                    completed_bytes += self.treestore[row][1] * self.treestore[row][3] / 100
 
                 row = self.treestore.iter_next(row)
 
             try:
-                value = (float(bytes) / float(self.treestore[parent][1])) * 100
+                value = completed_bytes / self.treestore[parent][1] * 100
             except ZeroDivisionError:
                 # Catch the unusal error found when moving folders around
                 value = 0
             self.treestore[parent][3] = value
-            self.treestore[parent][2] = '%.2f%%' % value
-            return bytes
+            self.treestore[parent][2] = '%i%%' % value
+            return completed_bytes
 
         get_completed_bytes(self.treestore.iter_children(root))
 
@@ -443,10 +443,6 @@ class FilesTab(Tab):
         # Check stored torrent id matches the callback id
         if self.torrent_id != torrent_id:
             return
-
-        # Store this torrent's compact setting
-        if 'storage_mode' in status:
-            self.__compact = status['storage_mode'] == 'compact'
 
         if 'is_seed' in status:
             self.__is_seed = status['is_seed']
@@ -465,7 +461,7 @@ class FilesTab(Tab):
                 continue
 
             try:
-                progress_string = '%.2f%%' % (status['file_progress'][index] * 100)
+                progress_string = '%i%%' % (status['file_progress'][index] * 100)
             except IndexError:
                 continue
             if row[2] != progress_string:
@@ -492,12 +488,12 @@ class FilesTab(Tab):
 
             paths = self.listview.get_selection().get_selected_rows()[1]
             if cursor_path[0] not in paths:
-                    row = self.treestore.get_iter(cursor_path[0])
-                    self.listview.get_selection().unselect_all()
-                    self.listview.get_selection().select_iter(row)
+                row = self.treestore.get_iter(cursor_path[0])
+                self.listview.get_selection().unselect_all()
+                self.listview.get_selection().select_iter(row)
 
             for widget in self.file_menu_priority_items:
-                widget.set_sensitive(not (self.__compact or self.__is_seed))
+                widget.set_sensitive(not self.__is_seed)
 
             self.file_menu.popup(None, None, None, None, event.button, event.time)
             return True
@@ -535,12 +531,12 @@ class FilesTab(Tab):
         """Sets the file priorities in the core. It will change the selected with the 'priority'"""
         file_priorities = []
 
-        def set_file_priority(model, path, iter, data):
-            index = model.get_value(iter, 5)
+        def set_file_priority(model, path, _iter, data):
+            index = model.get_value(_iter, 5)
             if index in selected and index != -1:
                 file_priorities.append((index, priority))
             elif index != -1:
-                file_priorities.append((index, model.get_value(iter, 4)))
+                file_priorities.append((index, model.get_value(_iter, 4)))
 
         self.treestore.foreach(set_file_priority, None)
         file_priorities.sort()
@@ -634,79 +630,47 @@ class FilesTab(Tab):
 
         # We need to update the filename displayed if we're currently viewing
         # this torrents files.
-        if torrent_id == self.torrent_id:
-            old_name_len = len(old_name.split('/'))
-            name_len = len(name.split('/'))
-            if old_name_len != name_len:
-                # The parent path list changes depending on which way the file
-                # is moving in the tree
-                if old_name_len < name_len:
-                    parent_path = [o for o in old_name.split('/')[:-1]]
-                else:
-                    parent_path = [o for o in name.split('/')[:-1]]
-                # Find the iter to the parent folder we need to add a new folder
-                # to.
+        if torrent_id != self.torrent_id:
+            return
 
-                def find_parent(model, path, itr, user_data):
-                    if model[itr][0] == parent_path[0] + '/':
-                        if len(parent_path) == 1:
-                            # This is the parent iter
-                            to_create = name.split('/')[len(old_name.split('/')[:-1]):-1]
-                            parent_iter = itr
+        old_name_parent = old_name.split('/')[:-1]
+        parent_path = name.split('/')[:-1]
 
-                            for tc in to_create:
-                                # We need to check if these folders need to be created
-                                child_iter = self.treestore.iter_children(parent_iter)
-                                create = True
-                                while child_iter:
-                                    if self.treestore[child_iter][0] == tc + '/':
-                                        create = False
-                                        parent_iter = child_iter
-                                        break
-                                    child_iter = self.treestore.iter_next(child_iter)
-                                if create:
-                                    parent_iter = self.treestore.append(
-                                        parent_iter, [tc + '/', 0, '', 0, 0, -1, Gtk.STOCK_DIRECTORY])
+        if old_name_parent != parent_path:
+            if parent_path:
+                for i, p in enumerate(parent_path):
+                    p_itr = self.get_iter_at_path('/'.join(parent_path[:i + 1]) + '/')
+                    if not p_itr:
+                        p_itr = self.get_iter_at_path('/'.join(parent_path[:i]) + '/')
+                        p_itr = self.treestore.append(
+                            p_itr, [parent_path[i] + '/', 0, '', 0, 0, -1, Gtk.STOCK_DIRECTORY])
+                p_itr = self.get_iter_at_path('/'.join(parent_path) + '/')
+                old_name_itr = self.get_iter_at_path(old_name)
+                self.treestore.append(p_itr,
+                                      self.treestore.get(old_name_itr, *xrange(self.treestore.get_n_columns())))
+                self.treestore.remove(old_name_itr)
 
-                            # Find the iter for the file that needs to be moved
-                            def get_file_iter(model, path, itr, user_data):
-                                if model[itr][5] == index:
-                                    model[itr][0] = name.split('/')[-1]
-                                    # t = self.treestore.append(
-                                    #    parent_iter,
-                                    #    self.treestore.get(itr, *xrange(self.treestore.get_n_columns())))
-                                    itr_parent = self.treestore.iter_parent(itr)
-                                    self.treestore.remove(itr)
-                                    self.remove_childless_folders(itr_parent)
-                                    return True
-
-                            self.treestore.foreach(get_file_iter, None)
-                            return True
-                        else:
-                            log.debug('parent_path: %s remove: %s', parent_path, model[itr][0])
-                            parent_path.remove(model[itr][0][:-1])
-
-                if parent_path:
-                    self.treestore.foreach(find_parent, None)
-                else:
-                    new_folders = name.split('/')[:-1]
-                    parent_iter = None
-                    for f in new_folders:
-                        parent_iter = self.treestore.append(
-                            parent_iter, [f + '/', 0, '', 0, 0, -1, Gtk.STOCK_DIRECTORY])
-                    child = self.get_iter_at_path(old_name)
-                    self.treestore.append(
-                        parent_iter,
-                        self.treestore.get(child, *xrange(self.treestore.get_n_columns())))
-                    self.treestore.remove(child)
-
+                # Remove old parent path
+                p_itr = self.get_iter_at_path('/'.join(old_name_parent) + '/')
+                self.remove_childless_folders(p_itr)
             else:
-                # This is just changing a filename without any folder changes
-                def set_file_name(model, path, itr, user_data):
-                    if model[itr][5] == index:
-                        model[itr][0] = os.path.split(name)[-1]
-                        return True
-                self.treestore.foreach(set_file_name, None)
+                new_folders = name.split('/')[:-1]
+                parent_iter = None
+                for f in new_folders:
+                    parent_iter = self.treestore.append(
+                        parent_iter, [f + '/', 0, '', 0, 0, -1, Gtk.STOCK_DIRECTORY])
+                child = self.get_iter_at_path(old_name)
+                self.treestore.append(parent_iter,
+                                      self.treestore.get(child, *xrange(self.treestore.get_n_columns())))
+                self.treestore.remove(child)
+
+        else:
+            # This is just changing a filename without any folder changes
+            def set_file_name(model, path, itr, user_data):
+                if model[itr][5] == index:
+                    model[itr][0] = os.path.split(name)[-1]
+                    return True
+            self.treestore.foreach(set_file_name, None)
 
     def get_iter_at_path(self, filepath):
         """Returns the gtkTreeIter for filepath."""
@@ -729,14 +693,13 @@ class FilesTab(Tab):
                 itr = self.treestore.iter_children(itr)
                 level += 1
                 continue
-            elif (level + 1) == len(filepath) and ipath == filepath[level] + '/' if is_dir else filepath[level]:
+            elif (level + 1) == len(filepath) and ipath == (filepath[level] + '/' if is_dir else filepath[level]):
                 # This is the iter we've been searching for
                 path_iter = itr
                 break
             else:
                 itr = self.treestore.iter_next(itr)
                 continue
-
         return path_iter
 
     def remove_childless_folders(self, itr):
@@ -755,7 +718,8 @@ class FilesTab(Tab):
 
         if old_folder[-1] != '/':
             old_folder += '/'
-        if new_folder[-1] != '/':
+
+        if len(new_folder) > 0 and new_folder[-1] != '/':
             new_folder += '/'
 
         for fd in self.files_list[torrent_id]:
@@ -767,19 +731,20 @@ class FilesTab(Tab):
             old_split = old_folder.split('/')
             try:
                 old_split.remove('')
-            except:
+            except ValueError:
                 pass
 
             new_split = new_folder.split('/')
             try:
                 new_split.remove('')
-            except:
+            except ValueError:
                 pass
 
             old_folder_iter = self.get_iter_at_path(old_folder)
             old_folder_iter_parent = self.treestore.iter_parent(old_folder_iter)
 
-            new_folder_iter = self.get_iter_at_path(new_folder)
+            new_folder_iter = self.get_iter_at_path(new_folder) if new_folder else None
+
             if len(new_split) == len(old_split):
                 # These are at the same tree depth, so it's a simple rename
                 self.treestore[old_folder_iter][0] = new_split[-1] + '/'
@@ -789,11 +754,15 @@ class FilesTab(Tab):
                 reparent_iter(self.treestore, self.treestore.iter_children(old_folder_iter), new_folder_iter)
             else:
                 parent = old_folder_iter_parent
-                for ns in new_split[:-1]:
-                    parent = self.treestore.append(parent, [ns + '/', 0, '', 0, 0, -1, Gtk.STOCK_DIRECTORY])
+                if new_split:
+                    for ns in new_split[:-1]:
+                        parent = self.treestore.append(parent, [ns + '/', 0, '', 0, 0, -1, Gtk.STOCK_DIRECTORY])
 
-                self.treestore[old_folder_iter][0] = new_split[-1] + '/'
-                reparent_iter(self.treestore, old_folder_iter, parent)
+                    self.treestore[old_folder_iter][0] = new_split[-1] + '/'
+                    reparent_iter(self.treestore, old_folder_iter, parent)
+                else:
+                    child_itr = self.treestore.iter_children(old_folder_iter)
+                    reparent_iter(self.treestore, child_itr, old_folder_iter_parent, move_siblings=True)
 
             # We need to check if the old_folder_iter_parent no longer has children
             # and if so, we delete it

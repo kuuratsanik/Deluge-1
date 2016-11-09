@@ -9,7 +9,7 @@
 
 import logging
 import os.path
-from itertools import izip
+from future_builtins import zip
 
 from gi.repository import GdkPixbuf, Gtk
 
@@ -25,9 +25,9 @@ log = logging.getLogger(__name__)
 
 
 def cell_data_progress(column, cell, model, row, data):
-    value = model.get_value(row, data)
-    cell.set_property('value', value * 100)
-    cell.set_property('text', '%.2f%%' % (value * 100))
+    value = model.get_value(row, data) * 100
+    cell.set_property('value', value)
+    cell.set_property('text', '%i%%' % value)
 
 
 class PeersTab(Tab):
@@ -214,7 +214,7 @@ class PeersTab(Tab):
         component.get('SessionProxy').get_torrent_status(torrent_id, ['peers']).addCallback(self._on_get_torrent_status)
 
     def get_flag_pixbuf(self, country):
-        if country == '  ':
+        if not country.strip():
             return None
 
         if country not in self.cached_flag_pixbufs:
@@ -266,7 +266,7 @@ class PeersTab(Tab):
                 if peer['ip'].count(':') == 1:
                     # This is an IPv4 address
                     ip_int = sum([int(byte) << shift
-                                 for byte, shift in izip(peer['ip'].split(':')[0].split('.'), (24, 16, 8, 0))])
+                                  for byte, shift in zip(peer['ip'].split(':')[0].split('.'), (24, 16, 8, 0))])
                     peer_ip = peer['ip']
                 else:
                     # This is an IPv6 address
@@ -274,7 +274,7 @@ class PeersTab(Tab):
                     import binascii
                     # Split out the :port
                     ip = ':'.join(peer['ip'].split(':')[:-1])
-                    ip_int = long(binascii.hexlify(socket.inet_pton(socket.AF_INET6, ip)), 16)
+                    ip_int = int(binascii.hexlify(socket.inet_pton(socket.AF_INET6, ip)), 16)
                     peer_ip = '[%s]:%s' % (ip, peer['ip'].split(':')[-1])
 
                 if peer['seed']:
@@ -296,7 +296,7 @@ class PeersTab(Tab):
                 self.peers[peer['ip']] = row
 
         # Now we need to remove any ips that were not in status["peers"] list
-        for ip in set(self.peers.keys()).difference(new_ips):
+        for ip in set(self.peers).difference(new_ips):
             self.liststore.remove(self.peers[ip])
             del self.peers[ip]
 
@@ -316,9 +316,9 @@ class PeersTab(Tab):
             return False
         else:
             # FIXME: ValueError: too many values to unpack
-            model, path, iter = widget.get_tooltip_context(x, y, keyboard_tip)
+            model, path, _iter = widget.get_tooltip_context(x, y, keyboard_tip)
 
-            country_code = model.get(iter, 5)[0]
+            country_code = model.get(_iter, 5)[0]
             if country_code != '  ' and country_code in COUNTRIES:
                 tooltip.set_text(COUNTRIES[country_code])
                 # widget here is self.listview

@@ -7,21 +7,25 @@
 # See LICENSE for more details.
 #
 
+from __future__ import division
+
 import logging
 import os
 import sys
-import warnings
+import time
 
 from gi.repository import GObject, Gdk, Gtk
-from twisted.internet import gtk3reactor
+from twisted.internet import defer, gtk3reactor
 from twisted.internet.error import ReactorAlreadyInstalledError
+from twisted.internet.task import LoopingCall
 
 try:
     reactor = gtk3reactor.install()  # Install twisted reactor, before any other modules import reactor.
-except ReactorAlreadyInstalledError:
+except ReactorAlreadyInstalledError as ex:
     # Running unit tests so trial already installed a rector
-    pass
+    from twisted.internet import reactor
 
+# isort:imports-firstparty
 import deluge.common
 import deluge.component as component
 from deluge.configmanager import ConfigManager, get_config_dir
@@ -29,9 +33,10 @@ from deluge.error import AuthenticationRequired, BadLoginError, DaemonRunningErr
 from deluge.ui.client import client
 from deluge.ui.gtkui.addtorrentdialog import AddTorrentDialog
 from deluge.ui.gtkui.common import associate_magnet_links
+from deluge.ui.gtkui.connectionmanager import ConnectionManager
 from deluge.ui.gtkui.dialogs import AuthenticationDialog, ErrorDialog, YesNoDialog
 from deluge.ui.gtkui.filtertreeview import FilterTreeView
-from deluge.ui.gtkui.ipcinterface import IPCInterface
+from deluge.ui.gtkui.ipcinterface import IPCInterface, process_args
 from deluge.ui.gtkui.mainwindow import MainWindow
 from deluge.ui.gtkui.menubar import MenuBar
 from deluge.ui.gtkui.pluginmanager import PluginManager
@@ -45,7 +50,7 @@ from deluge.ui.gtkui.torrentdetails import TorrentDetails
 from deluge.ui.gtkui.torrentview import TorrentView
 from deluge.ui.sessionproxy import SessionProxy
 from deluge.ui.tracker_icons import TrackerIcons
-from deluge.ui.ui import _UI
+from deluge.ui.util import lang
 
 
 GObject.set_prgname('deluge')
@@ -55,27 +60,15 @@ log = logging.getLogger(__name__)
 try:
     from setproctitle import setproctitle, getproctitle
 except ImportError:
-    setproctitle = lambda t: None
-    getproctitle = lambda: None
+    def setproctitle(title):
+        return
 
+    def getproctitle():
+        return
 
-class GtkStart(_UI):
-
-    help = """Starts the Deluge GTK+ interface"""
-
-    def __init__(self):
-        super(GtkStart, self).__init__('gtk')
-
-    def start(self):
-        super(GtkStart, self).start()
-        GtkUI(self.args)
-
-
-def start():
-    GtkStart().start()
 
 DEFAULT_PREFS = {
-    'classic_mode': True,
+    'standalone': True,
     'interactive_add': True,
     'focus_add_dialog': True,
     'enable_system_tray': True,
@@ -93,6 +86,8 @@ DEFAULT_PREFS = {
     'window_height': 480,
     'pref_dialog_width': None,
     'pref_dialog_height': None,
+    'edit_trackers_dialog_width': None,
+    'edit_trackers_dialog_height': None,
     'window_pane_position': 235,
     'tray_download_speed_list': [5.0, 10.0, 30.0, 80.0, 300.0],
     'tray_upload_speed_list': [5.0, 10.0, 30.0, 80.0, 300.0],
@@ -105,7 +100,6 @@ DEFAULT_PREFS = {
     'autoadd_queued': False,
     'choose_directory_dialog_path': deluge.common.get_default_download_dir(),
     'show_new_releases': True,
-    'signal_port': 40000,
     'ntf_tray_blink': True,
     'ntf_sound': False,
     'ntf_sound_path': deluge.common.get_default_download_dir(),
@@ -116,12 +110,12 @@ DEFAULT_PREFS = {
     'ntf_pass': '',
     'ntf_server': '',
     'ntf_security': None,
-    'signal_port': 40000,
     'show_sidebar': True,
     'show_toolbar': True,
     'show_statusbar': True,
     'sidebar_show_zero': False,
     'sidebar_show_trackers': True,
+    'sidebar_show_owners': True,
     'sidebar_position': 170,
     'show_rate_in_title': False,
     'createtorrent.trackers': [],
@@ -137,51 +131,24 @@ DEFAULT_PREFS = {
 
 class GtkUI(object):
     def __init__(self, args):
-        self.daemon_bps = (0, 0, 0)
-        # Setup btkbuilder/glade translation
+        # Setup Gtkbuilder/glade translation
         deluge.common.setup_translations(setup_gettext=False, setup_pygtk=True)
 
         # Setup signals
-        try:
-            import gnome.ui
-            import gnome
-
-            # Suppress: Warning: Attempt to add property GnomeProgram::*** after class was initialised
-            original_filters = warnings.filters[:]
-            warnings.simplefilter('ignore')
-            try:
-                self.gnome_prog = gnome.init('Deluge', deluge.common.get_version())
-            finally:
-                warnings.filters = original_filters
-
-            self.gnome_client = gnome.ui.master_client()
-
-            def on_die(*args):
-                reactor.stop()
-            self.gnome_client.connect('die', on_die)
-            log.debug("GNOME session 'die' handler registered!")
-        except Exception as ex:
-            log.warning("Unable to register a 'die' handler with the GNOME session manager: %s", ex)
+        def on_die(*args):
+            log.debug("OS signal 'die' caught with args: %s", args)
+            reactor.stop()
 
         if deluge.common.windows_check():
             from win32api import SetConsoleCtrlHandler
-            from win32con import CTRL_CLOSE_EVENT
-            from win32con import CTRL_SHUTDOWN_EVENT
-
-            def win_handler(ctrl_type):
-                log.debug('ctrl_type: %s', ctrl_type)
-                if ctrl_type in (CTRL_CLOSE_EVENT, CTRL_SHUTDOWN_EVENT):
-                    reactor.stop()
-                    return 1
-            SetConsoleCtrlHandler(win_handler)
-
-        if deluge.common.osx_check() and Gdk.WINDOWING == 'quartz':
-            import gtkosx_application
-            self.osxapp = gtkosx_application.gtkosx_application_get()
-
-            def on_die(*args):
-                reactor.stop()
-            self.osxapp.connect('NSApplicationWillTerminate', on_die)
+            SetConsoleCtrlHandler(on_die, True)
+            log.debug("Win32 'die' handler registered")
+        elif deluge.common.osx_check():
+            if Gdk.WINDOWING == 'quartz':
+                import gtkosx_application
+                self.osxapp = gtkosx_application.gtkosx_application_get()
+                self.osxapp.connect('NSApplicationWillTerminate', on_die)
+                log.debug("OSX quartz 'die' handler registered")
 
         # Set process name again to fix gtk issue
         setproctitle(getproctitle())
@@ -197,22 +164,19 @@ class GtkUI(object):
         if not os.path.exists(os.path.join(get_config_dir(), 'gtkui_state')):
             os.makedirs(os.path.join(get_config_dir(), 'gtkui_state'))
 
-        # We need to check on exit if it was started in classic mode to ensure we
-        # shutdown the daemon.
-        self.started_in_classic = self.config['classic_mode']
-
         # Set language
-        if not self.config['language'] is None:
-            deluge.common.set_language(self.config['language'])
+        if self.config['language'] is not None:
+            lang.set_language(self.config['language'])
 
         # Start the IPC Interface before anything else.. Just in case we are
         # already running.
         self.queuedtorrents = QueuedTorrents()
-        self.ipcinterface = IPCInterface(args)
+        self.ipcinterface = IPCInterface(args.torrents)
 
         # FIXME: Verify that removing gdk threading has no adverse effects.
         # There are the two commits [64a94ec] [1f3e930] that added gdk threading
         # and my thinking is there is no need for the code anymore.
+        # gtk.gdk.threads_init()
 
         # We make sure that the UI components start once we get a core URI
         client.set_disconnect_callback(self.__on_disconnect)
@@ -234,10 +198,9 @@ class GtkUI(object):
 
         if deluge.common.osx_check() and Gdk.WINDOWING == 'quartz':
             def nsapp_open_file(osxapp, filename):
-                # Will be raised at app launch (python opening main script)
-                if filename.endswith('Deluge-bin'):
+                # Ignore command name which is raised at app launch (python opening main script).
+                if filename == sys.argv[0]:
                     return True
-                from deluge.ui.gtkui.ipcinterface import process_args
                 process_args([filename])
             self.osxapp.connect('NSApplicationOpenFile', nsapp_open_file)
             from deluge.ui.gtkui.menubar_osx import menubar_osx
@@ -247,71 +210,97 @@ class GtkUI(object):
         # Initalize the plugins
         self.plugins = PluginManager()
 
-        # Late import because of setting up translations
-        from deluge.ui.gtkui.connectionmanager import ConnectionManager
         # Show the connection manager
         self.connectionmanager = ConnectionManager()
 
-        from twisted.internet.task import LoopingCall
-        rpc_stats = LoopingCall(self.print_rpc_stats)
-        rpc_stats.start(10)
+        # Setup RPC stats logging
+        # daemon_bps: time, bytes_sent, bytes_recv
+        self.daemon_bps = (0, 0, 0)
+        self.rpc_stats = LoopingCall(self.print_rpc_stats)
+        self.closing = False
 
-        reactor.callWhenRunning(self._on_reactor_start)
+        # Twisted catches signals to terminate, so have it call a pre_shutdown method.
+        reactor.addSystemEventTrigger('before', 'gtkui_close', self.close)
 
-        reactor.run()
-        self.shutdown()
-
-    def shutdown(self, *args, **kwargs):
-        log.debug('gtkui shutting down..')
-
-        component.stop()
+        def gtkui_sigint_handler(num, frame):
+            log.debug("SIGINT signal caught - firing event: 'gtkui_close'")
 
         # Process any pending gtk events since the mainloop has been quit
         while Gtk.events_pending():
             Gtk.main_iteration_do(False)
 
-        # Shutdown all components
-        component.shutdown()
+    def start(self):
+        reactor.callWhenRunning(self._on_reactor_start)
 
+        # Initialize gdk threading
+        # gtk.gdk.threads_enter()
+        reactor.run()
+        # Reactor is not running. Any async callbacks (Deferreds) can no longer
+        # be processed from this point on.
+        # gtk.gdk.threads_leave()
+
+    def shutdown(self, *args, **kwargs):
+        log.debug('GTKUI shutting down...')
+        # Shutdown all components
+        if client.is_standalone:
+            return component.shutdown()
+
+    @defer.inlineCallbacks
+    def close(self):
+        if self.closing:
+            return
+        self.closing = True
         # Make sure the config is saved.
         self.config.save()
+        # Ensure columns state is saved
+        self.torrentview.save_state()
+        # Shut down components
+        yield self.shutdown()
+
+        # The gtk modal dialogs (e.g. Preferences) can prevent the application
+        # quitting, so force exiting by destroying MainWindow. Must be done here
+        # to avoid hanging when quitting with SIGINT (CTRL-C).
+        self.mainwindow.window.destroy()
+
+        reactor.stop()
+
+        # Restart the application after closing if MainWindow attribute set.
+        if component.get('MainWindow').restart:
+            os.execv(sys.argv[0], sys.argv)
 
     def print_rpc_stats(self):
-        import time
-        try:
-            recv = client.get_bytes_recv()
-            sent = client.get_bytes_sent()
-        except AttributeError:
+        if not client.connected():
             return
 
-        log.debug('sent: %s recv: %s', deluge.common.fsize(sent), deluge.common.fsize(recv))
         t = time.time()
+        recv = client.get_bytes_recv()
+        sent = client.get_bytes_sent()
         delta_time = t - self.daemon_bps[0]
         delta_sent = sent - self.daemon_bps[1]
         delta_recv = recv - self.daemon_bps[2]
-
-        sent_rate = deluge.common.fspeed(float(delta_sent) / float(delta_time))
-        recv_rate = deluge.common.fspeed(float(delta_recv) / float(delta_time))
-        log.debug('sent rate: %s recv rate: %s', sent_rate, recv_rate)
         self.daemon_bps = (t, sent, recv)
+        sent_rate = deluge.common.fspeed(delta_sent / delta_time)
+        recv_rate = deluge.common.fspeed(delta_recv / delta_time)
+        log.debug('RPC: Sent %s (%s) Recv %s (%s)',
+                  deluge.common.fsize(sent), sent_rate, deluge.common.fsize(recv), recv_rate)
 
     def _on_reactor_start(self):
         log.debug('_on_reactor_start')
         self.mainwindow.first_show()
 
-        if self.config['classic_mode']:
+        if self.config['standalone']:
             def on_dialog_response(response):
                 if response != Gtk.ResponseType.YES:
                     # The user does not want to turn Standalone Mode off, so just quit
                     self.mainwindow.quit()
                     return
-                # Turning off classic_mode
-                self.config['classic_mode'] = False
-                self.__start_non_classic()
+                # Turning off standalone
+                self.config['standalone'] = False
+                self.__start_thinclient()
 
             try:
                 try:
-                    client.start_classic_mode()
+                    client.start_standalone()
                 except DaemonRunningError:
                     d = YesNoDialog(
                         _('Switch to Thin Client Mode?'),
@@ -319,7 +308,6 @@ class GtkUI(object):
                           'To use Standalone mode, stop this daemon and restart Deluge.'
                           '\n\n'
                           'Continue in Thin Client mode?')).run()
-                    self.started_in_classic = False
                     d.addCallback(on_dialog_response)
                 except ImportError as ex:
                     if 'No module named libtorrent' in ex.message:
@@ -328,7 +316,6 @@ class GtkUI(object):
                             _('Only Thin Client mode is available because libtorrent is not installed.'
                               '\n\n'
                               'To use Deluge Standalone mode, please install libtorrent.')).run()
-                        self.started_in_classic = False
                         d.addCallback(on_dialog_response)
                     else:
                         raise ex
@@ -349,104 +336,102 @@ class GtkUI(object):
                         _('Switch to Thin Client Mode?'),
                         _('Unable to start Standalone mode would you like to continue in Thin Client mode?')
                     ).run()
-                    self.started_in_classic = False
                     d.addCallback(on_dialog_response)
                 ed.addCallback(on_ed_response)
         else:
-            self.__start_non_classic()
+            self.rpc_stats.start(10)
+            self.__start_thinclient()
 
-    def __start_non_classic(self):
-            # Autoconnect to a host
-            if self.config['autoconnect']:
+    def __start_thinclient(self):
+        # Autoconnect to a host
+        if self.config['autoconnect']:
 
-                def update_connection_manager():
-                    if not self.connectionmanager.running:
-                        return
-                    self.connectionmanager.builder.get_object('button_refresh').emit('clicked')
+            def update_connection_manager():
+                if not self.connectionmanager.running:
+                    return
+                self.connectionmanager.builder.get_object('button_refresh').emit('clicked')
 
-                def close_connection_manager():
-                    if not self.connectionmanager.running:
-                        return
-                    self.connectionmanager.builder.get_object('button_close').emit('clicked')
+            def close_connection_manager():
+                if not self.connectionmanager.running:
+                    return
+                self.connectionmanager.builder.get_object('button_close').emit('clicked')
 
-                for host_config in self.connectionmanager.config['hosts']:
-                    hostid, host, port, user, passwd = host_config
-                    if hostid == self.config['autoconnect_host_id']:
-                        try_connect = True
-                        # Check to see if we need to start the localhost daemon
-                        if self.config['autostart_localhost'] and host in ('localhost', '127.0.0.1'):
-                            log.debug('Autostarting localhost:%s', host)
-                            try_connect = client.start_daemon(
-                                port, get_config_dir()
-                            )
-                            log.debug('Localhost started: %s', try_connect)
-                            if not try_connect:
-                                ErrorDialog(
-                                    _('Error Starting Daemon'),
-                                    _('There was an error starting the daemon '
-                                      'process.  Try running it from a console '
-                                      'to see if there is an error.')
-                                ).run()
+            for host_config in self.connectionmanager.config['hosts']:
+                hostid, host, port, user, passwd = host_config
+                if hostid == self.config['autoconnect_host_id']:
+                    try_connect = True
+                    # Check to see if we need to start the localhost daemon
+                    if self.config['autostart_localhost'] and host in ('localhost', '127.0.0.1'):
+                        log.debug('Autostarting localhost:%s', host)
+                        try_connect = client.start_daemon(
+                            port, get_config_dir()
+                        )
+                        log.debug('Localhost started: %s', try_connect)
+                        if not try_connect:
+                            ErrorDialog(
+                                _('Error Starting Daemon'),
+                                _('There was an error starting the daemon '
+                                  'process.  Try running it from a console '
+                                  'to see if there is an error.')
+                            ).run()
 
-                            # Daemon Started, let's update it's info
-                            reactor.callLater(0.5, update_connection_manager)
+                        # Daemon Started, let's update it's info
+                        reactor.callLater(0.5, update_connection_manager)
 
-                        def on_connect(connector):
-                            component.start()
-                            reactor.callLater(0.2, update_connection_manager)
-                            reactor.callLater(0.5, close_connection_manager)
+                    def on_connect(connector):
+                        component.start()
+                        reactor.callLater(0.2, update_connection_manager)
+                        reactor.callLater(0.5, close_connection_manager)
 
-                        def on_connect_fail(reason, try_counter,
-                                            host, port, user, passwd):
-                            if not try_counter:
-                                return
+                    def on_connect_fail(reason, try_counter,
+                                        host, port, user, passwd):
+                        if not try_counter:
+                            return
 
-                            if reason.check(AuthenticationRequired, BadLoginError):
-                                log.debug('PasswordRequired exception')
-                                dialog = AuthenticationDialog(reason.value.message, reason.value.username)
+                        if reason.check(AuthenticationRequired, BadLoginError):
+                            log.debug('PasswordRequired exception')
+                            dialog = AuthenticationDialog(reason.value.message, reason.value.username)
 
-                                def dialog_finished(response_id, host, port):
-                                    if response_id == Gtk.ResponseType.OK:
-                                        reactor.callLater(
-                                            0.5, do_connect, try_counter - 1,
-                                            host, port, dialog.get_username(),
-                                            dialog.get_password())
-                                dialog.run().addCallback(dialog_finished, host, port)
-                                return
+                            def dialog_finished(response_id, host, port):
+                                if response_id == Gtk.ResponseType.OK:
+                                    reactor.callLater(
+                                        0.5, do_connect, try_counter - 1,
+                                        host, port, dialog.get_username(),
+                                        dialog.get_password())
+                            dialog.run().addCallback(dialog_finished, host, port)
+                            return
 
-                            log.info('Connection to host failed..')
-                            log.info('Retrying connection.. Retries left: '
-                                     '%s', try_counter)
-                            reactor.callLater(0.5, update_connection_manager)
-                            reactor.callLater(0.5, do_connect, try_counter - 1,
-                                              host, port, user, passwd)
+                        log.info('Connection to host failed..')
+                        log.info('Retrying connection.. Retries left: '
+                                 '%s', try_counter)
+                        reactor.callLater(0.5, update_connection_manager)
+                        reactor.callLater(0.5, do_connect, try_counter - 1,
+                                          host, port, user, passwd)
 
-                        def do_connect(try_counter, host, port, user, passwd):
-                            log.debug('Trying to connect to %s@%s:%s',
-                                      user, host, port)
-                            d = client.connect(host, port, user, passwd)
-                            d.addCallback(on_connect)
-                            d.addErrback(on_connect_fail, try_counter,
-                                         host, port, user, passwd)
+                    def do_connect(try_counter, host, port, user, passwd):
+                        log.debug('Trying to connect to %s@%s:%s',
+                                  user, host, port)
+                        d = client.connect(host, port, user, passwd)
+                        d.addCallback(on_connect)
+                        d.addErrback(on_connect_fail, try_counter,
+                                     host, port, user, passwd)
 
-                        if try_connect:
-                            reactor.callLater(
-                                0.5, do_connect, 6, host, port, user, passwd
-                            )
-                        break
+                    if try_connect:
+                        reactor.callLater(
+                            0.5, do_connect, 6, host, port, user, passwd
+                        )
+                    break
 
-            if self.config['show_connection_manager_on_start']:
-                # XXX: We need to call a simulate() here, but this could be a bug in twisted
-                try:
-                    reactor._simulate()
-                except AttributeError:
-                    # twisted < 12
-                    reactor.simulate()
-                self.connectionmanager.show()
+        if self.config['show_connection_manager_on_start']:
+            if deluge.common.windows_check():
+                # Call to simulate() required to workaround showing daemon status (see #2813)
+                reactor.simulate()
+            self.connectionmanager.show()
 
     def __on_disconnect(self):
         """
         Called when disconnected from the daemon.  We basically just stop all
         the components here.
         """
+        self.daemon_bps = (0, 0, 0)
         component.stop()

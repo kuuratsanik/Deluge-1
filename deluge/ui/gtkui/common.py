@@ -75,6 +75,7 @@ def build_menu_radio_list(value_list, callback, pref_value=None, suffix=None, sh
         item_text = str(value)
         if suffix:
             item_text += ' ' + suffix
+        # XXX: args order needs verified
         menuitem = Gtk.RadioMenuItem(item_text, group)
         group = menuitem
         if pref_value and value == pref_value:
@@ -84,6 +85,7 @@ def build_menu_radio_list(value_list, callback, pref_value=None, suffix=None, sh
         menu.append(menuitem)
 
     if show_notset:
+        # XXX: args order needs verified
         menuitem = Gtk.RadioMenuItem(notset_label, group)
         menuitem.set_name('unlimited')
         if pref_value and pref_value < notset_lessthan:
@@ -120,12 +122,11 @@ def reparent_iter(treestore, itr, parent, move_siblings=False):
             to_remove = i
             if treestore.iter_children(i):
                 move_children(treestore.iter_children(i), n_cols)
-            if i != src:
-                i = treestore.iter_next(i)
+            if not move_siblings and i == src:
+                i = None
             else:
-                # This is the source iter, we don't want other iters in it's level
-                if not move_siblings:
-                    i = None
+                i = treestore.iter_next(i)
+
             treestore.remove(to_remove)
 
     move_children(itr, parent)
@@ -166,7 +167,7 @@ def associate_magnet_links(overwrite=False):
 
         try:
             hkey = _winreg.OpenKey(_winreg.HKEY_CLASSES_ROOT, 'Magnet')
-        except WindowsError:
+        except WindowsError:  # pylint: disable=undefined-variable
             overwrite = True
         else:
             _winreg.CloseKey(hkey)
@@ -175,7 +176,7 @@ def associate_magnet_links(overwrite=False):
             deluge_exe = os.path.join(os.path.dirname(sys.executable), 'deluge.exe')
             try:
                 magnet_key = _winreg.CreateKey(_winreg.HKEY_CLASSES_ROOT, 'Magnet')
-            except WindowsError:
+            except WindowsError:  # pylint: disable=undefined-variable
                 # Could not create for all users, falling back to current user
                 magnet_key = _winreg.CreateKey(_winreg.HKEY_CURRENT_USER, 'Software\\Classes\\Magnet')
 

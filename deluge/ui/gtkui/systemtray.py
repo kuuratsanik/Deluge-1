@@ -14,6 +14,7 @@ from gi.repository import Gtk
 
 import deluge.common
 import deluge.component as component
+from deluge.common import fspeed
 from deluge.configmanager import ConfigManager
 from deluge.ui.client import client
 from deluge.ui.gtkui import dialogs
@@ -64,8 +65,7 @@ class SystemTray(component.Component):
         """Enables the system tray icon."""
         self.builder = Gtk.Builder()
         self.builder.add_from_file(deluge.common.resource_filename(
-            'deluge.ui.gtkui', os.path.join('glade', 'tray_menu.ui'))
-        )
+            'deluge.ui.gtkui', os.path.join('glade', 'tray_menu.ui')))
 
         self.builder.connect_signals({
             'on_menuitem_show_deluge_activate': self.on_menuitem_show_deluge_activate,
@@ -106,12 +106,7 @@ class SystemTray(component.Component):
             if deluge.common.windows_check() or deluge.common.osx_check():
                 self.tray = Gtk.StatusIcon.new_from_pixbuf(get_logo(32))
             else:
-                try:
-                    self.tray = Gtk.StatusIcon.new_from_pixbuf(get_logo(32))
-                except:
-                    self.tray = None
-                    log.warning('Update PyGTK to 2.10 or greater for SystemTray..')
-                    return
+                self.tray = Gtk.StatusIcon.new_from_icon_name('deluge')
 
             self.tray.connect('activate', self.on_tray_clicked)
             self.tray.connect('popup-menu', self.on_tray_popup)
@@ -133,7 +128,7 @@ class SystemTray(component.Component):
     def __start(self):
         if self.config['enable_system_tray']:
 
-            if self.config['classic_mode']:
+            if self.config['standalone']:
                 try:
                     self.hide_widget_list.remove('menuitem_quitdaemon')
                     self.hide_widget_list.remove('separatormenuitem4')
@@ -167,14 +162,13 @@ class SystemTray(component.Component):
             except Exception as ex:
                 log.debug('Unable to hide system tray menu widgets: %s', ex)
 
-            # if self.tray:
-            #    self.tray.set_tooltip(_("Deluge") + "\n" + _("Not Connected..."))
+            self.tray.set_tooltip_text(_('Deluge') + '\n' + _('Not Connected...'))
 
     def shutdown(self):
         if self.config['enable_system_tray']:
             if appindicator and self.config['enable_appindicator']:
                 self.indicator.set_status(appindicator.STATUS_PASSIVE)
-            elif self.tray:
+            else:
                 self.tray.set_visible(False)
 
     def send_status_request(self):
@@ -199,8 +193,8 @@ class SystemTray(component.Component):
             self.build_tray_bwsetsubmenu()
 
     def _on_get_session_status(self, status):
-        self.download_rate = deluge.common.fsize(status['payload_download_rate'])
-        self.upload_rate = deluge.common.fsize(status['payload_upload_rate'])
+        self.download_rate = fspeed(status['payload_download_rate'], shortform=True)
+        self.upload_rate = fspeed(status['payload_upload_rate'], shortform=True)
 
     def update(self):
         if not self.config['enable_system_tray']:
@@ -221,11 +215,11 @@ class SystemTray(component.Component):
         if max_download_speed == -1:
             max_download_speed = _('Unlimited')
         else:
-            max_download_speed = '%s %s' % (max_download_speed, _('KiB/s'))
+            max_download_speed = '%s %s' % (max_download_speed, _('K/s'))
         if max_upload_speed == -1:
             max_upload_speed = _('Unlimited')
         else:
-            max_upload_speed = '%s %s' % (max_upload_speed, _('KiB/s'))
+            max_upload_speed = '%s %s' % (max_upload_speed, _('K/s'))
 
         msg = '%s\n%s: %s (%s)\n%s: %s (%s)' % (
             _('Deluge'), _('Down'), self.download_rate,
@@ -233,8 +227,8 @@ class SystemTray(component.Component):
         )
 
         # Set the tooltip
-        if self.tray:
-            self.tray.set_tooltip_text(msg)
+        self.tray.set_tooltip_text(msg)
+
         self.send_status_request()
 
     def build_tray_bwsetsubmenu(self):
@@ -242,14 +236,14 @@ class SystemTray(component.Component):
         submenu_bwdownset = build_menu_radio_list(
             self.config['tray_download_speed_list'], self.on_tray_setbwdown,
             self.max_download_speed,
-            _('KiB/s'), show_notset=True, show_other=True
+            _('K/s'), show_notset=True, show_other=True
         )
 
         # Create the Upload speed list sub-menu
         submenu_bwupset = build_menu_radio_list(
             self.config['tray_upload_speed_list'], self.on_tray_setbwup,
             self.max_upload_speed,
-            _('KiB/s'), show_notset=True, show_other=True
+            _('K/s'), show_notset=True, show_other=True
         )
         # Add the sub-menus to the tray menu
         self.builder.get_object('menuitem_download_limit').set_submenu(
@@ -326,9 +320,10 @@ class SystemTray(component.Component):
             self.builder.get_object('menuitem_show_deluge').set_active(False)
 
         popup_function = Gtk.StatusIcon.position_menu
-        if deluge.common.windows_check():
+        if deluge.common.windows_check() or deluge.common.osx_check():
             popup_function = None
             button = 0
+        # FIXME why was status_icon removed??
         self.tray_menu.popup(None, None, None, popup_function, button, activate_time)
 
     def on_menuitem_show_deluge_activate(self, menuitem):
@@ -400,7 +395,7 @@ class SystemTray(component.Component):
         if widget.get_name() == 'unlimited':
             set_value(-1)
         elif widget.get_name() == 'other':
-            dialog = dialogs.OtherDialog(header, text, _('KiB/s'), image, default)
+            dialog = dialogs.OtherDialog(header, text, _('K/s'), image, default)
             dialog.run().addCallback(set_value)
         else:
             set_value(widget.get_children()[0].get_text().split(' ')[0])

@@ -32,6 +32,7 @@ try:
 except ImportError:
     Wnck = None
 
+
 log = logging.getLogger(__name__)
 
 
@@ -79,28 +80,22 @@ class MainWindow(component.Component):
 
         # Get the gtk builder file for the main window
         self.main_builder.add_from_file(deluge.common.resource_filename(
-            'deluge.ui.gtkui', os.path.join('glade', 'main_window.ui'))
-        )
+            'deluge.ui.gtkui', os.path.join('glade', 'main_window.ui')))
         # The new release dialog
         self.main_builder.add_from_file(deluge.common.resource_filename(
-            'deluge.ui.gtkui', os.path.join('glade', 'main_window.new_release.ui'))
-        )
+            'deluge.ui.gtkui', os.path.join('glade', 'main_window.new_release.ui')))
         # The move storage dialog
         self.main_builder.add_from_file(deluge.common.resource_filename(
-            'deluge.ui.gtkui', os.path.join('glade', 'main_window.move_storage.ui'))
-        )
+            'deluge.ui.gtkui', os.path.join('glade', 'main_window.move_storage.ui')))
         # The tabs
         self.main_builder.add_from_file(deluge.common.resource_filename(
-            'deluge.ui.gtkui', os.path.join('glade', 'main_window.tabs.ui'))
-        )
+            'deluge.ui.gtkui', os.path.join('glade', 'main_window.tabs.ui')))
         # The tabs file menu
         self.main_builder.add_from_file(deluge.common.resource_filename(
-            'deluge.ui.gtkui', os.path.join('glade', 'main_window.tabs.menu_file.ui'))
-        )
+            'deluge.ui.gtkui', os.path.join('glade', 'main_window.tabs.menu_file.ui')))
         # The tabs peer menu
         self.main_builder.add_from_file(deluge.common.resource_filename(
-            'deluge.ui.gtkui', os.path.join('glade', 'main_window.tabs.menu_peer.ui'))
-        )
+            'deluge.ui.gtkui', os.path.join('glade', 'main_window.tabs.menu_peer.ui')))
 
         self.window = self.main_builder.get_object('main_window')
 
@@ -115,6 +110,7 @@ class MainWindow(component.Component):
         # Keep track of window's minimization state so that we don't update the
         # UI when it is minimized.
         self.is_minimized = False
+        self.restart = False
 
         self.window.drag_dest_set(
             Gtk.DestDefaults.ALL, [Gtk.TargetEntry.new('text/uri-list', 0, 80)], Gdk.DragAction.COPY)
@@ -151,7 +147,7 @@ class MainWindow(component.Component):
             component.resume('TorrentView')
             component.resume('StatusBar')
             component.resume('TorrentDetails')
-        except:
+        except Exception:
             pass
         self.window.show()
 
@@ -175,13 +171,13 @@ class MainWindow(component.Component):
                 else:
                     self.config['window_x_pos'] = self.window_x_pos
                     self.config['window_y_pos'] = self.window_y_pos
-            except:
+            except Exception:
                 pass
             try:
                 component.resume('TorrentView')
                 component.resume('StatusBar')
                 component.resume('TorrentDetails')
-            except:
+            except Exception:
                 pass
 
             self.window.present()
@@ -210,23 +206,26 @@ class MainWindow(component.Component):
         """Returns a reference to the main window GTK builder object."""
         return self.main_builder
 
-    def quit(self, shutdown=False):
-        """
-        Quits the GtkUI
+    def quit(self, shutdown=False, restart=False):
+        """Quits the GtkUI application.
 
-        :param shutdown: whether or not to shutdown the daemon as well
-        :type shutdown: boolean
+        Args:
+            shutdown (bool): Whether or not to shutdown the daemon as well.
+            restart (bool): Whether or not to restart the application after closing.
+
         """
+
         def quit_gtkui():
             def stop_gtk_reactor(result=None):
+                self.restart = restart
                 try:
-                    reactor.stop()
+                    reactor.callLater(0, reactor.fireSystemEvent, 'gtkui_close')
                 except ReactorNotRunning:
                     log.debug('Attempted to stop the reactor but it is not running...')
 
             if shutdown:
                 client.daemon.shutdown().addCallback(stop_gtk_reactor)
-            elif not client.is_classicmode() and client.connected():
+            elif not client.is_standalone() and client.connected():
                 client.disconnect().addCallback(stop_gtk_reactor)
             else:
                 stop_gtk_reactor()
@@ -277,7 +276,7 @@ class MainWindow(component.Component):
                 try:
                     component.resume('TorrentView')
                     component.resume('StatusBar')
-                except:
+                except Exception:
                     pass
                 self.is_minimized = False
         return False
@@ -311,18 +310,18 @@ class MainWindow(component.Component):
     def update(self):
         # Update the window title
         def _on_get_session_status(status):
-            download_rate = deluge.common.fsize_short(status['payload_download_rate'])
-            upload_rate = deluge.common.fsize_short(status['payload_upload_rate'])
-            self.window.set_title('%s%s %s%s - Deluge' % (_('D:'), download_rate, _('U:'), upload_rate))
+            download_rate = deluge.common.fspeed(status['payload_download_rate'], precision=0, shortform=True)
+            upload_rate = deluge.common.fspeed(status['payload_upload_rate'], precision=0, shortform=True)
+            self.window.set_title(_('D: %s U: %s - Deluge' % (download_rate, upload_rate)))
         if self.config['show_rate_in_title']:
             client.core.get_session_status(['payload_download_rate',
-                                           'payload_upload_rate']).addCallback(_on_get_session_status)
+                                            'payload_upload_rate']).addCallback(_on_get_session_status)
 
     def _on_set_show_rate_in_title(self, key, value):
         if value:
             self.update()
         else:
-            self.window.set_title('Deluge')
+            self.window.set_title(_('Deluge'))
 
     def on_newversionavailable_event(self, new_version):
         if self.config['show_new_releases']:
@@ -341,14 +340,14 @@ class MainWindow(component.Component):
 
         """
 
-        if not Wnck:
-            return True
-
-        from gi.repository import GdkX11  # NOQA
-        win = Wnck.Window.get(self.window.get_window().get_xid())
-        active_wksp = win.get_screen().get_active_workspace()
-
-        if active_wksp:
-            return win.is_on_workspace(active_wksp)
-        else:
-            return False
+        if Wnck:
+            self.screen.force_update()
+            from gi.repository import GdkX11  # NOQA
+            win = Wnck.Window.get(self.window.get_window().get_xid())
+            if win:
+                active_wksp = win.get_screen().get_active_workspace()
+                if active_wksp:
+                    return win.is_on_workspace(active_wksp)
+                else:
+                    return False
+        return True

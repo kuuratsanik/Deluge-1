@@ -11,6 +11,7 @@ import hashlib
 import logging
 import os
 import time
+from socket import gethostbyname
 
 from gi.repository import Gtk
 from twisted.internet import reactor
@@ -221,8 +222,6 @@ class ConnectionManager(component.Component):
 
         # Host isn't in the list, so lets add it
         row = self.liststore.append()
-        import time
-        import hashlib
         self.liststore[row][HOSTLIST_COL_ID] = hashlib.sha1(str(time.time())).hexdigest()
         self.liststore[row][HOSTLIST_COL_HOST] = host
         self.liststore[row][HOSTLIST_COL_PORT] = port
@@ -324,10 +323,12 @@ class ConnectionManager(component.Component):
             port = row[HOSTLIST_COL_PORT]
             user = row[HOSTLIST_COL_USER]
 
-            if (client.connected() and
-                    (host, port, 'localclient' if not user and host in ('127.0.0.1', 'localhost') else user)
-                    == client.connection_info()):
-                def on_info(info):
+            if client.connected() and (
+                    gethostbyname(host),
+                    port,
+                    'localclient' if not user and host in ('127.0.0.1', 'localhost') else user
+            ) == client.connection_info():
+                def on_info(info, row):
                     if not self.running:
                         return
                     log.debug('Client connected, query info: %s', info)
@@ -336,7 +337,7 @@ class ConnectionManager(component.Component):
 
                 row[HOSTLIST_COL_STATUS] = 'Connected'
                 log.debug("Query daemon's info")
-                client.daemon.info().addCallback(on_info)
+                client.daemon.info().addCallback(on_info, row)
                 continue
 
             # Create a new Client instance
@@ -529,7 +530,7 @@ class ConnectionManager(component.Component):
         msg = str(reason.value)
         if not self.builder.get_object('chk_autostart').get_active():
             msg += '\n' + _('Auto-starting the daemon locally is not enabled. '
-                            "See \"Options\" on the \"Connection Manager\".")
+                            'See "Options" on the "Connection Manager".')
         ErrorDialog(_('Failed To Connect'), msg).run()
 
     def on_button_connect_clicked(self, widget=None):

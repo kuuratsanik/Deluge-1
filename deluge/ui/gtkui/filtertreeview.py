@@ -125,7 +125,7 @@ class FilterTreeView(component.Component):
             self.update_row('state', state, 0, _(state))
 
         self.cat_nodes['tracker_host'] = self.treestore.append(None, ['cat', 'tracker_host',
-                                                               _('Trackers'), 0, None, False])
+                                                                      _('Trackers'), 0, None, False])
         self.update_row('tracker_host', 'All', 0, _('All'))
         self.update_row('tracker_host', 'Error', 0, _('Error'))
         self.update_row('tracker_host', '', 0, _('None'))
@@ -293,7 +293,9 @@ class FilterTreeView(component.Component):
         try:
             hide_cat = []
             if not self.config['sidebar_show_trackers']:
-                hide_cat = ['tracker_host']
+                hide_cat.append('tracker_host')
+            if not self.config['sidebar_show_owners']:
+                hide_cat.append('owner')
             client.core.get_filter_tree(self.config['sidebar_show_zero'],
                                         hide_cat).addCallback(self.cb_update_filter_tree)
         except Exception as ex:

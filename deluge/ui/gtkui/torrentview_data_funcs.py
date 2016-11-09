@@ -10,6 +10,7 @@
 from __future__ import print_function
 
 import warnings
+from functools import partial
 
 from gi.repository import GdkPixbuf, GObject
 
@@ -41,21 +42,23 @@ ICON_STATE = {
 # Cache the key used to calculate the current value set for the specific cell
 # renderer. This is much cheaper than fetch the current value and test if
 # it's equal.
-func_last_value = {'cell_data_speed_down': None,
-                   'cell_data_speed_up': None,
-                   'cell_data_time': None,
-                   'cell_data_ratio_seeds_peers': None,
-                   'cell_data_ratio_ratio': None,
-                   'cell_data_ratio_avail': None,
-                   'cell_data_date': None,
-                   'cell_data_date_or_never': None,
-                   'cell_data_speed_limit_down': None,
-                   'cell_data_speed_limit_up': None,
-                   'cell_data_trackericon': None,
-                   'cell_data_statusicon': None,
-                   'cell_data_queue': None,
-                   'cell_data_progress': [None, None],
-                   }
+func_last_value = {
+    'cell_data_speed_down': None,
+    'cell_data_speed_up': None,
+    'cell_data_time': None,
+    'cell_data_ratio_seeds_peers': None,
+    'cell_data_ratio_ratio': None,
+    'cell_data_ratio_avail': None,
+    'cell_data_date_added': None,
+    'cell_data_date_completed': None,
+    'cell_data_date_or_never': None,
+    'cell_data_speed_limit_down': None,
+    'cell_data_speed_limit_up': None,
+    'cell_data_trackericon': None,
+    'cell_data_statusicon': None,
+    'cell_data_queue': None,
+    'cell_data_progress': [None, None],
+}
 
 
 def cell_data_statusicon(column, cell, model, row, data):
@@ -99,6 +102,7 @@ def cell_data_statusicon(column, cell, model, row, data):
 # l.write(img_data)
 #
 # w.add(gtk.Image.new_from_pixbuf(l.get_pixbuf()))
+
 
 def create_blank_pixbuf():
     return GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, 16, 16)
@@ -155,8 +159,8 @@ def cell_data_progress(column, cell, model, row, data):
 
     # Marked for translate states text are in filtertreeview
     textstr = _(state_str)
-    if state_str != 'Seeding' and value < 100:
-        textstr = '%s %.2f%%' % (textstr, value)
+    if state_str not in ('Error', 'Seeding') and value < 100:
+        textstr = '%s %i%%' % (textstr, value)
 
     if func_last_value['cell_data_progress'][1] != textstr:
         func_last_value['cell_data_progress'][1] = textstr
@@ -188,10 +192,11 @@ def cell_data_speed(cell, model, row, data, cache_key):
         return
     func_last_value[cache_key] = speed
 
-    speed_str = ''
     if speed > 0:
-        speed_str = common.fspeed(speed)
-    cell.set_property('text', speed_str)
+        speed_str = common.fspeed(speed, shortform=True)
+        cell.set_property('markup', '{0} <small>{1}</small>'.format(*tuple(speed_str.split())))
+    else:
+        cell.set_property('text', '')
 
 
 def cell_data_speed_down(column, cell, model, row, data):
@@ -212,10 +217,11 @@ def cell_data_speed_limit(cell, model, row, data, cache_key):
         return
     func_last_value[cache_key] = speed
 
-    speed_str = ''
     if speed > 0:
-        speed_str = common.fspeed(speed * 1024)
-    cell.set_property('text', speed_str)
+        speed_str = common.fspeed(speed * 1024, shortform=True)
+        cell.set_property('markup', '{0} <small>{1}</small>'.format(*tuple(speed_str.split())))
+    else:
+        cell.set_property('text', '')
 
 
 def cell_data_speed_limit_down(column, cell, model, row, data):
@@ -229,7 +235,7 @@ def cell_data_speed_limit_up(column, cell, model, row, data):
 def cell_data_size(column, cell, model, row, data):
     """Display value in terms of size, eg. 2 MB"""
     size = model.get_value(row, data)
-    cell.set_property('text', common.fsize(size))
+    cell.set_property('text', common.fsize(size, shortform=True))
 
 
 def cell_data_peer(column, cell, model, row, data):
@@ -257,13 +263,13 @@ def cell_data_time(column, cell, model, row, data):
 
 
 def cell_data_ratio(cell, model, row, data, cache_key):
-    """Display value as a ratio with a precision of 3."""
+    """Display value as a ratio with a precision of 2."""
     ratio = model.get_value(row, data)
     # Previous value in cell is the same as for this value, so ignore
     if func_last_value[cache_key] == ratio:
         return
     func_last_value[cache_key] = ratio
-    cell.set_property('text', '∞' if ratio < 0 else '%.3f' % ratio)
+    cell.set_property('text', '∞' if ratio < 0 else ('%.1f' % ratio).rstrip('0').rstrip('.'))
 
 
 def cell_data_ratio_seeds_peers(column, cell, model, row, data):
@@ -278,16 +284,19 @@ def cell_data_ratio_avail(column, cell, model, row, data):
     cell_data_ratio(cell, model, row, data, 'cell_data_ratio_avail')
 
 
-def cell_data_date(column, cell, model, row, data):
+def cell_data_date(column, cell, model, row, data, key):
     """Display value as date, eg 05/05/08"""
     date = model.get_value(row, data)
 
-    if func_last_value['cell_data_date'] == date:
+    if func_last_value[key] == date:
         return
-    func_last_value['cell_data_date'] = date
+    func_last_value[key] = date
 
-    date_str = common.fdate(date) if date > 0 else ''
+    date_str = common.fdate(date, date_only=True) if date > 0 else ''
     cell.set_property('text', date_str)
+
+cell_data_date_added = partial(cell_data_date, key='cell_data_date_added')
+cell_data_date_completed = partial(cell_data_date, key='cell_data_date_completed')
 
 
 def cell_data_date_or_never(column, cell, model, row, data):
@@ -298,5 +307,5 @@ def cell_data_date_or_never(column, cell, model, row, data):
         return
     func_last_value['cell_data_date_or_never'] = value
 
-    date_str = common.fdate(value) if value > 0.0 else _('Never')
+    date_str = common.fdate(value, date_only=True) if value > 0 else _('Never')
     cell.set_property('text', date_str)
