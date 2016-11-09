@@ -116,152 +116,152 @@ class FILTER:
     MOVING = 9
 
 DEFAULT_PREFS = {
-    "show_queue": True,
-    "show_size": True,
-    "show_state": False,
-    "show_progress": True,
-    "show_seeds": False,
-    "show_peers": False,
-    "show_downspeed": True,
-    "show_upspeed": True,
-    "show_eta": True,
-    "show_ratio": False,
-    "show_avail": False,
-    "show_added": False,
-    "show_tracker": False,
-    "show_savepath": False,
-    "show_downloaded": False,
-    "show_uploaded": False,
-    "show_remaining": False,
-    "show_owner": False,
-    "show_downloading_time": False,
-    "show_seeding_time": False,
-    "show_completed": False,
-    "show_seeds_peers_ratio": False,
-    "show_complete_seen": False,
-    "show_down_limit": False,
-    "show_up_limit": False,
-    "show_shared": False,
-    "queue_width": 4,
-    "name_width": -1,
-    "size_width": 8,
-    "state_width": 13,
-    "progress_width": 7,
-    "seeds_width": 10,
-    "peers_width": 10,
-    "downspeed_width": 7,
-    "upspeed_width": 7,
-    "eta_width": 8,
-    "ratio_width": 10,
-    "avail_width": 10,
-    "added_width": 15,
-    "tracker_width": 15,
-    "savepath_width": 15,
-    "downloaded_width": 13,
-    "uploaded_width": 13,
-    "remaining_width": 13,
-    "owner_width": 10,
-    "downloading_time_width": 10,
-    "seeding_time_width": 10,
-    "completed_width": 15,
-    "seeds_peers_ratio_width": 10,
-    "complete_seen_width": 15,
-    "down_limit_width": 7,
-    "up_limit_width": 7,
-    "shared_width": 10,
-    "ignore_duplicate_lines": False,
-    "move_selection": True,
-    "third_tab_lists_all": False,
-    "torrents_per_tab_press": 15,
-    "sort_primary": "queue",
-    "sort_secondary": "name",
-    "separate_complete": True,
-    "ring_bell": False,
-    "save_legacy_history": True,
-    "first_run": True,
-    "addtorrents_show_misc_files": False,  # TODO: Showing/hiding this
-    "addtorrents_show_hidden_folders": False,  # TODO: Showing/hiding this
-    "addtorrents_sort_column": "date",
-    "addtorrents_reverse_sort": True,
-    "addtorrents_last_path": "~"
+    'show_queue': True,
+    'show_size': True,
+    'show_state': False,
+    'show_progress': True,
+    'show_seeds': False,
+    'show_peers': False,
+    'show_downspeed': True,
+    'show_upspeed': True,
+    'show_eta': True,
+    'show_ratio': False,
+    'show_avail': False,
+    'show_added': False,
+    'show_tracker': False,
+    'show_savepath': False,
+    'show_downloaded': False,
+    'show_uploaded': False,
+    'show_remaining': False,
+    'show_owner': False,
+    'show_downloading_time': False,
+    'show_seeding_time': False,
+    'show_completed': False,
+    'show_seeds_peers_ratio': False,
+    'show_complete_seen': False,
+    'show_down_limit': False,
+    'show_up_limit': False,
+    'show_shared': False,
+    'queue_width': 4,
+    'name_width': -1,
+    'size_width': 8,
+    'state_width': 13,
+    'progress_width': 7,
+    'seeds_width': 10,
+    'peers_width': 10,
+    'downspeed_width': 7,
+    'upspeed_width': 7,
+    'eta_width': 8,
+    'ratio_width': 10,
+    'avail_width': 10,
+    'added_width': 15,
+    'tracker_width': 15,
+    'savepath_width': 15,
+    'downloaded_width': 13,
+    'uploaded_width': 13,
+    'remaining_width': 13,
+    'owner_width': 10,
+    'downloading_time_width': 10,
+    'seeding_time_width': 10,
+    'completed_width': 15,
+    'seeds_peers_ratio_width': 10,
+    'complete_seen_width': 15,
+    'down_limit_width': 7,
+    'up_limit_width': 7,
+    'shared_width': 10,
+    'ignore_duplicate_lines': False,
+    'move_selection': True,
+    'third_tab_lists_all': False,
+    'torrents_per_tab_press': 15,
+    'sort_primary': 'queue',
+    'sort_secondary': 'name',
+    'separate_complete': True,
+    'ring_bell': False,
+    'save_legacy_history': True,
+    'first_run': True,
+    'addtorrents_show_misc_files': False,  # TODO: Showing/hiding this
+    'addtorrents_show_hidden_folders': False,  # TODO: Showing/hiding this
+    'addtorrents_sort_column': 'date',
+    'addtorrents_reverse_sort': True,
+    'addtorrents_last_path': '~'
 }
 
-column_pref_names = ["queue", "name", "size", "state", "progress", "seeds",
-                     "peers", "downspeed", "upspeed", "eta", "ratio", "avail",
-                     "added", "tracker", "savepath", "downloaded", "uploaded",
-                     "remaining", "owner", "downloading_time", "seeding_time",
-                     "completed", "seeds_peers_ratio", "complete_seen",
-                     "down_limit", "up_limit", "shared",
+column_pref_names = ['queue', 'name', 'size', 'state', 'progress', 'seeds',
+                     'peers', 'downspeed', 'upspeed', 'eta', 'ratio', 'avail',
+                     'added', 'tracker', 'savepath', 'downloaded', 'uploaded',
+                     'remaining', 'owner', 'downloading_time', 'seeding_time',
+                     'completed', 'seeds_peers_ratio', 'complete_seen',
+                     'down_limit', 'up_limit', 'shared',
                      ]
 
 prefs_to_names = {
-    "queue": "#",
-    "name": "Name",
-    "size": "Size",
-    "state": "State",
-    "progress": "Progress",
-    "seeds": "Seeds",
-    "peers": "Peers",
-    "downspeed": "Down Speed",
-    "upspeed": "Up Speed",
-    "eta": "ETA",
-    "ratio": "Ratio",
-    "avail": "Avail",
-    "added": "Added",
-    "tracker": "Tracker",
-    "savepath": "Download Folder",
-    "downloaded": "Downloaded",
-    "uploaded": "Uploaded",
-    "remaining": "Remaining",
-    "owner": "Owner",
-    "seeding_time": "Seeding Time",
-    "downloading_time": "Active Time",
-    "complete_seen": "Complete Seen",
-    "completed": "Completed",
-    "seeds_peers_ratio": "Seeds:Peers",
-    "down_limit": "Down Limit",
-    "up_limit": "Up Limit",
-    "shared": "Shared"
+    'queue': '#',
+    'name': 'Name',
+    'size': 'Size',
+    'state': 'State',
+    'progress': 'Progress',
+    'seeds': 'Seeds',
+    'peers': 'Peers',
+    'downspeed': 'Down Speed',
+    'upspeed': 'Up Speed',
+    'eta': 'ETA',
+    'ratio': 'Ratio',
+    'avail': 'Avail',
+    'added': 'Added',
+    'tracker': 'Tracker',
+    'savepath': 'Download Folder',
+    'downloaded': 'Downloaded',
+    'uploaded': 'Uploaded',
+    'remaining': 'Remaining',
+    'owner': 'Owner',
+    'seeding_time': 'Seeding Time',
+    'downloading_time': 'Active Time',
+    'complete_seen': 'Complete Seen',
+    'completed': 'Completed',
+    'seeds_peers_ratio': 'Seeds:Peers',
+    'down_limit': 'Down Limit',
+    'up_limit': 'Up Limit',
+    'shared': 'Shared'
 }
 
 column_names_to_state_keys = {
-    "size": "total_wanted",
-    "downspeed": "download_payload_rate",
-    "upspeed": "upload_payload_rate",
-    "seeds": "num_seeds",
-    "peers": "num_peers",
-    "avail": "distributed_copies",
-    "added": "time_added",
-    "tracker": "tracker_host",
-    "savepath": "download_location",
-    "uploaded": "total_uploaded",
-    "downloaded": "all_time_download",
-    "remaining": "total_remaining",
-    "seeding_time": "seeding_time",
-    "downloading_time": "active_time",
-    "complete_seen": "last_seen_complete",
-    "completed": "completed_time",
-    "seeds_peers_ratio": "seeds_peers_ratio",
-    "down_limit": "max_download_speed",
-    "up_limit": "max_upload_speed",
-    "shared": "shared"
+    'size': 'total_wanted',
+    'downspeed': 'download_payload_rate',
+    'upspeed': 'upload_payload_rate',
+    'seeds': 'num_seeds',
+    'peers': 'num_peers',
+    'avail': 'distributed_copies',
+    'added': 'time_added',
+    'tracker': 'tracker_host',
+    'savepath': 'download_location',
+    'uploaded': 'total_uploaded',
+    'downloaded': 'all_time_download',
+    'remaining': 'total_remaining',
+    'seeding_time': 'seeding_time',
+    'downloading_time': 'active_time',
+    'complete_seen': 'last_seen_complete',
+    'completed': 'completed_time',
+    'seeds_peers_ratio': 'seeds_peers_ratio',
+    'down_limit': 'max_download_speed',
+    'up_limit': 'max_upload_speed',
+    'shared': 'shared'
 }
 
 reverse_sort_fields = [
-    "total_wanted",
-    "download_payload_rate",
-    "upload_payload_rate",
-    "num_seeds",
-    "num_peers",
-    "distributed_copies",
-    "time_added",
-    "total_uploaded",
-    "all_time_download",
-    "total_remaining",
-    "progress",
-    "ratio",
-    "seeding_time",
-    "active_time"
+    'total_wanted',
+    'download_payload_rate',
+    'upload_payload_rate',
+    'num_seeds',
+    'num_peers',
+    'distributed_copies',
+    'time_added',
+    'total_uploaded',
+    'all_time_download',
+    'total_remaining',
+    'progress',
+    'ratio',
+    'seeding_time',
+    'active_time'
 ]
 
 SEARCH_EMPTY = 0
@@ -278,7 +278,7 @@ class AllTorrents(BaseMode, component.Component):
         self._cached_rows = {}
         self.cursel = 1
         self.curoff = 1  # TODO: this should really be 0 indexed
-        self.column_string = ""
+        self.column_string = ''
         self.popup = None
         self.messages = deque()
         self.marked = []
@@ -291,7 +291,7 @@ class AllTorrents(BaseMode, component.Component):
         self.search_string = None
         self.search_state = SEARCH_EMPTY
 
-        self.coreconfig = component.get("ConsoleUI").coreconfig
+        self.coreconfig = component.get('ConsoleUI').coreconfig
 
         self.legacy_mode = None
 
@@ -299,76 +299,76 @@ class AllTorrents(BaseMode, component.Component):
         self.__torrent_info_id = None
 
         BaseMode.__init__(self, stdscr, encoding)
-        component.Component.__init__(self, "AllTorrents", 1, depend=["SessionProxy"])
+        component.Component.__init__(self, 'AllTorrents', 1, depend=['SessionProxy'])
         curses.curs_set(0)
         self.stdscr.notimeout(0)
 
         self.update_config()
 
-        component.start(["AllTorrents"])
+        component.start(['AllTorrents'])
 
         self._info_fields = [
-            ("Name", None, ("name",)),
-            ("State", None, ("state",)),
-            ("Down Speed", format_utils.format_speed, ("download_payload_rate",)),
-            ("Up Speed", format_utils.format_speed, ("upload_payload_rate",)),
-            ("Progress", format_utils.format_progress, ("progress",)),
-            ("ETA", deluge.common.ftime, ("eta",)),
-            ("Download Folder", None, ("download_location",)),
-            ("Downloaded", deluge.common.fsize, ("all_time_download",)),
-            ("Uploaded", deluge.common.fsize, ("total_uploaded",)),
-            ("Share Ratio", format_utils.format_float, ("ratio",)),
-            ("Seeds", format_utils.format_seeds_peers, ("num_seeds", "total_seeds")),
-            ("Peers", format_utils.format_seeds_peers, ("num_peers", "total_peers")),
-            ("Active Time", deluge.common.ftime, ("active_time",)),
-            ("Seeding Time", deluge.common.ftime, ("seeding_time",)),
-            ("Complete Seen", format_utils.format_date_never, ("last_seen_complete",)),
-            ("Date Added", format_utils.format_time, ("time_added",)),
-            ("Completed", format_utils.format_date, ("completed_time",)),
-            ("Availability", format_utils.format_float, ("distributed_copies",)),
-            ("Pieces", format_utils.format_pieces, ("num_pieces", "piece_length")),
-            ("Seed Rank", str, ("seed_rank",)),
+            ('Name', None, ('name',)),
+            ('State', None, ('state',)),
+            ('Down Speed', format_utils.format_speed, ('download_payload_rate',)),
+            ('Up Speed', format_utils.format_speed, ('upload_payload_rate',)),
+            ('Progress', format_utils.format_progress, ('progress',)),
+            ('ETA', deluge.common.ftime, ('eta',)),
+            ('Download Folder', None, ('download_location',)),
+            ('Downloaded', deluge.common.fsize, ('all_time_download',)),
+            ('Uploaded', deluge.common.fsize, ('total_uploaded',)),
+            ('Share Ratio', format_utils.format_float, ('ratio',)),
+            ('Seeds', format_utils.format_seeds_peers, ('num_seeds', 'total_seeds')),
+            ('Peers', format_utils.format_seeds_peers, ('num_peers', 'total_peers')),
+            ('Active Time', deluge.common.ftime, ('active_time',)),
+            ('Seeding Time', deluge.common.ftime, ('seeding_time',)),
+            ('Complete Seen', format_utils.format_date_never, ('last_seen_complete',)),
+            ('Date Added', format_utils.format_time, ('time_added',)),
+            ('Completed', format_utils.format_date, ('completed_time',)),
+            ('Availability', format_utils.format_float, ('distributed_copies',)),
+            ('Pieces', format_utils.format_pieces, ('num_pieces', 'piece_length')),
+            ('Seed Rank', str, ('seed_rank',)),
         ]
 
-        self.__status_keys = ["name", "state", "download_payload_rate", "upload_payload_rate",
-                              "progress", "eta", "download_location", "all_time_download", "total_uploaded",
-                              "ratio", "num_seeds", "total_seeds", "num_peers", "total_peers",
-                              "active_time", "seeding_time", "last_seen_complete", "time_added",
-                              "completed_time", "distributed_copies", "num_pieces", "piece_length",
-                              "seed_rank"
+        self.__status_keys = ['name', 'state', 'download_payload_rate', 'upload_payload_rate',
+                              'progress', 'eta', 'download_location', 'all_time_download', 'total_uploaded',
+                              'ratio', 'num_seeds', 'total_seeds', 'num_peers', 'total_peers',
+                              'active_time', 'seeding_time', 'last_seen_complete', 'time_added',
+                              'completed_time', 'distributed_copies', 'num_pieces', 'piece_length',
+                              'seed_rank'
                               ]
 
         self.legacy_mode = Legacy(self.stdscr, self.encoding)
 
-        if self.config["first_run"]:
-            self.popup = MessagePopup(self, "Welcome to Deluge", HELP_STR, width_req=0.75)
-            self.config["first_run"] = False
+        if self.config['first_run']:
+            self.popup = MessagePopup(self, 'Welcome to Deluge', HELP_STR, width_req=0.75)
+            self.config['first_run'] = False
             self.config.save()
 
     # component start/update
     def start(self):
-        component.get("SessionProxy").get_torrents_status(self.__status_dict, self.__status_fields
+        component.get('SessionProxy').get_torrents_status(self.__status_dict, self.__status_fields
                                                           ).addCallback(self.set_state, False)
 
     def update(self):
-        component.get("SessionProxy").get_torrents_status(self.__status_dict, self.__status_fields
+        component.get('SessionProxy').get_torrents_status(self.__status_dict, self.__status_fields
                                                           ).addCallback(self.set_state, True)
         if self.__torrent_info_id:
-            component.get("SessionProxy").get_torrent_status(self.__torrent_info_id, self.__status_keys
+            component.get('SessionProxy').get_torrent_status(self.__torrent_info_id, self.__status_keys
                                                              ).addCallback(self._on_torrent_status)
 
     def update_config(self):
-        self.config = ConfigManager("console.conf", DEFAULT_PREFS)
-        s_primary = self.config["sort_primary"]
-        s_secondary = self.config["sort_secondary"]
+        self.config = ConfigManager('console.conf', DEFAULT_PREFS)
+        s_primary = self.config['sort_primary']
+        s_secondary = self.config['sort_secondary']
         self.__cols_to_show = [pref for pref in column_pref_names
-                               if ("show_%s" % pref) not in self.config or self.config["show_%s" % pref]]
+                               if ('show_%s' % pref) not in self.config or self.config['show_%s' % pref]]
 
         self.__columns = [prefs_to_names[col] for col in self.__cols_to_show]
         self.__status_fields = deluge.ui.console.modes.column.get_required_fields(self.__columns)
 
         # we always need these, even if we're not displaying them
-        for rf in ["state", "name", "queue", "progress"]:
+        for rf in ['state', 'name', 'queue', 'progress']:
             if rf not in self.__status_fields:
                 self.__status_fields.append(rf)
 
@@ -381,11 +381,11 @@ class AllTorrents(BaseMode, component.Component):
         self.__update_columns()
 
     def resume(self):
-        component.start(["AllTorrents"])
+        component.start(['AllTorrents'])
         self.refresh()
 
     def __update_columns(self):
-        self.column_widths = [self.config["%s_width" % c] for c in self.__cols_to_show]
+        self.column_widths = [self.config['%s_width' % c] for c in self.__cols_to_show]
         req = sum(filter(lambda x: x >= 0, self.column_widths))
         if (req > self.cols):  # can't satisfy requests, just spread out evenly
             cw = int(self.cols / len(self.__columns))
@@ -400,12 +400,12 @@ class AllTorrents(BaseMode, component.Component):
                     if (self.column_widths[i] < 0):
                         self.column_widths[i] = vw
 
-        self.column_string = "{!header!}"
+        self.column_string = '{!header!}'
 
         try:
-            primary_sort_col_name = prefs_to_names[self.config["sort_primary"]]
+            primary_sort_col_name = prefs_to_names[self.config['sort_primary']]
         except:
-            primary_sort_col_name = ""
+            primary_sort_col_name = ''
 
         for i, column in enumerate(self.__columns):
             ccol = column
@@ -416,14 +416,14 @@ class AllTorrents(BaseMode, component.Component):
                 ccol = ccol[:width - 1]
 
             # Padding
-            ccol += " " * (width - len(ccol))
+            ccol += ' ' * (width - len(ccol))
 
             # Highlight the primary sort column
             if column == primary_sort_col_name:
                 if i != len(self.__columns) - 1:
-                    ccol = "{!black,green,bold!}%s{!header!}" % ccol
+                    ccol = '{!black,green,bold!}%s{!header!}' % ccol
                 else:
-                    ccol = ("{!black,green,bold!}%s" % ccol)[:-1]
+                    ccol = ('{!black,green,bold!}%s' % ccol)[:-1]
 
             self.column_string += ccol
 
@@ -434,7 +434,7 @@ class AllTorrents(BaseMode, component.Component):
         self._sorted_ids = self._sort_torrents(self.curstate)
         for torrent_id in self._sorted_ids:
             ts = self.curstate[torrent_id]
-            newnames.append(ts["name"])
+            newnames.append(ts['name'])
 
         self.numtorrents = len(state)
         self.torrent_names = newnames
@@ -476,7 +476,7 @@ class AllTorrents(BaseMode, component.Component):
     def _on_torrent_status(self, state):
         if (self.popup):
             self.popup.clear()
-            name = state["name"]
+            name = state['name']
             self.popup.set_title(name)
             for i, f in enumerate(self._info_fields):
                 if f[1] is not None:
@@ -485,7 +485,7 @@ class AllTorrents(BaseMode, component.Component):
                         for key in f[2]:
                             args.append(state[key])
                     except Exception as ex:
-                        log.debug("Could not get info field: %s", ex)
+                        log.debug('Could not get info field: %s', ex)
                         continue
                     info = f[1](*args)
                 else:
@@ -493,14 +493,14 @@ class AllTorrents(BaseMode, component.Component):
 
                 nl = len(f[0]) + 4
                 if (nl + len(info)) > self.popup.width:
-                    self.popup.add_line("{!info!}%s: {!input!}%s" % (f[0], info[:(self.popup.width - nl)]))
+                    self.popup.add_line('{!info!}%s: {!input!}%s' % (f[0], info[:(self.popup.width - nl)]))
                     info = info[(self.popup.width - nl):]
                     n = self.popup.width - 3
                     chunks = [info[i:i + n] for i in xrange(0, len(info), n)]
                     for c in chunks:
-                        self.popup.add_line(" %s" % c)
+                        self.popup.add_line(' %s' % c)
                 else:
-                    self.popup.add_line("{!info!}%s: {!input!}%s" % (f[0], info))
+                    self.popup.add_line('{!info!}%s: {!input!}%s' % (f[0], info))
             self.refresh()
         else:
             self.__torrent_info_id = None
@@ -528,13 +528,13 @@ class AllTorrents(BaseMode, component.Component):
             return -1
 
     def _sort_torrents(self, state):
-        "sorts by primary and secondary sort fields"
+        'sorts by primary and secondary sort fields'
 
         if not state:
             return {}
 
-        s_primary = self.config["sort_primary"]
-        s_secondary = self.config["sort_secondary"]
+        s_primary = self.config['sort_primary']
+        s_secondary = self.config['sort_secondary']
 
         result = state
 
@@ -567,47 +567,47 @@ class AllTorrents(BaseMode, component.Component):
                 else:
                     result = sorted(result, cmp_func, sort_key, reverse)
 
-            if field == "eta":
-                result = sorted(result, key=lambda s: state.get(s)["eta"] == 0)
+            if field == 'eta':
+                result = sorted(result, key=lambda s: state.get(s)['eta'] == 0)
 
             return result
 
         # Just in case primary and secondary fields are empty and/or
         # both are too ambiguous, also sort by queue position first
-        if "queue" not in [s_secondary, s_primary]:
-            result = sort_by_field(state, result, "queue")
+        if 'queue' not in [s_secondary, s_primary]:
+            result = sort_by_field(state, result, 'queue')
         if s_secondary != s_primary:
             result = sort_by_field(state, result, s_secondary)
         result = sort_by_field(state, result, s_primary)
 
-        if self.config["separate_complete"]:
-            result = sorted(result, cmp_func, lambda s: state.get(s)["progress"] == 100.0)
+        if self.config['separate_complete']:
+            result = sorted(result, cmp_func, lambda s: state.get(s)['progress'] == 100.0)
 
         return result
 
     def _format_queue(self, qnum):
         if (qnum >= 0):
-            return "%d" % (qnum + 1)
+            return '%d' % (qnum + 1)
         else:
-            return ""
+            return ''
 
     def show_addtorrents_screen(self):
         def dodeets(arg):
             if arg and True in arg[0]:
                 self.stdscr.erase()
-                component.get("ConsoleUI").set_mode(AddTorrents(self, self.stdscr, self.config, self.encoding))
+                component.get('ConsoleUI').set_mode(AddTorrents(self, self.stdscr, self.config, self.encoding))
             else:
-                self.messages.append(("Error", "An error occurred trying to display add torrents screen"))
-        component.stop(["AllTorrents"]).addCallback(dodeets)
+                self.messages.append(('Error', 'An error occurred trying to display add torrents screen'))
+        component.stop(['AllTorrents']).addCallback(dodeets)
 
     def show_torrent_details(self, tid):
         def dodeets(arg):
             if arg and True in arg[0]:
                 self.stdscr.erase()
-                component.get("ConsoleUI").set_mode(TorrentDetail(self, tid, self.stdscr, self.config, self.encoding))
+                component.get('ConsoleUI').set_mode(TorrentDetail(self, tid, self.stdscr, self.config, self.encoding))
             else:
-                self.messages.append(("Error", "An error occurred trying to display torrent details"))
-        component.stop(["AllTorrents"]).addCallback(dodeets)
+                self.messages.append(('Error', 'An error occurred trying to display torrent details'))
+        component.stop(['AllTorrents']).addCallback(dodeets)
 
     def show_preferences(self):
         def _on_get_config(config):
@@ -620,11 +620,11 @@ class AllTorrents(BaseMode, component.Component):
             def doprefs(arg):
                 if arg and True in arg[0]:
                     self.stdscr.erase()
-                    component.get("ConsoleUI").set_mode(Preferences(self, config, self.config, port,
+                    component.get('ConsoleUI').set_mode(Preferences(self, config, self.config, port,
                                                                     status, self.stdscr, self.encoding))
                 else:
-                    self.messages.append(("Error", "An error occurred trying to display preferences"))
-            component.stop(["AllTorrents"]).addCallback(doprefs)
+                    self.messages.append(('Error', 'An error occurred trying to display preferences'))
+            component.stop(['AllTorrents']).addCallback(doprefs)
 
         client.core.get_config().addCallback(_on_get_config)
 
@@ -632,102 +632,102 @@ class AllTorrents(BaseMode, component.Component):
         def doevents(arg):
             if arg and True in arg[0]:
                 self.stdscr.erase()
-                component.get("ConsoleUI").set_mode(EventView(self, self.stdscr, self.encoding))
+                component.get('ConsoleUI').set_mode(EventView(self, self.stdscr, self.encoding))
             else:
-                self.messages.append(("Error", "An error occurred trying to display events"))
-        component.stop(["AllTorrents"]).addCallback(doevents)
+                self.messages.append(('Error', 'An error occurred trying to display events'))
+        component.stop(['AllTorrents']).addCallback(doevents)
 
     def __legacy_mode(self):
         def dolegacy(arg):
             if arg and True in arg[0]:
                 self.stdscr.erase()
-                component.get("ConsoleUI").set_mode(self.legacy_mode)
+                component.get('ConsoleUI').set_mode(self.legacy_mode)
                 self.legacy_mode.refresh()
                 curses.curs_set(2)
             else:
-                self.messages.append(("Error", "An error occurred trying to switch to legacy mode"))
-        component.stop(["AllTorrents"]).addCallback(dolegacy)
+                self.messages.append(('Error', 'An error occurred trying to switch to legacy mode'))
+        component.stop(['AllTorrents']).addCallback(dolegacy)
 
     def _torrent_filter(self, idx, data):
         if data == FILTER.ALL:
             self.__status_dict = {}
             self._curr_filter = None
         elif data == FILTER.ACTIVE:
-            self.__status_dict = {"state": "Active"}
-            self._curr_filter = "Active"
+            self.__status_dict = {'state': 'Active'}
+            self._curr_filter = 'Active'
         elif data == FILTER.DOWNLOADING:
-            self.__status_dict = {"state": "Downloading"}
-            self._curr_filter = "Downloading"
+            self.__status_dict = {'state': 'Downloading'}
+            self._curr_filter = 'Downloading'
         elif data == FILTER.SEEDING:
-            self.__status_dict = {"state": "Seeding"}
-            self._curr_filter = "Seeding"
+            self.__status_dict = {'state': 'Seeding'}
+            self._curr_filter = 'Seeding'
         elif data == FILTER.PAUSED:
-            self.__status_dict = {"state": "Paused"}
-            self._curr_filter = "Paused"
+            self.__status_dict = {'state': 'Paused'}
+            self._curr_filter = 'Paused'
         elif data == FILTER.CHECKING:
-            self.__status_dict = {"state": "Checking"}
-            self._curr_filter = "Checking"
+            self.__status_dict = {'state': 'Checking'}
+            self._curr_filter = 'Checking'
         elif data == FILTER.ERROR:
-            self.__status_dict = {"state": "Error"}
-            self._curr_filter = "Error"
+            self.__status_dict = {'state': 'Error'}
+            self._curr_filter = 'Error'
         elif data == FILTER.QUEUED:
-            self.__status_dict = {"state": "Queued"}
-            self._curr_filter = "Queued"
+            self.__status_dict = {'state': 'Queued'}
+            self._curr_filter = 'Queued'
         elif data == FILTER.ALLOCATING:
-            self.__status_dict = {"state": "Allocating"}
-            self._curr_filter = "Allocating"
+            self.__status_dict = {'state': 'Allocating'}
+            self._curr_filter = 'Allocating'
         elif data == FILTER.MOVING:
-            self.__status_dict = {"state": "Moving"}
-            self._curr_filter = "Moving"
+            self.__status_dict = {'state': 'Moving'}
+            self._curr_filter = 'Moving'
 
         self._go_top = True
         return True
 
     def _show_torrent_filter_popup(self):
-        self.popup = SelectablePopup(self, "Filter Torrents", self._torrent_filter)
-        self.popup.add_line("_All", data=FILTER.ALL)
-        self.popup.add_line("Ac_tive", data=FILTER.ACTIVE)
-        self.popup.add_line("_Downloading", data=FILTER.DOWNLOADING, foreground="green")
-        self.popup.add_line("_Seeding", data=FILTER.SEEDING, foreground="cyan")
-        self.popup.add_line("_Paused", data=FILTER.PAUSED)
-        self.popup.add_line("_Error", data=FILTER.ERROR, foreground="red")
-        self.popup.add_line("_Checking", data=FILTER.CHECKING, foreground="blue")
-        self.popup.add_line("Q_ueued", data=FILTER.QUEUED, foreground="yellow")
-        self.popup.add_line("A_llocating", data=FILTER.ALLOCATING, foreground="yellow")
-        self.popup.add_line("_Moving", data=FILTER.MOVING, foreground="green")
+        self.popup = SelectablePopup(self, 'Filter Torrents', self._torrent_filter)
+        self.popup.add_line('_All', data=FILTER.ALL)
+        self.popup.add_line('Ac_tive', data=FILTER.ACTIVE)
+        self.popup.add_line('_Downloading', data=FILTER.DOWNLOADING, foreground='green')
+        self.popup.add_line('_Seeding', data=FILTER.SEEDING, foreground='cyan')
+        self.popup.add_line('_Paused', data=FILTER.PAUSED)
+        self.popup.add_line('_Error', data=FILTER.ERROR, foreground='red')
+        self.popup.add_line('_Checking', data=FILTER.CHECKING, foreground='blue')
+        self.popup.add_line('Q_ueued', data=FILTER.QUEUED, foreground='yellow')
+        self.popup.add_line('A_llocating', data=FILTER.ALLOCATING, foreground='yellow')
+        self.popup.add_line('_Moving', data=FILTER.MOVING, foreground='green')
 
     def _report_add_status(self, succ_cnt, fail_cnt, fail_msgs):
         if fail_cnt == 0:
-            self.report_message("Torrents Added", "{!success!}Successfully added %d torrent(s)" % succ_cnt)
+            self.report_message('Torrents Added', '{!success!}Successfully added %d torrent(s)' % succ_cnt)
         else:
-            msg = ("{!error!}Failed to add the following %d torrent(s):\n {!input!}" % fail_cnt) + "\n ".join(fail_msgs)
+            msg = ('{!error!}Failed to add the following %d torrent(s):\n {!input!}' % fail_cnt) + '\n '.join(fail_msgs)
             if succ_cnt != 0:
-                msg += "\n \n{!success!}Successfully added %d torrent(s)" % succ_cnt
-            self.report_message("Torrent Add Report", msg)
+                msg += '\n \n{!success!}Successfully added %d torrent(s)' % succ_cnt
+            self.report_message('Torrent Add Report', msg)
 
     def _show_torrent_add_popup(self):
 
         def do_add_from_url(result):
             def fail_cb(msg, url):
-                log.debug("failed to add torrent: %s: %s" % (url, msg))
-                error_msg = "{!input!} * %s: {!error!}%s" % (url, msg)
+                log.debug('failed to add torrent: %s: %s' % (url, msg))
+                error_msg = '{!input!} * %s: {!error!}%s' % (url, msg)
                 self._report_add_status(0, 1, [error_msg])
 
             def success_cb(tid, url):
                 if tid:
-                    log.debug("added torrent: %s (%s)" % (url, tid))
+                    log.debug('added torrent: %s (%s)' % (url, tid))
                     self._report_add_status(1, 0, [])
                 else:
-                    fail_cb("Already in session (probably)", url)
+                    fail_cb('Already in session (probably)', url)
 
-            url = result["url"]
+            url = result['url']
 
             if not url:
                 return
 
             t_options = {
-                "download_location": result["path"],
-                "add_paused": result["add_paused"]
+                'download_location': result['path'],
+                'add_paused': result['add_paused']
             }
 
             if deluge.common.is_magnet(url):
@@ -735,29 +735,29 @@ class AllTorrents(BaseMode, component.Component):
             elif deluge.common.is_url(url):
                 client.core.add_torrent_url(url, t_options).addCallback(success_cb, url).addErrback(fail_cb, url)
             else:
-                self.messages.append(("Error", "{!error!}Invalid URL or magnet link: %s" % url))
+                self.messages.append(('Error', '{!error!}Invalid URL or magnet link: %s' % url))
                 return
 
-            log.debug("Adding Torrent(s): %s (dl path: %s) (paused: %d)", url, result["path"], result["add_paused"])
+            log.debug('Adding Torrent(s): %s (dl path: %s) (paused: %d)', url, result['path'], result['add_paused'])
 
         def show_add_url_popup():
             try:
-                dl = self.coreconfig["download_location"]
+                dl = self.coreconfig['download_location']
             except KeyError:
-                dl = ""
+                dl = ''
 
             ap = 1
 
             try:
-                if self.coreconfig["add_paused"]:
+                if self.coreconfig['add_paused']:
                     ap = 0
             except KeyError:
                 pass
 
-            self.popup = InputPopup(self, "Add Torrent (Esc to cancel)", close_cb=do_add_from_url)
-            self.popup.add_text_input("Enter torrent URL or Magnet link:", "url")
-            self.popup.add_text_input("Enter save path:", "path", dl)
-            self.popup.add_select_input("Add Paused:", "add_paused", ["Yes", "No"], [True, False], ap)
+            self.popup = InputPopup(self, 'Add Torrent (Esc to cancel)', close_cb=do_add_from_url)
+            self.popup.add_text_input('Enter torrent URL or Magnet link:', 'url')
+            self.popup.add_text_input('Enter save path:', 'path', dl)
+            self.popup.add_select_input('Add Paused:', 'add_paused', ['Yes', 'No'], [True, False], ap)
 
         def option_chosen(index, data):
             self.popup = None
@@ -769,10 +769,10 @@ class AllTorrents(BaseMode, component.Component):
             elif data == 2:
                 show_add_url_popup()
 
-        self.popup = SelectablePopup(self, "Add torrent", option_chosen)
-        self.popup.add_line("From _File(s)", data=1)
-        self.popup.add_line("From _URL or Magnet", data=2)
-        self.popup.add_line("_Cancel", data=0)
+        self.popup = SelectablePopup(self, 'Add torrent', option_chosen)
+        self.popup.add_line('From _File(s)', data=1)
+        self.popup.add_line('From _URL or Magnet', data=2)
+        self.popup.add_line('_Cancel', data=0)
 
     def _do_set_column_visibility(self, data):
         for key, value in data.items():
@@ -783,14 +783,14 @@ class AllTorrents(BaseMode, component.Component):
         self.refresh([])
 
     def _show_visible_columns_popup(self):
-        title = "Visible columns (Enter to exit)"
+        title = 'Visible columns (Enter to exit)'
         self.popup = InputPopup(self, title, close_cb=self._do_set_column_visibility,
                                 immediate_action=True, height_req=len(column_pref_names) + 1,
                                 width_req=max([len(col) for col in column_pref_names + [title]]) + 8)
 
         for col in column_pref_names:
             name = prefs_to_names[col]
-            prop = "show_%s" % col
+            prop = 'show_%s' % col
             if prop not in self.config:
                 continue
             state = self.config[prop]
@@ -824,7 +824,7 @@ class AllTorrents(BaseMode, component.Component):
             self.popup = MessagePopup(self, title, msg, width_req=1.0)
 
         if not lines:
-            if component.get("ConsoleUI").screen != self:
+            if component.get('ConsoleUI').screen != self:
                 return
             self.stdscr.erase()
 
@@ -832,17 +832,17 @@ class AllTorrents(BaseMode, component.Component):
         if self._curr_filter is None:
             self.add_string(0, self.statusbars.topbar)
         else:
-            self.add_string(0, "%s    {!filterstatus!}Current filter: %s" % (self.statusbars.topbar, self._curr_filter))
+            self.add_string(0, '%s    {!filterstatus!}Current filter: %s' % (self.statusbars.topbar, self._curr_filter))
         self.add_string(1, self.column_string)
 
         if self.entering_search:
             string = {
-                SEARCH_EMPTY: "{!black,white!}Search torrents: %s{!black,white!}",
-                SEARCH_SUCCESS: "{!black,white!}Search torrents: {!black,green!}%s{!black,white!}",
-                SEARCH_FAILING: "{!black,white!}Search torrents: {!black,red!}%s{!black,white!}",
+                SEARCH_EMPTY: '{!black,white!}Search torrents: %s{!black,white!}',
+                SEARCH_SUCCESS: '{!black,white!}Search torrents: {!black,green!}%s{!black,white!}',
+                SEARCH_FAILING: '{!black,white!}Search torrents: {!black,red!}%s{!black,white!}',
                 SEARCH_START_REACHED:
-                "{!black,white!}Search torrents: {!black,yellow!}%s{!black,white!} (start reached)",
-                SEARCH_END_REACHED: "{!black,white!}Search torrents: {!black,yellow!}%s{!black,white!} (end reached)"
+                '{!black,white!}Search torrents: {!black,yellow!}%s{!black,white!} (start reached)',
+                SEARCH_END_REACHED: '{!black,white!}Search torrents: {!black,yellow!}%s{!black,white!} (end reached)'
             }[self.search_state] % self.search_string
 
             self.add_string(self.rows - 1, string)
@@ -851,9 +851,9 @@ class AllTorrents(BaseMode, component.Component):
             try:
                 rf = format_utils.remove_formatting
                 string = self.statusbars.bottombar
-                hstr = "Press {!magenta,blue,bold!}[h]{!status!} for help"
+                hstr = 'Press {!magenta,blue,bold!}[h]{!status!} for help'
 
-                string += " " * (self.cols - len(rf(string)) - len(rf(hstr))) + hstr
+                string += ' ' * (self.cols - len(rf(string)) - len(rf(hstr))) + hstr
 
                 self.add_string(self.rows - 1, string)
             except:
@@ -861,8 +861,8 @@ class AllTorrents(BaseMode, component.Component):
 
         # add all the torrents
         if self.numtorrents == 0:
-            msg = "No torrents match filter".center(self.cols)
-            self.add_string(3, "{!info!}%s" % msg)
+            msg = 'No torrents match filter'.center(self.cols)
+            self.add_string(3, '{!info!}%s' % msg)
         elif self.numtorrents > 0:
             tidx = self.curoff
             currow = 2
@@ -879,7 +879,7 @@ class AllTorrents(BaseMode, component.Component):
             def draw_row(index):
                 if index not in cr:
                     ts = curstate[sorted_ids[index]]
-                    cr[index] = (fr([gcv(name, ts) for name in cols], colw), ts["state"])
+                    cr[index] = (fr([gcv(name, ts) for name in cols], colw), ts['state'])
                 return cr[index]
 
             if lines:
@@ -902,37 +902,37 @@ class AllTorrents(BaseMode, component.Component):
 
             for row in todraw:
                 # default style
-                fg = "white"
-                bg = "black"
+                fg = 'white'
+                bg = 'black'
                 attr = None
                 if lines:
                     tidx = lines.pop() + 1
                     currow = tidx - self.curoff + 2
 
                 if tidx in self.marked:
-                    bg = "blue"
-                    attr = "bold"
+                    bg = 'blue'
+                    attr = 'bold'
 
                 if tidx == self.cursel:
-                    bg = "white"
-                    attr = "bold"
+                    bg = 'white'
+                    attr = 'bold'
                     if tidx in self.marked:
-                        fg = "blue"
+                        fg = 'blue'
                     else:
-                        fg = "black"
+                        fg = 'black'
 
-                if row[1] == "Downloading":
-                    fg = "green"
-                elif row[1] == "Seeding":
-                    fg = "cyan"
-                elif row[1] == "Error":
-                    fg = "red"
-                elif row[1] == "Queued":
-                    fg = "yellow"
-                elif row[1] == "Checking":
-                    fg = "blue"
-                elif row[1] == "Moving":
-                    fg = "green"
+                if row[1] == 'Downloading':
+                    fg = 'green'
+                elif row[1] == 'Seeding':
+                    fg = 'cyan'
+                elif row[1] == 'Error':
+                    fg = 'red'
+                elif row[1] == 'Queued':
+                    fg = 'yellow'
+                elif row[1] == 'Checking':
+                    fg = 'blue'
+                elif row[1] == 'Moving':
+                    fg = 'green'
 
                 if self.entering_search and len(self.search_string) > 1:
                     lcase_name = self.torrent_names[tidx - 1].lower()
@@ -941,20 +941,20 @@ class AllTorrents(BaseMode, component.Component):
                         if tidx == self.cursel:
                             pass
                         elif tidx in self.marked:
-                            bg = "magenta"
+                            bg = 'magenta'
                         else:
-                            bg = "green"
-                            if fg == "green":
-                                fg = "black"
-                            attr = "bold"
+                            bg = 'green'
+                            if fg == 'green':
+                                fg = 'black'
+                            attr = 'bold'
 
                 if attr:
-                    colorstr = "{!%s,%s,%s!}" % (fg, bg, attr)
+                    colorstr = '{!%s,%s,%s!}' % (fg, bg, attr)
                 else:
-                    colorstr = "{!%s,%s!}" % (fg, bg)
+                    colorstr = '{!%s,%s!}' % (fg, bg)
 
                 try:
-                    self.add_string(currow, "%s%s" % (colorstr, row[0]), trim=False)
+                    self.add_string(currow, '%s%s' % (colorstr, row[0]), trim=False)
                 except:
                     # Yeah, this should be fixed in some better way
                     pass
@@ -963,7 +963,7 @@ class AllTorrents(BaseMode, component.Component):
                 if (currow > (self.rows - 2)):
                     break
         else:
-            self.add_string(1, "Waiting for torrents from core...")
+            self.add_string(1, 'Waiting for torrents from core...')
 
         # self.stdscr.redrawwin()
         if self.entering_search:
@@ -972,7 +972,7 @@ class AllTorrents(BaseMode, component.Component):
         else:
             curses.curs_set(0)
 
-        if component.get("ConsoleUI").screen != self:
+        if component.get('ConsoleUI').screen != self:
             return
 
         self.stdscr.noutrefresh()
@@ -1002,7 +1002,7 @@ class AllTorrents(BaseMode, component.Component):
 
         return match_count
 
-    def __do_search(self, direction="first", skip=0):
+    def __do_search(self, direction='first', skip=0):
         """
         Performs a search on visible torrent and sets cursor to the match
 
@@ -1011,17 +1011,17 @@ class AllTorrents(BaseMode, component.Component):
         :returns: Nothing
         """
 
-        if direction == "first":
+        if direction == 'first':
             search_space = enumerate(self.torrent_names)
-        elif direction == "last":
+        elif direction == 'last':
             search_space = enumerate(self.torrent_names)
             search_space = list(search_space)
             search_space = reversed(search_space)
-        elif direction == "next":
+        elif direction == 'next':
             search_space = enumerate(self.torrent_names)
             search_space = list(search_space)
             search_space = search_space[self.cursel:]
-        elif direction == "previous":
+        elif direction == 'previous':
             search_space = enumerate(self.torrent_names)
             search_space = list(search_space)[:self.cursel - 1]
             search_space = reversed(search_space)
@@ -1040,11 +1040,11 @@ class AllTorrents(BaseMode, component.Component):
                     self.curoff = max(1, self.cursel - 1)
                 self.search_state = SEARCH_SUCCESS
                 return
-        if direction in ["first", "last"]:
+        if direction in ['first', 'last']:
             self.search_state = SEARCH_FAILING
-        elif direction == "next":
+        elif direction == 'next':
             self.search_state = SEARCH_END_REACHED
-        elif direction == "previous":
+        elif direction == 'previous':
             self.search_state = SEARCH_START_REACHED
 
     def __update_search(self, c):
@@ -1061,16 +1061,16 @@ class AllTorrents(BaseMode, component.Component):
             self.refresh([])
 
         elif c == curses.KEY_DC:
-            self.search_string = ""
+            self.search_string = ''
             self.search_state = SEARCH_SUCCESS
             self.refresh([])
 
         elif c == curses.KEY_UP:
-            self.__do_search("previous")
+            self.__do_search('previous')
             self.refresh([])
 
         elif c == curses.KEY_DOWN:
-            self.__do_search("next")
+            self.__do_search('next')
             self.refresh([])
 
         elif c == curses.KEY_LEFT:
@@ -1078,7 +1078,7 @@ class AllTorrents(BaseMode, component.Component):
             self.search_state = SEARCH_EMPTY
             self.refresh([])
 
-        elif c == ord("/"):
+        elif c == ord('/'):
             self.entering_search = False
             self.search_state = SEARCH_EMPTY
             self.refresh([])
@@ -1088,11 +1088,11 @@ class AllTorrents(BaseMode, component.Component):
             self.show_torrent_details(tid)
 
         elif c == curses.KEY_HOME:
-            self.__do_search("first")
+            self.__do_search('first')
             self.refresh([])
 
         elif c == curses.KEY_END:
-            self.__do_search("last")
+            self.__do_search('last')
             self.refresh([])
 
         elif c in [10, curses.KEY_ENTER]:
@@ -1101,14 +1101,14 @@ class AllTorrents(BaseMode, component.Component):
             torrent_actions_popup(self, [tid], details=True)
 
         elif c == 27:
-            self.search_string = ""
+            self.search_string = ''
             self.search_state = SEARCH_EMPTY
             self.refresh([])
 
         elif c > 31 and c < 256:
             old_search_string = self.search_string
             stroke = chr(c)
-            uchar = ""
+            uchar = ''
             while not uchar:
                 try:
                     uchar = stroke.decode(self.encoding)
@@ -1150,7 +1150,7 @@ class AllTorrents(BaseMode, component.Component):
             return
 
         if c > 31 and c < 256:
-            if chr(c) == "Q":
+            if chr(c) == 'Q':
                 from twisted.internet import reactor
                 if client.connected():
                     def on_disconnect(result):
@@ -1207,29 +1207,29 @@ class AllTorrents(BaseMode, component.Component):
             return
         else:
             if c > 31 and c < 256:
-                if chr(c) == "/":
-                    self.search_string = ""
+                if chr(c) == '/':
+                    self.search_string = ''
                     self.entering_search = True
-                elif chr(c) == "n" and self.search_string:
-                    self.__do_search("next")
-                elif chr(c) == "j":
+                elif chr(c) == 'n' and self.search_string:
+                    self.__do_search('next')
+                elif chr(c) == 'j':
                     if not self._scroll_up(1):
                         effected_lines = [self.cursel - 1, self.cursel]
-                elif chr(c) == "k":
+                elif chr(c) == 'k':
                     if not self._scroll_down(1):
                         effected_lines = [self.cursel - 2, self.cursel - 1]
-                elif chr(c) == "i":
+                elif chr(c) == 'i':
                     cid = self.current_torrent_id()
                     if cid:
                         def cb():
                             self.__torrent_info_id = None
-                        self.popup = Popup(self, "Info", close_cb=cb, height_req=20)
-                        self.popup.add_line("Getting torrent info...")
+                        self.popup = Popup(self, 'Info', close_cb=cb, height_req=20)
+                        self.popup.add_line('Getting torrent info...')
                         self.__torrent_info_id = cid
-                elif chr(c) == "m":
+                elif chr(c) == 'm':
                     self._mark_unmark(self.cursel)
                     effected_lines = [self.cursel - 1]
-                elif chr(c) == "M":
+                elif chr(c) == 'M':
                     if self.last_mark >= 0:
                         if (self.cursel + 1) > self.last_mark:
                             mrange = range(self.last_mark, self.cursel + 1)
@@ -1240,14 +1240,14 @@ class AllTorrents(BaseMode, component.Component):
                     else:
                         self._mark_unmark(self.cursel)
                         effected_lines = [self.cursel - 1]
-                elif chr(c) == "c":
+                elif chr(c) == 'c':
                     self.marked = []
                     self.last_mark = -1
-                elif chr(c) == "a":
+                elif chr(c) == 'a':
                     self._show_torrent_add_popup()
-                elif chr(c) == "v":
+                elif chr(c) == 'v':
                     self._show_visible_columns_popup()
-                elif chr(c) == "o":
+                elif chr(c) == 'o':
                     if not self.marked:
                         self.marked = [self.cursel]
                         self.last_mark = self.cursel
@@ -1255,49 +1255,49 @@ class AllTorrents(BaseMode, component.Component):
                         self.last_mark = -1
                     torrent_actions_popup(self, self._selected_torrent_ids(), action=ACTION.TORRENT_OPTIONS)
 
-                elif chr(c) == "<":
+                elif chr(c) == '<':
                     i = len(self.__cols_to_show)
                     try:
-                        i = self.__cols_to_show.index(self.config["sort_primary"]) - 1
+                        i = self.__cols_to_show.index(self.config['sort_primary']) - 1
                     except:
                         pass
 
                     i = max(0, i)
                     i = min(len(self.__cols_to_show) - 1, i)
 
-                    self.config["sort_primary"] = self.__cols_to_show[i]
+                    self.config['sort_primary'] = self.__cols_to_show[i]
                     self.config.save()
                     self.update_config()
                     self.__update_columns()
                     self.refresh([])
 
-                elif chr(c) == ">":
+                elif chr(c) == '>':
                     i = 0
                     try:
-                        i = self.__cols_to_show.index(self.config["sort_primary"]) + 1
+                        i = self.__cols_to_show.index(self.config['sort_primary']) + 1
                     except:
                         pass
 
                     i = min(len(self.__cols_to_show) - 1, i)
                     i = max(0, i)
 
-                    self.config["sort_primary"] = self.__cols_to_show[i]
+                    self.config['sort_primary'] = self.__cols_to_show[i]
                     self.config.save()
                     self.update_config()
                     self.__update_columns()
                     self.refresh([])
 
-                elif chr(c) == "f":
+                elif chr(c) == 'f':
                     self._show_torrent_filter_popup()
-                elif chr(c) == "h":
-                    self.popup = MessagePopup(self, "Help", HELP_STR, width_req=0.75)
-                elif chr(c) == "p":
+                elif chr(c) == 'h':
+                    self.popup = MessagePopup(self, 'Help', HELP_STR, width_req=0.75)
+                elif chr(c) == 'p':
                     self.show_preferences()
                     return
-                elif chr(c) == "e":
+                elif chr(c) == 'e':
                     self.__show_events()
                     return
-                elif chr(c) == "l":
+                elif chr(c) == 'l':
                     self.__legacy_mode()
                     return
 

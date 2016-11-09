@@ -22,7 +22,7 @@ Usage: python minify_web_js.py deluge/ui/web/js/deluge-all
 """
 
 if len(sys.argv) != 2:
-    print "Specify a source js directory... e.g. "
+    print 'Specify a source js directory... e.g. '
     sys.exit(1)
 
 SOURCE_DIR = os.path.abspath(sys.argv[1])

@@ -32,7 +32,7 @@ import os
 import struct
 import sys
 
-__version__ = "1.1"
+__version__ = '1.1'
 
 MESSAGES = {}
 
@@ -87,14 +87,14 @@ def generate():
         koffsets += [l1, o1 + keystart]
         voffsets += [l2, o2 + valuestart]
     offsets = koffsets + voffsets
-    output = struct.pack("Iiiiiii",
+    output = struct.pack('Iiiiiii',
                          0x950412deL,       # Magic
                          0,                 # Version
                          len(keys),         # # of entries
                          7 * 4,             # start of key index
                          7 * 4 + len(keys) * 8,   # start of value index
                          0, 0)              # size and offset of hash table
-    output += array.array("i", offsets).tostring()
+    output += array.array('i', offsets).tostring()
     output += ids
     output += strs
     return output
@@ -183,7 +183,7 @@ def make(filename, outfile):
     output = generate()
 
     try:
-        open(outfile, "wb").write(output)
+        open(outfile, 'wb').write(output)
     except IOError, msg:
         print >> sys.stderr, msg
 
@@ -201,7 +201,7 @@ def main():
         if opt in ('-h', '--help'):
             usage(0)
         elif opt in ('-V', '--version'):
-            print >> sys.stderr, "msgfmt.py", __version__
+            print >> sys.stderr, 'msgfmt.py', __version__
             sys.exit(0)
         elif opt in ('-o', '--output-file'):
             outfile = arg

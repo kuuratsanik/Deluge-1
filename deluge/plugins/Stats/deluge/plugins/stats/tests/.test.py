@@ -94,9 +94,9 @@ def test_write():
 
     file_like = FakeFile()
     surface.write_to_png(file_like)
-    data = "".join(file_like.data)
+    data = ''.join(file_like.data)
 
-    f = open("file_like.png", "wb")
+    f = open('file_like.png', 'wb')
     f.write(data)
     f.close()
 

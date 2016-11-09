@@ -19,7 +19,7 @@ try:
     from deluge.ui.gtkui.gtkui import DEFAULT_PREFS
 except ImportError as err:
     libs_available = False
-    TYPE_UINT64 = "Whatever"
+    TYPE_UINT64 = 'Whatever'
     import traceback
     traceback.print_exc()
 
@@ -43,11 +43,11 @@ class TorrentviewTestCase(BaseTestCase):
 
     def set_up(self):
         if libs_available is False:
-            raise unittest.SkipTest("GTKUI dependencies not available")
+            raise unittest.SkipTest('GTKUI dependencies not available')
 
         common.set_tmp_config_dir()
         # MainWindow loads this config file, so lets make sure it contains the defaults
-        ConfigManager("gtkui.conf", defaults=DEFAULT_PREFS)
+        ConfigManager('gtkui.conf', defaults=DEFAULT_PREFS)
         self.mainwindow = MainWindow()
         self.torrentview = TorrentView()
         self.torrentdetails = TorrentDetails()
@@ -60,13 +60,13 @@ class TorrentviewTestCase(BaseTestCase):
 
         self.assertEquals(self.torrentview.column_index, TorrentviewTestCase.default_column_index)
         self.assertEquals(self.torrentview.liststore_columns, TorrentviewTestCase.default_liststore_columns)
-        self.assertEquals(self.torrentview.columns["Download Folder"].column_indices, [29])
+        self.assertEquals(self.torrentview.columns['Download Folder'].column_indices, [29])
 
     def test_add_column(self):
 
         # Add a text column
-        test_col = "Test column"
-        self.torrentview.add_text_column(test_col, status_field=["label"])
+        test_col = 'Test column'
+        self.torrentview.add_text_column(test_col, status_field=['label'])
         self.assertEquals(len(self.torrentview.liststore_columns),
                           len(TorrentviewTestCase.default_liststore_columns) + 1)
         self.assertEquals(len(self.torrentview.column_index),
@@ -77,12 +77,12 @@ class TorrentviewTestCase(BaseTestCase):
     def test_add_columns(self):
 
         # Add a text column
-        test_col = "Test column"
-        self.torrentview.add_text_column(test_col, status_field=["label"])
+        test_col = 'Test column'
+        self.torrentview.add_text_column(test_col, status_field=['label'])
 
         # Add a second text column
-        test_col2 = "Test column2"
-        self.torrentview.add_text_column(test_col2, status_field=["label2"])
+        test_col2 = 'Test column2'
+        self.torrentview.add_text_column(test_col2, status_field=['label2'])
 
         self.assertEquals(len(self.torrentview.liststore_columns),
                           len(TorrentviewTestCase.default_liststore_columns) + 2)
@@ -99,8 +99,8 @@ class TorrentviewTestCase(BaseTestCase):
     def test_remove_column(self):
 
         # Add and remove text column
-        test_col = "Test column"
-        self.torrentview.add_text_column(test_col, status_field=["label"])
+        test_col = 'Test column'
+        self.torrentview.add_text_column(test_col, status_field=['label'])
         self.torrentview.remove_column(test_col)
 
         self.assertEquals(len(self.torrentview.liststore_columns), len(TorrentviewTestCase.default_liststore_columns))
@@ -111,10 +111,10 @@ class TorrentviewTestCase(BaseTestCase):
     def test_remove_columns(self):
 
         # Add two columns
-        test_col = "Test column"
-        self.torrentview.add_text_column(test_col, status_field=["label"])
-        test_col2 = "Test column2"
-        self.torrentview.add_text_column(test_col2, status_field=["label2"])
+        test_col = 'Test column'
+        self.torrentview.add_text_column(test_col, status_field=['label'])
+        test_col2 = 'Test column2'
+        self.torrentview.add_text_column(test_col2, status_field=['label2'])
 
         # Remove test_col
         self.torrentview.remove_column(test_col)
@@ -135,8 +135,8 @@ class TorrentviewTestCase(BaseTestCase):
     def test_add_remove_column_multiple_types(self):
 
         # Add a column with multiple column types
-        test_col3 = "Test column3"
-        self.torrentview.add_progress_column(test_col3, status_field=["progress", "label3"], col_types=[float, str])
+        test_col3 = 'Test column3'
+        self.torrentview.add_progress_column(test_col3, status_field=['progress', 'label3'], col_types=[float, str])
         self.assertEquals(len(self.torrentview.liststore_columns),
                           len(TorrentviewTestCase.default_liststore_columns) + 2)
         self.assertEquals(len(self.torrentview.column_index),

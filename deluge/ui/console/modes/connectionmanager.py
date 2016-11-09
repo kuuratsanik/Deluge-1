@@ -29,11 +29,11 @@ except ImportError:
 
 log = logging.getLogger(__name__)
 
-DEFAULT_HOST = "127.0.0.1"
+DEFAULT_HOST = '127.0.0.1'
 DEFAULT_PORT = 58846
 
 DEFAULT_CONFIG = {
-    "hosts": [(hashlib.sha1(str(time.time())).hexdigest(), DEFAULT_HOST, DEFAULT_PORT, "", "")]
+    'hosts': [(hashlib.sha1(str(time.time())).hexdigest(), DEFAULT_HOST, DEFAULT_PORT, '', '')]
 }
 
 
@@ -42,21 +42,21 @@ class ConnectionManager(BaseMode):
         self.popup = None
         self.statuses = {}
         self.messages = deque()
-        self.config = ConfigManager("hostlist.conf.1.2", DEFAULT_CONFIG)
+        self.config = ConfigManager('hostlist.conf.1.2', DEFAULT_CONFIG)
         BaseMode.__init__(self, stdscr, encoding)
         self.__update_statuses()
         self.__update_popup()
 
     def __update_popup(self):
-        self.popup = SelectablePopup(self, "Select Host", self.__host_selected)
+        self.popup = SelectablePopup(self, 'Select Host', self.__host_selected)
         self.popup.add_line("{!white,black,bold!}'Q'=quit, 'r'=refresh, 'a'=add new host, 'D'=delete host",
                             selectable=False)
-        for host in self.config["hosts"]:
+        for host in self.config['hosts']:
             if host[0] in self.statuses:
-                self.popup.add_line("%s:%d [Online] (%s)" % (host[1], host[2], self.statuses[host[0]]),
-                                    data=host[0], foreground="green")
+                self.popup.add_line('%s:%d [Online] (%s)' % (host[1], host[2], self.statuses[host[0]]),
+                                    data=host[0], foreground='green')
             else:
-                self.popup.add_line("%s:%d [Offline]" % (host[1], host[2]), data=host[0], foreground="red")
+                self.popup.add_line('%s:%d [Offline]' % (host[1], host[2]), data=host[0], foreground='red')
         self.inlist = True
         self.refresh()
 
@@ -81,7 +81,7 @@ class ConnectionManager(BaseMode):
             if host_id in self.statuses:
                 del self.statuses[host_id]
 
-        for host in self.config["hosts"]:
+        for host in self.config['hosts']:
             c = Client()
             hadr = host[1]
             port = host[2]
@@ -95,48 +95,48 @@ class ConnectionManager(BaseMode):
         component.start()
         self.stdscr.erase()
         at = AllTorrents(self.stdscr, self.encoding)
-        component.get("ConsoleUI").set_mode(at)
+        component.get('ConsoleUI').set_mode(at)
         at.resume()
 
     def __host_selected(self, idx, data):
-        for host in self.config["hosts"]:
+        for host in self.config['hosts']:
             if host[0] == data and host[0] in self.statuses:
                 client.connect(host[1], host[2], host[3], host[4]).addCallback(self.__on_connected)
         return False
 
     def __do_add(self, result):
-        hostname = result["hostname"]
+        hostname = result['hostname']
         try:
-            port = int(result["port"])
+            port = int(result['port'])
         except ValueError:
-            self.report_message("Can't add host", "Invalid port.  Must be an integer")
+            self.report_message("Can't add host", 'Invalid port.  Must be an integer')
             return
-        username = result["username"]
-        password = result["password"]
-        for host in self.config["hosts"]:
+        username = result['username']
+        password = result['password']
+        for host in self.config['hosts']:
             if (host[1], host[2], host[3]) == (hostname, port, username):
-                self.report_message("Can't add host", "Host already in list")
+                self.report_message("Can't add host", 'Host already in list')
                 return
         newid = hashlib.sha1(str(time.time())).hexdigest()
-        self.config["hosts"].append((newid, hostname, port, username, password))
+        self.config['hosts'].append((newid, hostname, port, username, password))
         self.config.save()
         self.__update_popup()
 
     def __add_popup(self):
         self.inlist = False
-        self.popup = InputPopup(self, "Add Host (up & down arrows to navigate, esc to cancel)", close_cb=self.__do_add)
-        self.popup.add_text_input("Hostname:", "hostname")
-        self.popup.add_text_input("Port:", "port")
-        self.popup.add_text_input("Username:", "username")
-        self.popup.add_text_input("Password:", "password")
+        self.popup = InputPopup(self, 'Add Host (up & down arrows to navigate, esc to cancel)', close_cb=self.__do_add)
+        self.popup.add_text_input('Hostname:', 'hostname')
+        self.popup.add_text_input('Port:', 'port')
+        self.popup.add_text_input('Username:', 'username')
+        self.popup.add_text_input('Password:', 'password')
         self.refresh()
 
     def __delete_current_host(self):
         idx, data = self.popup.current_selection()
-        log.debug("deleting host: %s", data)
-        for host in self.config["hosts"]:
+        log.debug('deleting host: %s', data)
+        for host in self.config['hosts']:
             if host[0] == data:
-                self.config["hosts"].remove(host)
+                self.config['hosts'].remove(host)
                 break
         self.config.save()
 
@@ -172,9 +172,9 @@ class ConnectionManager(BaseMode):
         c = self.stdscr.getch()
 
         if c > 31 and c < 256:
-            if chr(c) == "q" and self.inlist:
+            if chr(c) == 'q' and self.inlist:
                 return
-            if chr(c) == "Q":
+            if chr(c) == 'Q':
                 from twisted.internet import reactor
                 if client.connected():
                     def on_disconnect(result):
@@ -183,13 +183,13 @@ class ConnectionManager(BaseMode):
                 else:
                     reactor.stop()
                 return
-            if chr(c) == "D" and self.inlist:
+            if chr(c) == 'D' and self.inlist:
                 self.__delete_current_host()
                 self.__update_popup()
                 return
-            if chr(c) == "r" and self.inlist:
+            if chr(c) == 'r' and self.inlist:
                 self.__update_statuses()
-            if chr(c) == "a" and self.inlist:
+            if chr(c) == 'a' and self.inlist:
                 self.__add_popup()
                 return
 

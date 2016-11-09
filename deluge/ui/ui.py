@@ -25,16 +25,16 @@ except ImportError:
 
 
 def version_callback(option, opt_str, value, parser):
-    print(os.path.basename(sys.argv[0]) + ": " + deluge.common.get_version())
+    print(os.path.basename(sys.argv[0]) + ': ' + deluge.common.get_version())
     try:
         from deluge._libtorrent import lt
-        print("libtorrent: %s" % lt.version)
+        print('libtorrent: %s' % lt.version)
     except ImportError:
         pass
     raise SystemExit
 
 DEFAULT_PREFS = {
-    "default_ui": "gtk"
+    'default_ui': 'gtk'
 }
 
 if 'dev' not in deluge.common.get_version():
@@ -44,20 +44,20 @@ if 'dev' not in deluge.common.get_version():
 
 class _UI(object):
 
-    def __init__(self, name="gtk"):
+    def __init__(self, name='gtk'):
         self.__name = name
 
-        self.__parser = OptionParser(usage="%prog [options] [actions]")
-        self.__parser.add_option("-v", "--version", action="callback", callback=version_callback,
+        self.__parser = OptionParser(usage='%prog [options] [actions]')
+        self.__parser.add_option('-v', '--version', action='callback', callback=version_callback,
                                  help="Show program's version number and exit")
-        group = OptionGroup(self.__parser, "Common Options")
-        group.add_option("-c", "--config", dest="config", help="Set the config folder location")
-        group.add_option("-l", "--logfile", dest="logfile", help="Output to designated logfile instead of stdout")
-        group.add_option("-L", "--loglevel", dest="loglevel",
-                         help="Set the log level: none, info, warning, error, critical, debug")
-        group.add_option("-q", "--quiet", dest="quiet", action="store_true", default=False,
+        group = OptionGroup(self.__parser, 'Common Options')
+        group.add_option('-c', '--config', dest='config', help='Set the config folder location')
+        group.add_option('-l', '--logfile', dest='logfile', help='Output to designated logfile instead of stdout')
+        group.add_option('-L', '--loglevel', dest='loglevel',
+                         help='Set the log level: none, info, warning, error, critical, debug')
+        group.add_option('-q', '--quiet', dest='quiet', action='store_true', default=False,
                          help="Sets the log level to 'none', this is the same as `-L none`")
-        group.add_option("-r", "--rotate-logs", help="Rotate logfiles.", action="store_true", default=False)
+        group.add_option('-r', '--rotate-logs', help='Rotate logfiles.', action='store_true', default=False)
         self.__parser.add_option_group(group)
 
     @property
@@ -82,7 +82,7 @@ class _UI(object):
         (self.__options, self.__args) = self.__parser.parse_args(argv)
 
         if self.__options.quiet:
-            self.__options.loglevel = "none"
+            self.__options.loglevel = 'none'
 
         logfile_mode = 'w'
         if self.__options.rotate_logs:
@@ -100,25 +100,25 @@ class _UI(object):
 
         if self.__options.config:
             if not deluge.configmanager.set_config_dir(self.__options.config):
-                log.error("There was an error setting the config dir! Exiting..")
+                log.error('There was an error setting the config dir! Exiting..')
                 sys.exit(1)
 
         # Setup gettext
         deluge.common.setup_translations()
 
-        setproctitle("deluge-%s" % self.__name)
+        setproctitle('deluge-%s' % self.__name)
 
-        log.info("Deluge ui %s", deluge.common.get_version())
-        log.debug("options: %s", self.__options)
-        log.debug("args: %s", self.__args)
-        log.info("Starting %s ui..", self.__name)
+        log.info('Deluge ui %s', deluge.common.get_version())
+        log.debug('options: %s', self.__options)
+        log.debug('args: %s', self.__args)
+        log.info('Starting %s ui..', self.__name)
 
 
 class UI:
     def __init__(self, options, args, ui_args):
         import logging
         log = logging.getLogger(__name__)
-        log.debug("UI init..")
+        log.debug('UI init..')
 
         # Setup gettext
         deluge.common.setup_translations()
@@ -126,29 +126,29 @@ class UI:
         # Set the config directory
         deluge.configmanager.set_config_dir(options.config)
 
-        config = deluge.configmanager.ConfigManager("ui.conf", DEFAULT_PREFS)
+        config = deluge.configmanager.ConfigManager('ui.conf', DEFAULT_PREFS)
 
         if not options.ui:
-            selected_ui = config["default_ui"]
+            selected_ui = config['default_ui']
         else:
             selected_ui = options.ui
 
-        setproctitle("deluge")
+        setproctitle('deluge')
 
         config.save()
         del config
 
         try:
-            if selected_ui == "gtk":
-                log.info("Starting GtkUI..")
+            if selected_ui == 'gtk':
+                log.info('Starting GtkUI..')
                 from deluge.ui.gtkui.gtkui import GtkUI
                 GtkUI(args)
-            elif selected_ui == "web":
-                log.info("Starting WebUI..")
+            elif selected_ui == 'web':
+                log.info('Starting WebUI..')
                 from deluge.ui.web.web import WebUI
                 WebUI(args)
-            elif selected_ui == "console":
-                log.info("Starting ConsoleUI..")
+            elif selected_ui == 'console':
+                log.info('Starting ConsoleUI..')
                 from deluge.ui.console.main import ConsoleUI
                 ConsoleUI(ui_args)
         except ImportError as ex:
@@ -162,6 +162,6 @@ class UI:
                           or alternatively use the '-s' option to select a different default UI.", selected_ui)
             else:
                 log.exception(ex)
-                log.error("There was an error whilst launching the request UI: %s", selected_ui)
-                log.error("Look at the traceback above for more information.")
+                log.error('There was an error whilst launching the request UI: %s', selected_ui)
+                log.error('Look at the traceback above for more information.')
             sys.exit(1)

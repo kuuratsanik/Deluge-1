@@ -46,7 +46,7 @@ class HTTPDownloader(client.HTTPDownloader):
         self.value = filename
         self.force_filename = force_filename
         self.allow_compression = allow_compression
-        agent = "Deluge/%s (http://deluge-torrent.org)" % get_version()
+        agent = 'Deluge/%s (http://deluge-torrent.org)' % get_version()
         client.HTTPDownloader.__init__(self, url, filename, headers=headers, agent=agent)
 
     def gotStatus(self, version, status, message):  # NOQA
@@ -55,19 +55,19 @@ class HTTPDownloader(client.HTTPDownloader):
 
     def gotHeaders(self, headers):  # NOQA
         if self.code == http.OK:
-            if "content-length" in headers:
-                self.total_length = int(headers["content-length"][0])
+            if 'content-length' in headers:
+                self.total_length = int(headers['content-length'][0])
             else:
                 self.total_length = 0
 
-            if self.allow_compression and "content-encoding" in headers and \
-               headers["content-encoding"][0] in ("gzip", "x-gzip", "deflate"):
+            if self.allow_compression and 'content-encoding' in headers and \
+               headers['content-encoding'][0] in ('gzip', 'x-gzip', 'deflate'):
                 # Adding 32 to the wbits enables gzip & zlib decoding (with automatic header detection)
                 # Adding 16 just enables gzip decoding (no zlib)
                 self.decoder = zlib.decompressobj(zlib.MAX_WBITS + 32)
 
-            if "content-disposition" in headers and not self.force_filename:
-                new_file_name = str(headers["content-disposition"][0]).split(";")[1].split("=")[1]
+            if 'content-disposition' in headers and not self.force_filename:
+                new_file_name = str(headers['content-disposition'][0]).split(';')[1].split('=')[1]
                 new_file_name = sanitise_filename(new_file_name)
                 new_file_name = os.path.join(os.path.split(self.fileName)[0], new_file_name)
 
@@ -76,14 +76,14 @@ class HTTPDownloader(client.HTTPDownloader):
                 fileext = os.path.splitext(new_file_name)[1]
                 while os.path.isfile(new_file_name):
                     # Increment filename if already exists
-                    new_file_name = "%s-%s%s" % (fileroot, count, fileext)
+                    new_file_name = '%s-%s%s' % (fileroot, count, fileext)
                     count += 1
 
                 self.fileName = new_file_name
                 self.value = new_file_name
 
         elif self.code in (http.MOVED_PERMANENTLY, http.FOUND, http.SEE_OTHER, http.TEMPORARY_REDIRECT):
-            location = headers["location"][0]
+            location = headers['location'][0]
             error = PageRedirect(self.code, location=location)
             self.noPage(Failure(error))
 
@@ -130,7 +130,7 @@ def sanitise_filename(filename):
         filename = os.path.basename(filename)
 
     filename = filename.strip()
-    if filename.startswith(".") or ";" in filename or "|" in filename:
+    if filename.startswith('.') or ';' in filename or '|' in filename:
         # Dodgy server, log it
         log.warning("Potentially malicious server: trying to write to file '%s'" % filename)
 
@@ -173,11 +173,11 @@ def download_file(url, filename, callback=None, headers=None, force_filename=Fal
     if allow_compression:
         if not headers:
             headers = {}
-        headers["accept-encoding"] = "deflate, gzip, x-gzip"
+        headers['accept-encoding'] = 'deflate, gzip, x-gzip'
 
     # In Twisted 13.1.0 _parse() function replaced by _URI class.
     # In Twisted 15.0.0 _URI class renamed to URI.
-    if hasattr(client, "_parse"):
+    if hasattr(client, '_parse'):
         scheme, host, port, path = client._parse(url)
     else:
         try:
@@ -191,7 +191,7 @@ def download_file(url, filename, callback=None, headers=None, force_filename=Fal
         port = uri.port
 
     factory = HTTPDownloader(url, filename, callback, headers, force_filename, allow_compression)
-    if scheme == "https":
+    if scheme == 'https':
         from twisted.internet import ssl
         reactor.connectSSL(host, port, factory, ssl.ClientContextFactory())
     else:

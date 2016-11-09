@@ -27,7 +27,7 @@ pygtkcompat.enable_gtk(version='3.0')
 
 log = logging.getLogger(__name__)
 
-DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
 
 class SchedulerSelectWidget(Gtk.DrawingArea):
@@ -36,11 +36,11 @@ class SchedulerSelectWidget(Gtk.DrawingArea):
         self.set_events(Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK |
                         Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.LEAVE_NOTIFY_MASK)
 
-        self.connect("draw", self.expose)
-        self.connect("button_press_event", self.mouse_down)
-        self.connect("button_release_event", self.mouse_up)
-        self.connect("motion_notify_event", self.mouse_hover)
-        self.connect("leave_notify_event", self.mouse_leave)
+        self.connect('draw', self.expose)
+        self.connect('button_press_event', self.mouse_down)
+        self.connect('button_release_event', self.mouse_up)
+        self.connect('motion_notify_event', self.mouse_hover)
+        self.connect('leave_notify_event', self.mouse_leave)
 
         self.colors = [[115.0 / 255, 210.0 / 255, 22.0 / 255],
                        [237.0 / 255, 212.0 / 255, 0.0 / 255],
@@ -130,8 +130,8 @@ class SchedulerSelectWidget(Gtk.DrawingArea):
         if self.get_point(event) != self.hover_point:
             self.hover_point = self.get_point(event)
 
-            self.hover_label.set_text(self.hover_days[self.hover_point[1]] + " " + str(self.hover_point[0])
-                                      + ":00 - " + str(self.hover_point[0]) + ":59")
+            self.hover_label.set_text(self.hover_days[self.hover_point[1]] + ' ' + str(self.hover_point[0])
+                                      + ':00 - ' + str(self.hover_point[0]) + ':59')
 
             if self.mouse_press:
                 points = [[self.hover_point[0], self.start_point[0]], [self.hover_point[1], self.start_point[1]]]
@@ -144,7 +144,7 @@ class SchedulerSelectWidget(Gtk.DrawingArea):
 
     # clear hover text on mouse leave
     def mouse_leave(self, widget, event):
-        self.hover_label.set_text("")
+        self.hover_label.set_text('')
         self.hover_point = [-1, -1]
 
 
@@ -152,61 +152,61 @@ class GtkUI(GtkPluginBase):
     def enable(self):
         self.create_prefs_page()
 
-        component.get("PluginManager").register_hook("on_apply_prefs", self.on_apply_prefs)
-        component.get("PluginManager").register_hook("on_show_prefs", self.on_show_prefs)
+        component.get('PluginManager').register_hook('on_apply_prefs', self.on_apply_prefs)
+        component.get('PluginManager').register_hook('on_show_prefs', self.on_show_prefs)
 
-        self.status_item = component.get("StatusBar").add_item(
-            image=get_resource("green.png"),
-            text="",
+        self.status_item = component.get('StatusBar').add_item(
+            image=get_resource('green.png'),
+            text='',
             callback=self.on_status_item_clicked,
-            tooltip="Scheduler")
+            tooltip='Scheduler')
 
         def on_get_state(state):
-            self.status_item.set_image_from_file(get_resource(state.lower() + ".png"))
+            self.status_item.set_image_from_file(get_resource(state.lower() + '.png'))
 
         self.state_deferred = client.scheduler.get_state().addCallback(on_get_state)
-        client.register_event_handler("SchedulerEvent", self.on_scheduler_event)
+        client.register_event_handler('SchedulerEvent', self.on_scheduler_event)
 
     def disable(self):
-        component.get("Preferences").remove_page(_("Scheduler"))
+        component.get('Preferences').remove_page(_('Scheduler'))
         # Remove status item
-        component.get("StatusBar").remove_item(self.status_item)
+        component.get('StatusBar').remove_item(self.status_item)
         del self.status_item
 
-        component.get("PluginManager").deregister_hook("on_apply_prefs", self.on_apply_prefs)
-        component.get("PluginManager").deregister_hook("on_show_prefs", self.on_show_prefs)
+        component.get('PluginManager').deregister_hook('on_apply_prefs', self.on_apply_prefs)
+        component.get('PluginManager').deregister_hook('on_show_prefs', self.on_show_prefs)
 
     def on_apply_prefs(self):
-        log.debug("applying prefs for Scheduler")
+        log.debug('applying prefs for Scheduler')
         config = {}
-        config["low_down"] = self.spin_download.get_value()
-        config["low_up"] = self.spin_upload.get_value()
-        config["low_active"] = self.spin_active.get_value_as_int()
-        config["low_active_down"] = self.spin_active_down.get_value_as_int()
-        config["low_active_up"] = self.spin_active_up.get_value_as_int()
-        config["button_state"] = self.scheduler_select.button_state
+        config['low_down'] = self.spin_download.get_value()
+        config['low_up'] = self.spin_upload.get_value()
+        config['low_active'] = self.spin_active.get_value_as_int()
+        config['low_active_down'] = self.spin_active_down.get_value_as_int()
+        config['low_active_up'] = self.spin_active_up.get_value_as_int()
+        config['button_state'] = self.scheduler_select.button_state
         client.scheduler.set_config(config)
 
     def on_show_prefs(self):
         def on_get_config(config):
-            log.debug("config: %s", config)
-            self.scheduler_select.set_button_state(config["button_state"])
-            self.spin_download.set_value(config["low_down"])
-            self.spin_upload.set_value(config["low_up"])
-            self.spin_active.set_value(config["low_active"])
-            self.spin_active_down.set_value(config["low_active_down"])
-            self.spin_active_up.set_value(config["low_active_up"])
+            log.debug('config: %s', config)
+            self.scheduler_select.set_button_state(config['button_state'])
+            self.spin_download.set_value(config['low_down'])
+            self.spin_upload.set_value(config['low_up'])
+            self.spin_active.set_value(config['low_active'])
+            self.spin_active_down.set_value(config['low_active_down'])
+            self.spin_active_up.set_value(config['low_active_up'])
 
         client.scheduler.get_config().addCallback(on_get_config)
 
     def on_scheduler_event(self, state):
         def on_state_deferred(s):
-            self.status_item.set_image_from_file(get_resource(state.lower() + ".png"))
+            self.status_item.set_image_from_file(get_resource(state.lower() + '.png'))
 
         self.state_deferred.addCallback(on_state_deferred)
 
     def on_status_item_clicked(self, widget, event):
-        component.get("Preferences").show("Scheduler")
+        component.get('Preferences').show('Scheduler')
 
     # Configuration dialog
     def create_prefs_page(self):
@@ -223,7 +223,7 @@ class GtkUI(GtkPluginBase):
         hbox.pack_start(self.scheduler_select, True, True)
         frame = Gtk.Frame()
         label = Gtk.Label()
-        label.set_markup("<b>Schedule</b>")
+        label.set_markup('<b>Schedule</b>')
         frame.set_label_widget(label)
         frame.set_shadow_type(Gtk.ShadowType.NONE)
         frame.add(hbox)
@@ -233,7 +233,7 @@ class GtkUI(GtkPluginBase):
 
         table = Gtk.Table(3, 4)
 
-        label = Gtk.Label(label=_("Download Limit:"))
+        label = Gtk.Label(label=_('Download Limit:'))
         label.set_alignment(0.0, 0.6)
         table.attach(label, 0, 1, 0, 1, Gtk.AttachOptions.FILL)
         self.spin_download = Gtk.SpinButton()
@@ -242,7 +242,7 @@ class GtkUI(GtkPluginBase):
         self.spin_download.set_increments(1, 10)
         table.attach(self.spin_download, 1, 2, 0, 1, Gtk.AttachOptions.FILL)
 
-        label = Gtk.Label(label=_("Upload Limit:"))
+        label = Gtk.Label(label=_('Upload Limit:'))
         label.set_alignment(0.0, 0.6)
         table.attach(label, 0, 1, 1, 2, Gtk.AttachOptions.FILL)
         self.spin_upload = Gtk.SpinButton()
@@ -251,7 +251,7 @@ class GtkUI(GtkPluginBase):
         self.spin_upload.set_increments(1, 10)
         table.attach(self.spin_upload, 1, 2, 1, 2, Gtk.AttachOptions.FILL)
 
-        label = Gtk.Label(label=_("Active Torrents:"))
+        label = Gtk.Label(label=_('Active Torrents:'))
         label.set_alignment(0.0, 0.6)
         table.attach(label, 2, 3, 0, 1, Gtk.AttachOptions.FILL)
         self.spin_active = Gtk.SpinButton()
@@ -260,7 +260,7 @@ class GtkUI(GtkPluginBase):
         self.spin_active.set_increments(1, 10)
         table.attach(self.spin_active, 3, 4, 0, 1, Gtk.AttachOptions.FILL)
 
-        label = Gtk.Label(label=_("Active Downloading:"))
+        label = Gtk.Label(label=_('Active Downloading:'))
         label.set_alignment(0.0, 0.6)
         table.attach(label, 2, 3, 1, 2, Gtk.AttachOptions.FILL)
         self.spin_active_down = Gtk.SpinButton()
@@ -269,7 +269,7 @@ class GtkUI(GtkPluginBase):
         self.spin_active_down.set_increments(1, 10)
         table.attach(self.spin_active_down, 3, 4, 1, 2, Gtk.AttachOptions.FILL)
 
-        label = Gtk.Label(label=_("Active Seeding:"))
+        label = Gtk.Label(label=_('Active Seeding:'))
         label.set_alignment(0.0, 0.6)
         table.attach(label, 2, 3, 2, 3, Gtk.AttachOptions.FILL)
         self.spin_active_up = Gtk.SpinButton()
@@ -279,16 +279,16 @@ class GtkUI(GtkPluginBase):
         table.attach(self.spin_active_up, 3, 4, 2, 3, Gtk.AttachOptions.FILL)
 
         eventbox = Gtk.EventBox()
-        eventbox.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse("#EDD400"))
+        eventbox.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse('#EDD400'))
         eventbox.add(table)
         frame = Gtk.Frame()
         label = Gtk.Label()
-        label.set_markup(_("<b>Slow Settings</b>"))
+        label.set_markup(_('<b>Slow Settings</b>'))
         frame.set_label_widget(label)
-        frame.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse("#CDB400"))
+        frame.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse('#CDB400'))
         frame.set_border_width(2)
         frame.add(eventbox)
         vbox.pack_start(frame, False, False)
 
         vbox.show_all()
-        component.get("Preferences").add_page(_("Scheduler"), vbox)
+        component.get('Preferences').add_page(_('Scheduler'), vbox)

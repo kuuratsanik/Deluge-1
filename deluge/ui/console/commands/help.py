@@ -17,10 +17,10 @@ from deluge.ui.console.main import BaseCommand
 class Command(BaseCommand):
     """displays help on other commands"""
 
-    usage = "Usage: help [command]"
+    usage = 'Usage: help [command]'
 
     def handle(self, *args, **options):
-        self.console = component.get("ConsoleUI")
+        self.console = component.get('ConsoleUI')
         self._commands = self.console._commands
         deferred = defer.succeed(True)
         if args:
@@ -28,23 +28,23 @@ class Command(BaseCommand):
                 try:
                     cmd = self._commands[arg]
                 except KeyError:
-                    self.console.write("{!error!}Unknown command %r" % args[0])
+                    self.console.write('{!error!}Unknown command %r' % args[0])
                     continue
                 try:
                     parser = cmd.create_parser()
                     self.console.write(parser.format_help())
                 except AttributeError:
-                    self.console.write(cmd.__doc__ or "No help for this command")
-                self.console.write(" ")
+                    self.console.write(cmd.__doc__ or 'No help for this command')
+                self.console.write(' ')
         else:
             self.console.set_batch_write(True)
             for cmd in sorted(self._commands):
-                self.console.write("{!info!}" + cmd + "{!input!} - " + self._commands[cmd].__doc__ or '')
-            self.console.write(" ")
+                self.console.write('{!info!}' + cmd + '{!input!} - ' + self._commands[cmd].__doc__ or '')
+            self.console.write(' ')
             self.console.write("For help on a specific command, use '<command> --help'")
             self.console.set_batch_write(False)
 
         return deferred
 
     def complete(self, line):
-        return [x for x in component.get("ConsoleUI")._commands if x.startswith(line)]
+        return [x for x in component.get('ConsoleUI')._commands if x.startswith(line)]

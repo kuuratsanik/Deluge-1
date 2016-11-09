@@ -47,7 +47,7 @@ class InputField:
 
     def set_depend(self, i, inverse=False):
         if not isinstance(i, CheckedInput):
-            raise Exception("Can only depend on CheckedInputs")
+            raise Exception('Can only depend on CheckedInputs')
         self.depend = i
         self.inverse = inverse
 
@@ -64,10 +64,10 @@ class CheckedInput(InputField):
     def __init__(self, parent, message, name, checked=False, additional_formatting=False):
         self.parent = parent
         self.additional_formatting = additional_formatting
-        self.chkd_inact = "[X] %s" % message
-        self.unchkd_inact = "[ ] %s" % message
-        self.chkd_act = "[{!black,white,bold!}X{!white,black!}] %s" % message
-        self.unchkd_act = "[{!black,white,bold!} {!white,black!}] %s" % message
+        self.chkd_inact = '[X] %s' % message
+        self.unchkd_inact = '[ ] %s' % message
+        self.chkd_act = '[{!black,white,bold!}X{!white,black!}] %s' % message
+        self.unchkd_act = '[{!black,white,bold!} {!white,black!}] %s' % message
         self.name = name
         self.checked = checked
 
@@ -100,10 +100,10 @@ class CheckedPlusInput(InputField):
     def __init__(self, parent, message, name, child, checked=False, additional_formatting=False):
         self.parent = parent
         self.additional_formatting = additional_formatting
-        self.chkd_inact = "[X] %s" % message
-        self.unchkd_inact = "[ ] %s" % message
-        self.chkd_act = "[{!black,white,bold!}X{!white,black!}] %s" % message
-        self.unchkd_act = "[{!black,white,bold!} {!white,black!}] %s" % message
+        self.chkd_inact = '[X] %s' % message
+        self.unchkd_inact = '[ ] %s' % message
+        self.chkd_act = '[{!black,white,bold!}X{!white,black!}] %s' % message
+        self.unchkd_act = '[{!black,white,bold!} {!white,black!}] %s' % message
         self.name = name
         self.checked = checked
         self.msglen = len(self.chkd_inact) + 1
@@ -125,9 +125,9 @@ class CheckedPlusInput(InputField):
             self.parent.add_string(row, self.unchkd_inact, screen, col, False, True)
 
         if active and self.checked and self.child_active:
-            self.parent.add_string(row + 1, "(esc to leave)", screen, col, False, True)
+            self.parent.add_string(row + 1, '(esc to leave)', screen, col, False, True)
         elif active and self.checked:
-            self.parent.add_string(row + 1, "(right arrow to edit)", screen, col, False, True)
+            self.parent.add_string(row + 1, '(right arrow to edit)', screen, col, False, True)
         rows = 2
         # show child
         if self.checked:
@@ -139,7 +139,7 @@ class CheckedPlusInput(InputField):
                                                 self.child_active and active, col + self.msglen)
             rows = max(rows, crows)
         else:
-            self.parent.add_string(row, "(enable to view/edit value)", screen, col + self.msglen, False, True)
+            self.parent.add_string(row, '(enable to view/edit value)', screen, col + self.msglen, False, True)
         return rows
 
     def handle_read(self, c):
@@ -196,7 +196,7 @@ class IntSpinInput(InputField):
 
     def render(self, screen, row, width, active, col=1, cursor_offset=0):
         if not active and self.need_update:
-            if not self.valstr or self.valstr == "-":
+            if not self.valstr or self.valstr == '-':
                 self.value = self.default_value
                 self.valstr = self.default_str
                 try:
@@ -206,11 +206,11 @@ class IntSpinInput(InputField):
             else:
                 self.value = int(self.valstr)
                 self.__limit_value()
-                self.valstr = "%d" % self.value
+                self.valstr = '%d' % self.value
                 self.cursor = len(self.valstr)
             self.cursor = colors.get_line_width(self.valstr)
             self.need_update = False
-        elif self.need_update and self.valstr != "-":
+        elif self.need_update and self.valstr != '-':
             self.real_value = True
             try:
                 self.value = int(self.valstr)
@@ -221,15 +221,15 @@ class IntSpinInput(InputField):
                 except:
                     self.real_value = False
         if not self.valstr:
-            self.parent.add_string(row, "%s {!input!}[  ]" % self.message, screen, col, False, True)
+            self.parent.add_string(row, '%s {!input!}[  ]' % self.message, screen, col, False, True)
         elif active:
-            self.parent.add_string(row, "%s {!input!}[ {!black,white,bold!}%s{!input!} ]" % (
+            self.parent.add_string(row, '%s {!input!}[ {!black,white,bold!}%s{!input!} ]' % (
                 self.message, self.valstr), screen, col, False, True)
         elif self.additional_formatting and self.valstr == self.default_str:
-            self.parent.add_string(row, "%s {!input!}[ {!magenta,black!}%s{!input!} ]" % (
+            self.parent.add_string(row, '%s {!input!}[ {!magenta,black!}%s{!input!} ]' % (
                 self.message, self.valstr), screen, col, False, True)
         else:
-            self.parent.add_string(row, "%s {!input!}[ %s ]" % (self.message, self.valstr), screen, col, False, True)
+            self.parent.add_string(row, '%s {!input!}[ %s ]' % (self.message, self.valstr), screen, col, False, True)
 
         if active:
             self.move_func(row, self.cursor + self.cursoff + cursor_offset)
@@ -240,20 +240,20 @@ class IntSpinInput(InputField):
         if c == curses.KEY_PPAGE and self.value < self.max_val:
             if not self.real_value:
                 self.value = self.min_val
-                self.valstr = "%d" % self.value
+                self.valstr = '%d' % self.value
                 self.real_value = True
             else:
                 self.value += 1
-                self.valstr = "%d" % self.value
+                self.valstr = '%d' % self.value
                 self.cursor = len(self.valstr)
         elif c == curses.KEY_NPAGE and self.value > self.min_val:
             if not self.real_value:
                 self.value = self.min_val
-                self.valstr = "%d" % self.value
+                self.valstr = '%d' % self.value
                 self.real_value = True
             else:
                 self.value -= 1
-                self.valstr = "%d" % self.value
+                self.valstr = '%d' % self.value
                 self.cursor = len(self.valstr)
         elif c == curses.KEY_LEFT:
             if not self.real_value:
@@ -273,7 +273,7 @@ class IntSpinInput(InputField):
             self.cursor = len(self.valstr)
         elif c == curses.KEY_BACKSPACE or c == 127:
             if not self.real_value:
-                self.valstr = ""
+                self.valstr = ''
                 self.cursor = 0
                 self.real_value = True
                 self.need_update = True
@@ -289,13 +289,13 @@ class IntSpinInput(InputField):
                 self.need_update = True
         elif c == 45 and self.min_val < 0:
             if not self.real_value:
-                self.valstr = "-"
+                self.valstr = '-'
                 self.cursor = 1
                 self.real_value = True
                 self.need_update = True
             if self.cursor != 0:
                 return
-            minus_place = self.valstr.find("-")
+            minus_place = self.valstr.find('-')
             if minus_place >= 0:
                 return
             self.valstr = chr(c) + self.valstr
@@ -303,13 +303,13 @@ class IntSpinInput(InputField):
             self.need_update = True
         elif c > 47 and c < 58:
             if (not self.real_value) and self.valstr:
-                self.valstr = ""
+                self.valstr = ''
                 self.cursor = 0
                 self.real_value = True
                 self.need_update = True
             if c == 48 and self.cursor == 0:
                 return
-            minus_place = self.valstr.find("-")
+            minus_place = self.valstr.find('-')
             if self.cursor <= minus_place:
                 return
             if self.cursor == len(self.valstr):
@@ -331,7 +331,7 @@ class IntSpinInput(InputField):
     def set_value(self, val):
         try:
             self.value = int(val)
-            self.valstr = "%d" % self.value
+            self.valstr = '%d' % self.value
             self.real_value = True
         except ValueError:
             self.value = None
@@ -351,7 +351,7 @@ class FloatSpinInput(InputField):
 
         self.additional_formatting = additional_formatting
 
-        self.fmt = "%%.%df" % precision
+        self.fmt = '%%.%df' % precision
 
         self.default_str = str(value)
         self.set_value(value)
@@ -376,7 +376,7 @@ class FloatSpinInput(InputField):
 
     def render(self, screen, row, width, active, col=1, cursor_offset=0):
         if not active and self.need_update:
-            if not self.valstr or self.valstr == "-":
+            if not self.valstr or self.valstr == '-':
                 self.value = self.default_value
                 self.valstr = self.default_str
                 try:
@@ -390,7 +390,7 @@ class FloatSpinInput(InputField):
                 self.cursor = len(self.valstr)
             self.cursor = colors.get_line_width(self.valstr)
             self.need_update = False
-        elif self.need_update and self.valstr != "-":
+        elif self.need_update and self.valstr != '-':
             self.real_value = True
             try:
                 self.value = round(float(self.valstr), self.precision)
@@ -402,15 +402,15 @@ class FloatSpinInput(InputField):
                     self.real_value = False
 
         if not self.valstr:
-            self.parent.add_string(row, "%s {!input!}[  ]" % self.message, screen, col, False, True)
+            self.parent.add_string(row, '%s {!input!}[  ]' % self.message, screen, col, False, True)
         elif active:
-            self.parent.add_string(row, "%s {!input!}[ {!black,white,bold!}%s{!white,black!} ]" % (
+            self.parent.add_string(row, '%s {!input!}[ {!black,white,bold!}%s{!white,black!} ]' % (
                 self.message, self.valstr), screen, col, False, True)
         elif self.additional_formatting and self.valstr == self.default_str:
-            self.parent.add_string(row, "%s {!input!}[ {!magenta,black!}%s{!input!} ]" % (
+            self.parent.add_string(row, '%s {!input!}[ {!magenta,black!}%s{!input!} ]' % (
                 self.message, self.valstr), screen, col, False, True)
         else:
-            self.parent.add_string(row, "%s {!input!}[ %s ]" % (self.message, self.valstr), screen, col, False, True)
+            self.parent.add_string(row, '%s {!input!}[ %s ]' % (self.message, self.valstr), screen, col, False, True)
         if active:
             self.move_func(row, self.cursor + self.cursoff + cursor_offset)
 
@@ -420,7 +420,7 @@ class FloatSpinInput(InputField):
         if c == curses.KEY_PPAGE:
             if not self.real_value:
                 self.value = self.min_val
-                self.valstr = "%d" % self.value
+                self.valstr = '%d' % self.value
                 self.real_value = True
             else:
                 self.value += self.inc_amt
@@ -430,7 +430,7 @@ class FloatSpinInput(InputField):
         elif c == curses.KEY_NPAGE:
             if not self.real_value:
                 self.value = self.min_val
-                self.valstr = "%d" % self.value
+                self.valstr = '%d' % self.value
                 self.real_value = True
             else:
                 self.value -= self.inc_amt
@@ -455,7 +455,7 @@ class FloatSpinInput(InputField):
             self.cursor = len(self.valstr)
         elif c == curses.KEY_BACKSPACE or c == 127:
             if not self.real_value:
-                self.valstr = ""
+                self.valstr = ''
                 self.cursor = 0
                 self.real_value = True
                 self.need_update = True
@@ -471,13 +471,13 @@ class FloatSpinInput(InputField):
                 self.need_update = True
         elif c == 45 and self.min_val < 0:
             if not self.real_value:
-                self.valstr = "-"
+                self.valstr = '-'
                 self.cursor = 1
                 self.need_update = True
                 self.real_value = True
             if self.cursor != 0:
                 return
-            minus_place = self.valstr.find("-")
+            minus_place = self.valstr.find('-')
             if minus_place >= 0:
                 return
             self.valstr = chr(c) + self.valstr
@@ -485,14 +485,14 @@ class FloatSpinInput(InputField):
             self.need_update = True
         elif c == 46:
             if (not self.real_value) and self.valstr:
-                self.valstr = "0."
+                self.valstr = '0.'
                 self.cursor = 2
                 self.real_value = True
                 self.need_update = True
-            minus_place = self.valstr.find("-")
+            minus_place = self.valstr.find('-')
             if self.cursor <= minus_place:
                 return
-            point_place = self.valstr.find(".")
+            point_place = self.valstr.find('.')
             if point_place >= 0:
                 return
             if self.cursor == len(self.valstr):
@@ -505,13 +505,13 @@ class FloatSpinInput(InputField):
             self.cursor += 1
         elif (c > 47 and c < 58):
             if (not self.real_value) and self.valstr:
-                self.valstr = ""
+                self.valstr = ''
                 self.cursor = 0
                 self.real_value = True
                 self.need_update = True
-            if self.value == "mixed":
-                self.value = ""
-            minus_place = self.valstr.find("-")
+            if self.value == 'mixed':
+                self.value = ''
+            minus_place = self.valstr.find('-')
             if self.cursor <= minus_place:
                 return
             if self.cursor == len(self.valstr):
@@ -563,17 +563,17 @@ class SelectInput(InputField):
         off = col + 1
         for i, opt in enumerate(self.opts):
             if selected and i == self.selidx:
-                self.parent.add_string(row, "{!black,white,bold!}[%s]" % opt, screen, off, False, True)
+                self.parent.add_string(row, '{!black,white,bold!}[%s]' % opt, screen, off, False, True)
             elif i == self.selidx:
                 if self.additional_formatting and i == self.default_option:
-                    self.parent.add_string(row, "[{!magenta,black!}%s{!white,black!}]" % opt, screen, off, False, True)
+                    self.parent.add_string(row, '[{!magenta,black!}%s{!white,black!}]' % opt, screen, off, False, True)
                 elif self.additional_formatting:
-                    self.parent.add_string(row, "[{!white,blue!}%s{!white,black!}]" % opt, screen, off, False, True)
+                    self.parent.add_string(row, '[{!white,blue!}%s{!white,black!}]' % opt, screen, off, False, True)
                 else:
-                    self.parent.add_string(row, "[{!white,black,underline!}%s{!white,black!}]" %
+                    self.parent.add_string(row, '[{!white,black,underline!}%s{!white,black!}]' %
                                            opt, screen, off, False, True)
             else:
-                self.parent.add_string(row, "[%s]" % opt, screen, off, False, True)
+                self.parent.add_string(row, '[%s]' % opt, screen, off, False, True)
             off += len(opt) + 3
         if self.message:
             return 2
@@ -594,7 +594,7 @@ class SelectInput(InputField):
             if nv == val:
                 self.selidx = i
                 return
-        raise Exception("Invalid value for SelectInput")
+        raise Exception('Invalid value for SelectInput')
 
 
 class TextInput(InputField):
@@ -641,9 +641,9 @@ class TextInput(InputField):
             vstr = self.value.ljust(width - 2)
 
         if self.additional_formatting and len(self.value) != 0 and self.value == self.default_value:
-            self.parent.add_string(row, "{!magenta,white!}%s" % vstr, screen, col, False, False)
+            self.parent.add_string(row, '{!magenta,white!}%s' % vstr, screen, col, False, False)
         else:
-            self.parent.add_string(row, "{!black,white,bold!}%s" % vstr, screen, col, False, False)
+            self.parent.add_string(row, '{!black,white,bold!}%s' % vstr, screen, col, False, False)
 
         if self.message:
             return 3
@@ -670,13 +670,13 @@ class TextInput(InputField):
 
             # We only call the tab completer function if we're at the end of
             # the input string on the cursor is on a space
-            if self.cursor == len(self.value) or self.value[self.cursor] == " ":
+            if self.cursor == len(self.value) or self.value[self.cursor] == ' ':
                 if self.opts:
                     prev = self.opt_off
                     self.opt_off += self.width - 3
                     # now find previous double space, best guess at a split point
                     # in future could keep opts unjoined to get this really right
-                    self.opt_off = self.opts.rfind("  ", 0, self.opt_off) + 2
+                    self.opt_off = self.opts.rfind('  ', 0, self.opt_off) + 2
                     if second_hit and self.opt_off == prev:  # double tap and we're at the end
                         self.opt_off = 0
                 else:
@@ -693,7 +693,7 @@ class TextInput(InputField):
 
                     if len(opts) > 1 and second_hit:  # display multiple options on second tab hit
                         sp = self.value.rfind(os.sep) + 1
-                        self.opts = "  ".join([o[sp:] for o in opts])
+                        self.opts = '  '.join([o[sp:] for o in opts])
 
         # Cursor movement
         elif c == curses.KEY_LEFT:
@@ -721,7 +721,7 @@ class TextInput(InputField):
         elif c > 31 and c < 256:
             # Emulate getwch
             stroke = chr(c)
-            uchar = ""
+            uchar = ''
             while not uchar:
                 try:
                     uchar = stroke.decode(self.parent.encoding)
@@ -747,7 +747,7 @@ class TextInput(InputField):
                 # ret.extend(os.listdir(line))
                 for f in os.listdir(line):
                     # Skip hidden
-                    if f.startswith("."):
+                    if f.startswith('.'):
                         continue
                     f = os.path.join(line, f)
                     if os.path.isdir(f):
@@ -793,7 +793,7 @@ class InputPopup(Popup):
         self._cursor_row = r
         self._cursor_col = c
 
-    def add_text_input(self, message, name, value="", complete=True):
+    def add_text_input(self, message, name, value='', complete=True):
         """
         Add a text input field to the popup.
 
@@ -818,10 +818,10 @@ class InputPopup(Popup):
 
     def add_spaces(self, num):
         for i in range(num):
-            self.lines.append((len(self.inputs), ""))
+            self.lines.append((len(self.inputs), ''))
 
     def add_text(self, string):
-        lines = string.split("\n")
+        lines = string.split('\n')
         for line in lines:
             self.lines.append((len(self.inputs), line))
 
@@ -881,7 +881,7 @@ class InputPopup(Popup):
             sb_pos = int((self.height - 2) * perc_sc) + 1
             if (sb_pos == 1) and (self.lineoff != 0):
                 sb_pos += 1
-            self.add_string(sb_pos, "{!red,black,bold!}#", self.screen, col=(self.width - 1), pad=False, trim=False)
+            self.add_string(sb_pos, '{!red,black,bold!}#', self.screen, col=(self.width - 1), pad=False, trim=False)
         if self._cursor_row >= 0:
             curses.curs_set(2)
             self.screen.move(self._cursor_row, self._cursor_col)

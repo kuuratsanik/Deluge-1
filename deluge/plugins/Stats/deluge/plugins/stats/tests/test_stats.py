@@ -12,9 +12,9 @@ def print_totals(totals):
     for name, value in totals.iteritems():
         print(name, fsize(value))
 
-    print("overhead:")
-    print("up:", fsize(totals["total_upload"] - totals["total_payload_upload"]))
-    print("down:", fsize(totals["total_download"] - totals["total_payload_download"]))
+    print('overhead:')
+    print('up:', fsize(totals['total_upload'] - totals['total_payload_upload']))
+    print('down:', fsize(totals['total_download'] - totals['total_payload_download']))
 
 
 class StatsTestCase(unittest.TestCase):
@@ -23,7 +23,7 @@ class StatsTestCase(unittest.TestCase):
         defer.setDebugging(True)
         tests_common.set_tmp_config_dir()
         client.start_classic_mode()
-        client.core.enable_plugin("Stats")
+        client.core.enable_plugin('Stats')
 
     def tearDown(self):  # NOQA
         client.stop_classic_mode()
@@ -34,7 +34,7 @@ class StatsTestCase(unittest.TestCase):
 
     @pytest.mark.todo
     def test_client_totals(self):
-        StatsTestCase.test_client_totals.im_func.todo = "To be fixed"
+        StatsTestCase.test_client_totals.im_func.todo = 'To be fixed'
 
         def callback(args):
             print_totals(args)
@@ -43,7 +43,7 @@ class StatsTestCase(unittest.TestCase):
 
     @pytest.mark.todo
     def test_session_totals(self):
-        StatsTestCase.test_session_totals.im_func.todo = "To be fixed"
+        StatsTestCase.test_session_totals.im_func.todo = 'To be fixed'
 
         def callback(args):
             print_totals(args)

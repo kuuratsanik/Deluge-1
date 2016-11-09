@@ -16,7 +16,7 @@ class BaseTestCase(unittest.TestCase):
     def setUp(self):  # NOQA
 
         if len(component._ComponentRegistry.components) != 0:
-            warnings.warn("The component._ComponentRegistry.components is not empty on test setup."
+            warnings.warn('The component._ComponentRegistry.components is not empty on test setup.'
                           "This is probably caused by another test that didn't clean up after finishing!: %s" %
                           component._ComponentRegistry.components)
         return self.set_up()
@@ -26,7 +26,7 @@ class BaseTestCase(unittest.TestCase):
 
         def on_teared_down(result):
             if len(component._ComponentRegistry.components) != 0:
-                warnings.warn("The component._ComponentRegistry.components is not empty after the test finished!: %s" %
+                warnings.warn('The component._ComponentRegistry.components is not empty after the test finished!: %s' %
                               component._ComponentRegistry.components)
         return d.addCallback(on_teared_down)
 

@@ -128,7 +128,7 @@ class ListView:
                 self.set_attributes(renderer, **kw)
 
     def __init__(self, treeview_widget=None, state_file=None):
-        log.debug("ListView initialized..")
+        log.debug('ListView initialized..')
 
         if treeview_widget is not None:
             # User supplied a treeview widget
@@ -173,7 +173,7 @@ class ListView:
         self.default_sort_column_id = None
 
         # Create the model filter and column
-        self.add_bool_column("filter", hidden=True)
+        self.add_bool_column('filter', hidden=True)
 
     def create_model_filter(self):
         """create new filter-model
@@ -181,11 +181,11 @@ class ListView:
         """
         model_filter = self.liststore.filter_new()
         model_filter.set_visible_column(
-            self.columns["filter"].column_indices[0])
+            self.columns['filter'].column_indices[0])
         self.model_filter = Gtk.TreeModelSort(model=model_filter)
 
-        self.model_filter.connect("sort-column-changed", self.on_model_sort_changed)
-        self.model_filter.connect("row-inserted", self.on_model_row_inserted)
+        self.model_filter.connect('sort-column-changed', self.on_model_sort_changed)
+        self.model_filter.connect('row-inserted', self.on_model_row_inserted)
         self.treeview.set_model(self.model_filter)
         self.set_sort_functions()
         self.set_model_sort()
@@ -360,7 +360,7 @@ class ListView:
             if column.column.get_visible() is True:
                 menuitem.set_active(True)
             # Connect to the 'toggled' event
-            menuitem.connect("toggled", self.on_menuitem_toggled)
+            menuitem.connect('toggled', self.on_menuitem_toggled)
             # Add the new checkmenuitem to the menu
             menu.append(menuitem)
 
@@ -398,23 +398,23 @@ class ListView:
         column = self.columns[header]
         tree_column = self.columns[header].column
 
-        if column.column_type == "text":
+        if column.column_type == 'text':
             if add:
                 tree_column.pack_start(column.renderer, True)
             tree_column.set_col_attributes(column.renderer, add=add,
                                            text=column.column_indices[column.text_index])
-        elif column.column_type == "bool":
+        elif column.column_type == 'bool':
             if add:
                 tree_column.pack_start(column.renderer, True)
             tree_column.set_col_attributes(column.renderer, active=column.column_indices[0])
-        elif column.column_type == "func":
+        elif column.column_type == 'func':
             if add:
                 tree_column.pack_start(column.renderer, True)
             indice_arg = column.column_indices[0]
             if len(column.column_indices) > 1:
                 indice_arg = tuple(column.column_indices)
             tree_column.set_cell_data_func(column.renderer, column.data_func, indice_arg)
-        elif column.column_type == "progress":
+        elif column.column_type == 'progress':
             if add:
                 tree_column.pack_start(column.renderer, True)
             if column.data_func is None:
@@ -424,7 +424,7 @@ class ListView:
             else:
                 tree_column.set_cell_data_func(column.renderer, column.data_func,
                                                tuple(column.column_indices))
-        elif column.column_type == "texticon":
+        elif column.column_type == 'texticon':
             if add:
                 tree_column.pack_start(column.renderer[column.pixbuf_index], False)
                 tree_column.pack_start(column.renderer[column.text_index], True)
@@ -542,7 +542,7 @@ class ListView:
         column_in_state = False
         if self.state is not None:
             for column_state in self.state:
-                if header.decode("utf-8") == column_state.name.decode("utf-8"):
+                if header.decode('utf-8') == column_state.name.decode('utf-8'):
                     # We found a loaded state
                     column_in_state = True
                     if column_state.width > 0:
@@ -572,7 +572,7 @@ class ListView:
         return True
 
     def add_text_column(self, header, col_type=str, hidden=False, position=None,
-                        status_field=None, sortid=0, column_type="text",
+                        status_field=None, sortid=0, column_type='text',
                         sort_func=None, tooltip=None, default=True, unique=False,
                         default_sort=False):
         """Add a text column to the listview.  Only the header name is required.
@@ -587,7 +587,7 @@ class ListView:
 
     def add_bool_column(self, header, col_type=bool, hidden=False,
                         position=None, status_field=None, sortid=0,
-                        column_type="bool", tooltip=None, default=True):
+                        column_type='bool', tooltip=None, default=True):
 
         """Add a bool column to the listview"""
         render = Gtk.CellRendererToggle()
@@ -597,7 +597,7 @@ class ListView:
 
     def add_func_column(self, header, function, col_types, sortid=0,
                         hidden=False, position=None, status_field=None,
-                        column_type="func", sort_func=None, tooltip=None, default=True):
+                        column_type='func', sort_func=None, tooltip=None, default=True):
         """Add a function column to the listview.  Need a header name, the
         function and the column types."""
 
@@ -610,7 +610,7 @@ class ListView:
 
     def add_progress_column(self, header, col_types=[float, str], sortid=0,
                             hidden=False, position=None, status_field=None,
-                            function=None, column_type="progress",
+                            function=None, column_type='progress',
                             tooltip=None, default=True):
         """Add a progress column to the listview."""
 
@@ -624,7 +624,7 @@ class ListView:
 
     def add_texticon_column(self, header, col_types=[str, str], sortid=1,
                             hidden=False, position=None, status_field=None,
-                            column_type="texticon", function=None,
+                            column_type='texticon', function=None,
                             tooltip=None, default=True, default_sort=False):
         """Adds a texticon column to the listview."""
         render1 = Gtk.CellRendererPixbuf()
@@ -638,7 +638,7 @@ class ListView:
         return True
 
     def on_keypress_search_by_name(self, model, column, key, iter):
-        torrent_name_col = self.columns["Name"].column_indices[1]
+        torrent_name_col = self.columns['Name'].column_indices[1]
         return not model[iter][torrent_name_col].lower().startswith(key.lower())
 
     def restore_columns_order_from_state(self):

@@ -16,13 +16,13 @@ from optparse import OptionParser
 import deluge.common
 
 parser = OptionParser()
-parser.add_option("-n", "--name", dest="name", help="plugin name")
-parser.add_option("-m", "--module-name", dest="module", help="plugin name")
-parser.add_option("-p", "--basepath", dest="path", help="base path")
-parser.add_option("-a", "--author-name", dest="author_name", help="author name,for the GPL header")
-parser.add_option("-e", "--author-email", dest="author_email", help="author email,for the GPL header")
-parser.add_option("-u", "--url", dest="url", help="Homepage URL")
-parser.add_option("-c", "--config", dest="configdir", help="location of deluge configuration")
+parser.add_option('-n', '--name', dest='name', help='plugin name')
+parser.add_option('-m', '--module-name', dest='module', help='plugin name')
+parser.add_option('-p', '--basepath', dest='path', help='base path')
+parser.add_option('-a', '--author-name', dest='author_name', help='author name,for the GPL header')
+parser.add_option('-e', '--author-email', dest='author_email', help='author email,for the GPL header')
+parser.add_option('-u', '--url', dest='url', help='Homepage URL')
+parser.add_option('-c', '--config', dest='configdir', help='location of deluge configuration')
 
 
 (options, args) = parser.parse_args()
@@ -30,23 +30,23 @@ parser.add_option("-c", "--config", dest="configdir", help="location of deluge c
 
 def create_plugin():
     if not options.name:
-        print("--name is mandatory , use -h for more info")
+        print('--name is mandatory , use -h for more info')
         return
     if not options.path:
-        print("--basepath is mandatory , use -h for more info")
+        print('--basepath is mandatory , use -h for more info')
         return
     if not options.author_email:
-        print("--author-email is mandatory , use -h for more info")
+        print('--author-email is mandatory , use -h for more info')
         return
     if not options.author_email:
-        print("--author-name is mandatory , use -h for more info")
+        print('--author-name is mandatory , use -h for more info')
         return
 
     if not options.url:
-        options.url = ""
+        options.url = ''
 
     if not os.path.exists(options.path):
-        print("basepath does not exist")
+        print('basepath does not exist')
         return
 
     if not options.configdir:
@@ -55,66 +55,66 @@ def create_plugin():
     options.configdir = os.path.realpath(options.configdir)
 
     real_name = options.name
-    name = real_name.replace(" ", "_")
+    name = real_name.replace(' ', '_')
     safe_name = name.lower()
     if options.module:
         safe_name = options.module.lower()
     plugin_base = os.path.realpath(os.path.join(options.path, name))
-    deluge_namespace = os.path.join(plugin_base, "deluge")
-    plugins_namespace = os.path.join(deluge_namespace, "plugins")
+    deluge_namespace = os.path.join(plugin_base, 'deluge')
+    plugins_namespace = os.path.join(deluge_namespace, 'plugins')
     src = os.path.join(plugins_namespace, safe_name)
-    data_dir = os.path.join(src, "data")
+    data_dir = os.path.join(src, 'data')
     python_path = sys.executable
 
     if os.path.exists(plugin_base):
-        print("the directory %s already exists, delete it first" % plugin_base)
+        print('the directory %s already exists, delete it first' % plugin_base)
         return
 
     def write_file(path, filename, template, include_gpl=True):
         args = {
-            "author_name": options.author_name,
-            "author_email": options.author_email,
-            "name": name,
-            "safe_name": safe_name,
-            "filename": filename,
-            "plugin_base": plugin_base,
-            "python_path": python_path,
-            "url": options.url,
-            "configdir": options.configdir,
-            "current_year": datetime.utcnow().year
+            'author_name': options.author_name,
+            'author_email': options.author_email,
+            'name': name,
+            'safe_name': safe_name,
+            'filename': filename,
+            'plugin_base': plugin_base,
+            'python_path': python_path,
+            'url': options.url,
+            'configdir': options.configdir,
+            'current_year': datetime.utcnow().year
         }
 
         filename = os.path.join(path, filename)
-        f = open(filename, "w")
-        if filename.endswith(".py") and include_gpl:
+        f = open(filename, 'w')
+        if filename.endswith('.py') and include_gpl:
             f.write(GPL % args)
         f.write(template % args)
         f.close()
 
-    print("creating folders..")
+    print('creating folders..')
     os.mkdir(plugin_base)
     os.mkdir(deluge_namespace)
     os.mkdir(plugins_namespace)
     os.mkdir(src)
     os.mkdir(data_dir)
 
-    print("creating files..")
-    write_file(plugin_base, "setup.py", SETUP)
-    write_file(deluge_namespace, "__init__.py", NAMESPACE_INIT, False)
-    write_file(plugins_namespace, "__init__.py", NAMESPACE_INIT, False)
-    write_file(src, "__init__.py", INIT)
-    write_file(src, "gtkui.py", GTKUI)
-    write_file(src, "webui.py", WEBUI)
-    write_file(src, "core.py", CORE)
-    write_file(src, "common.py", COMMON)
-    write_file(data_dir, "config.ui", GLADE)
-    write_file(data_dir, "%s.js" % safe_name, DEFAULT_JS)
+    print('creating files..')
+    write_file(plugin_base, 'setup.py', SETUP)
+    write_file(deluge_namespace, '__init__.py', NAMESPACE_INIT, False)
+    write_file(plugins_namespace, '__init__.py', NAMESPACE_INIT, False)
+    write_file(src, '__init__.py', INIT)
+    write_file(src, 'gtkui.py', GTKUI)
+    write_file(src, 'webui.py', WEBUI)
+    write_file(src, 'core.py', CORE)
+    write_file(src, 'common.py', COMMON)
+    write_file(data_dir, 'config.ui', GLADE)
+    write_file(data_dir, '%s.js' % safe_name, DEFAULT_JS)
 
     # add an input parameter for this?
-    print("building dev-link..")
-    write_file(plugin_base, "create_dev_link.sh", CREATE_DEV_LINK)
-    dev_link_path = os.path.join(plugin_base, "create_dev_link.sh")
-    os.system("chmod +x %s" % dev_link_path)  # lazy..
+    print('building dev-link..')
+    write_file(plugin_base, 'create_dev_link.sh', CREATE_DEV_LINK)
+    dev_link_path = os.path.join(plugin_base, 'create_dev_link.sh')
+    os.system('chmod +x %s' % dev_link_path)  # lazy..
     os.system(dev_link_path)
 
 

@@ -15,16 +15,16 @@ from deluge.ui.console.main import BaseCommand
 
 class Command(BaseCommand):
     """Update tracker for torrent(s)"""
-    usage = "Usage: update_tracker [ * | <torrent-id> [<torrent-id> ...] ]"
+    usage = 'Usage: update_tracker [ * | <torrent-id> [<torrent-id> ...] ]'
     aliases = ['reannounce']
 
     def handle(self, *args, **options):
-        self.console = component.get("ConsoleUI")
+        self.console = component.get('ConsoleUI')
         if len(args) == 0:
             self.console.write(self.usage)
             return
         if len(args) > 0 and args[0].lower() == '*':
-            args = [""]
+            args = ['']
 
         torrent_ids = []
         for arg in args:
@@ -34,4 +34,4 @@ class Command(BaseCommand):
 
     def complete(self, line):
         # We use the ConsoleUI torrent tab complete method
-        return component.get("ConsoleUI").tab_complete_torrent(line)
+        return component.get('ConsoleUI').tab_complete_torrent(line)

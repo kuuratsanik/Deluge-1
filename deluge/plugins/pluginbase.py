@@ -22,27 +22,27 @@ class PluginBase(component.Component):
         super(PluginBase, self).__init__(name, self.update_interval)
 
     def enable(self):
-        raise NotImplementedError("Need to define an enable method!")
+        raise NotImplementedError('Need to define an enable method!')
 
     def disable(self):
-        raise NotImplementedError("Need to define a disable method!")
+        raise NotImplementedError('Need to define a disable method!')
 
 
 class CorePluginBase(PluginBase):
     def __init__(self, plugin_name):
-        super(CorePluginBase, self).__init__("CorePlugin." + plugin_name)
+        super(CorePluginBase, self).__init__('CorePlugin.' + plugin_name)
         # Register RPC methods
-        component.get("RPCServer").register_object(self, plugin_name.lower())
-        log.debug("CorePlugin initialized..")
+        component.get('RPCServer').register_object(self, plugin_name.lower())
+        log.debug('CorePlugin initialized..')
 
     def __del__(self):
-        component.get("RPCServer").deregister_object(self)
+        component.get('RPCServer').deregister_object(self)
 
 
 class GtkPluginBase(PluginBase):
     def __init__(self, plugin_name):
-        super(GtkPluginBase, self).__init__("GtkPlugin." + plugin_name)
-        log.debug("GtkPlugin initialized..")
+        super(GtkPluginBase, self).__init__('GtkPlugin.' + plugin_name)
+        log.debug('GtkPlugin initialized..')
 
 
 class WebPluginBase(PluginBase):
@@ -54,11 +54,11 @@ class WebPluginBase(PluginBase):
     debug_stylesheets = []
 
     def __init__(self, plugin_name):
-        super(WebPluginBase, self).__init__("WebPlugin." + plugin_name)
+        super(WebPluginBase, self).__init__('WebPlugin.' + plugin_name)
 
         # Register JSON rpc methods
-        component.get("JSON").register_object(self, plugin_name.lower())
-        log.debug("WebPlugin initialized..")
+        component.get('JSON').register_object(self, plugin_name.lower())
+        log.debug('WebPlugin initialized..')
 
     def enable(self):
         pass

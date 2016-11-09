@@ -233,7 +233,7 @@ def make_fixed_length_string_decoders():
         def f(x, f):
             s = x[f + 1:f + 1 + slen]
             if _decode_utf8:
-                s = s.decode("utf8")
+                s = s.decode('utf8')
             return (s, f + 1 + slen)
         return f
     for i in range(STR_FIXED_COUNT):
@@ -341,7 +341,7 @@ def encode_string(x, r):
 
 
 def encode_unicode(x, r):
-    encode_string(x.encode("utf8"), r)
+    encode_string(x.encode('utf8'), r)
 
 
 def encode_list(x, r):
@@ -438,7 +438,7 @@ def test():
     assert 1e-10 < abs(loads(dumps(1.1)) - 1.1) < 1e-6
     assert 1e-10 < abs(loads(dumps(1.1, 32)) - 1.1) < 1e-6
     assert abs(loads(dumps(1.1, 64)) - 1.1) < 1e-12
-    assert loads(dumps(u"Hello World!!"))
+    assert loads(dumps(u'Hello World!!'))
 try:
     import psyco
     psyco.bind(dumps)

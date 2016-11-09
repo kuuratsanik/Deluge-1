@@ -14,13 +14,13 @@ from deluge.ui.console.modes.alltorrents import AllTorrents
 
 class Command(BaseCommand):
     """Exit this mode and go into the more 'gui' like mode"""
-    usage = "Usage: gui"
+    usage = 'Usage: gui'
     interactive_only = True
 
     def handle(self, *args, **options):
-        console = component.get("ConsoleUI")
+        console = component.get('ConsoleUI')
         try:
-            at = component.get("AllTorrents")
+            at = component.get('AllTorrents')
         except KeyError:
             at = AllTorrents(console.stdscr, console.encoding)
         console.set_mode(at)

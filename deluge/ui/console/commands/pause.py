@@ -15,10 +15,10 @@ from deluge.ui.console.main import BaseCommand
 
 class Command(BaseCommand):
     """Pause a torrent"""
-    usage = "Usage: pause [ * | <torrent-id> [<torrent-id> ...] ]"
+    usage = 'Usage: pause [ * | <torrent-id> [<torrent-id> ...] ]'
 
     def handle(self, *args, **options):
-        self.console = component.get("ConsoleUI")
+        self.console = component.get('ConsoleUI')
 
         if len(args) == 0:
             self.console.write(self.usage)
@@ -36,4 +36,4 @@ class Command(BaseCommand):
 
     def complete(self, line):
         # We use the ConsoleUI torrent tab complete method
-        return component.get("ConsoleUI").tab_complete_torrent(line)
+        return component.get('ConsoleUI').tab_complete_torrent(line)

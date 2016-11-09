@@ -19,13 +19,13 @@ supports.
 
 """
 
-REQUIRED_VERSION = "0.16.7.0"
+REQUIRED_VERSION = '0.16.7.0'
 
 
 def check_version(lt):
     from deluge.common import VersionSplit
     if VersionSplit(lt.version) < VersionSplit(REQUIRED_VERSION):
-        raise ImportError("This version of Deluge requires libtorrent >=%s!" % REQUIRED_VERSION)
+        raise ImportError('This version of Deluge requires libtorrent >=%s!' % REQUIRED_VERSION)
 
 try:
     import deluge.libtorrent as lt

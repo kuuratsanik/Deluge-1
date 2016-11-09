@@ -130,7 +130,7 @@ class Win32IcoFile(object):
         else:
             # XOR + AND mask bmp frame
             im = PIL.BmpImagePlugin.DibImageFile(self.buf)
-            log.debug("Loaded image: %s %s %s %s", im.format, im.mode, im.size, im.info)
+            log.debug('Loaded image: %s %s %s %s', im.format, im.mode, im.size, im.info)
 
             # change tile dimension to only encompass XOR image
             im.size = im.size[0], im.size[1] / 2
@@ -145,7 +145,7 @@ class Win32IcoFile(object):
                     bpp = k
                     break
             # end for
-            log.debug("o:%s, w:%s, h:%s, bpp:%s", o, im.size[0], im.size[1], bpp)
+            log.debug('o:%s, w:%s, h:%s, bpp:%s', o, im.size[0], im.size[1], bpp)
             and_mask_offset = o + (im.size[0] * im.size[1] * (bpp / 8.0))
 
             if 32 == bpp:
@@ -170,7 +170,7 @@ class Win32IcoFile(object):
                 # apply mask image as alpha channel
                 im = im.convert('RGBA')
                 im.putalpha(mask)
-                log.debug("image mode: %s", im.mode)
+                log.debug('image mode: %s', im.mode)
 
             else:
                 # get AND image from end of bitmap
@@ -180,7 +180,7 @@ class Win32IcoFile(object):
                     w += 32 - (im.size[0] % 32)
                 # the total mask data is padded row size * height / bits per char
                 total_bytes = long((w * im.size[1]) / 8)
-                log.debug("tot=%d, off=%d, w=%d, size=%d", len(data), and_mask_offset, w, total_bytes)
+                log.debug('tot=%d, off=%d, w=%d, size=%d', len(data), and_mask_offset, w, total_bytes)
 
                 self.buf.seek(and_mask_offset)
                 mask_data = self.buf.read(total_bytes)
@@ -198,7 +198,7 @@ class Win32IcoFile(object):
                 # set mask as alpha channel
                 im = im.convert('RGBA')
                 im.putalpha(mask)
-                log.debug("image mode: %s", im.mode)
+                log.debug('image mode: %s', im.mode)
             # end if !'RGBA'
         # end if (png)/else(bmp)
 
@@ -255,4 +255,4 @@ def _accept(prefix):
 
 # register our decoder with PIL
 PIL.Image.register_open(Win32IconImageFile.format, Win32IconImageFile, _accept)
-PIL.Image.register_extension(Win32IconImageFile.format, ".ico")
+PIL.Image.register_extension(Win32IconImageFile.format, '.ico')

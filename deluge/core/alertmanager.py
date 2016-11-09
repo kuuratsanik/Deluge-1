@@ -30,9 +30,9 @@ log = logging.getLogger(__name__)
 class AlertManager(component.Component):
     """AlertManager fetches and processes libtorrent alerts"""
     def __init__(self):
-        log.debug("AlertManager init...")
-        component.Component.__init__(self, "AlertManager", interval=0.3)
-        self.session = component.get("Core").session
+        log.debug('AlertManager init...')
+        component.Component.__init__(self, 'AlertManager', interval=0.3)
+        self.session = component.get('Core').session
 
         # Increase the alert queue size so that alerts don't get lost.
         self.alert_queue_size = 10000
@@ -78,7 +78,7 @@ class AlertManager(component.Component):
 
         # Append the handler to the list in the handlers dictionary
         self.handlers[alert_type].append(handler)
-        log.debug("Registered handler for alert %s", alert_type)
+        log.debug('Registered handler for alert %s', alert_type)
 
     def deregister_handler(self, handler):
         """
@@ -105,16 +105,16 @@ class AlertManager(component.Component):
 
         num_alerts = len(alerts)
         if log.isEnabledFor(logging.DEBUG):
-            log.debug("Alerts queued: %s", num_alerts)
+            log.debug('Alerts queued: %s', num_alerts)
         if num_alerts > 0.9 * self.alert_queue_size:
-            log.warning("Warning total alerts queued, %s, passes 90%% of queue size.", num_alerts)
+            log.warning('Warning total alerts queued, %s, passes 90%% of queue size.', num_alerts)
 
         # Loop through all alerts in the queue
         for alert in alerts:
             alert_type = type(alert).__name__
             # Display the alert message
             if log.isEnabledFor(logging.DEBUG):
-                log.debug("%s: %s", alert_type, decode_string(alert.message()))
+                log.debug('%s: %s', alert_type, decode_string(alert.message()))
             # Call any handlers for this alert type
             if alert_type in self.handlers:
                 for handler in self.handlers[alert_type]:
@@ -125,8 +125,8 @@ class AlertManager(component.Component):
 
     def set_alert_queue_size(self, queue_size):
         """Sets the maximum size of the libtorrent alert queue"""
-        log.info("Alert Queue Size set to %s", queue_size)
+        log.info('Alert Queue Size set to %s', queue_size)
         self.alert_queue_size = queue_size
         settings = self.session.get_settings()
-        settings["alert_queue_size"] = self.alert_queue_size
+        settings['alert_queue_size'] = self.alert_queue_size
         self.session.set_settings(settings)

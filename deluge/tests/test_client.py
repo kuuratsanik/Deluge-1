@@ -13,7 +13,7 @@ from .basetest import BaseTestCase
 class NoVersionSendingDaemonSSLProxy(DaemonSSLProxy):
     def authenticate(self, username, password):
         self.login_deferred = defer.Deferred()
-        d = self.call("daemon.login", username, password)
+        d = self.call('daemon.login', username, password)
         d.addCallback(self.__on_login, username)
         d.addErrback(self.__on_login_fail)
         return self.login_deferred
@@ -27,7 +27,7 @@ class NoVersionSendingDaemonSSLProxy(DaemonSSLProxy):
 
 class NoVersionSendingClient(Client):
 
-    def connect(self, host="127.0.0.1", port=58846, username="", password="",
+    def connect(self, host='127.0.0.1', port=58846, username='', password='',
                 skip_authentication=False):
         self._daemon_proxy = NoVersionSendingDaemonSSLProxy()
         self._daemon_proxy.set_disconnect_callback(self.__on_disconnect)
@@ -89,7 +89,7 @@ class ClientTestCase(BaseTestCase):
 
     def test_connect_no_credentials(self):
         d = client.connect(
-            "localhost", self.listen_port, username="", password=""
+            'localhost', self.listen_port, username='', password=''
         )
 
         def on_connect(result):
@@ -104,7 +104,7 @@ class ClientTestCase(BaseTestCase):
         from deluge.ui import common
         username, password = common.get_localhost_auth()
         d = client.connect(
-            "localhost", self.listen_port, username=username, password=password
+            'localhost', self.listen_port, username=username, password=password
         )
 
         def on_connect(result):
@@ -119,7 +119,7 @@ class ClientTestCase(BaseTestCase):
         from deluge.ui import common
         username, password = common.get_localhost_auth()
         d = client.connect(
-            "localhost", self.listen_port, username=username, password=password + "1"
+            'localhost', self.listen_port, username=username, password=password + '1'
         )
 
         def on_failure(failure):
@@ -136,7 +136,7 @@ class ClientTestCase(BaseTestCase):
         from deluge.ui import common
         username, password = common.get_localhost_auth()
         d = client.connect(
-            "localhost", self.listen_port, username=username
+            'localhost', self.listen_port, username=username
         )
 
         def on_failure(failure):
@@ -155,7 +155,7 @@ class ClientTestCase(BaseTestCase):
         username, password = common.get_localhost_auth()
         no_version_sending_client = NoVersionSendingClient()
         d = no_version_sending_client.connect(
-            "localhost", self.listen_port, username=username, password=password
+            'localhost', self.listen_port, username=username, password=password
         )
 
         def on_failure(failure):

@@ -67,7 +67,7 @@ Special keys for various input types are as follows:
 
 
 """
-HELP_LINES = HELP_STR.split("\n")
+HELP_LINES = HELP_STR.split('\n')
 
 
 class ZONE:
@@ -79,8 +79,8 @@ class ZONE:
 class Preferences(BaseMode):
     def __init__(self, parent_mode, core_config, console_config, active_port, status, stdscr, encoding=None):
         self.parent_mode = parent_mode
-        self.categories = [_("Interface"), _("Columns"), _("Downloads"), _("Network"), _("Bandwidth"),
-                           _("Other"), _("Daemon"), _("Queue"), _("Proxy"), _("Cache")]  # , _("Plugins")]
+        self.categories = [_('Interface'), _('Columns'), _('Downloads'), _('Network'), _('Bandwidth'),
+                           _('Other'), _('Daemon'), _('Queue'), _('Proxy'), _('Cache')]  # , _("Plugins")]
         self.cur_cat = 0
         self.popup = None
         self.messages = deque()
@@ -101,7 +101,7 @@ class Preferences(BaseMode):
         # create the panes
         self.__calc_sizes()
 
-        self.action_input = SelectInput(self, None, None, ["Cancel", "Apply", "OK"], [0, 1, 2], 0)
+        self.action_input = SelectInput(self, None, None, ['Cancel', 'Apply', 'OK'], [0, 1, 2], 0)
         self.refresh()
 
     def __calc_sizes(self):
@@ -124,19 +124,19 @@ class Preferences(BaseMode):
     def __draw_catetories(self):
         for i, category in enumerate(self.categories):
             if i == self.cur_cat and self.active_zone == ZONE.CATEGORIES:
-                self.add_string(i + 1, "- {!black,white,bold!}%s" % category, pad=False)
+                self.add_string(i + 1, '- {!black,white,bold!}%s' % category, pad=False)
             elif i == self.cur_cat:
-                self.add_string(i + 1, "- {!black,white!}%s" % category, pad=False)
+                self.add_string(i + 1, '- {!black,white!}%s' % category, pad=False)
             else:
-                self.add_string(i + 1, "- %s" % category)
-        self.stdscr.vline(1, self.div_off, "|", self.rows - 2)
+                self.add_string(i + 1, '- %s' % category)
+        self.stdscr.vline(1, self.div_off, '|', self.rows - 2)
 
     def __draw_preferences(self):
         self.panes[self.cur_cat].render(self, self.stdscr, self.prefs_width, self.active_zone == ZONE.PREFRENCES)
 
     def __draw_actions(self):
         selected = self.active_zone == ZONE.ACTIONS
-        self.stdscr.hline(self.rows - 3, self.div_off + 1, "_", self.cols)
+        self.stdscr.hline(self.rows - 3, self.div_off + 1, '_', self.cols)
         self.action_input.render(self.stdscr, self.rows - 2, self.cols, selected, self.cols - 22)
 
     def on_resize(self, *args):
@@ -144,7 +144,7 @@ class Preferences(BaseMode):
         self.__calc_sizes()
 
         # Always refresh Legacy(it will also refresh AllTorrents), otherwise it will bug deluge out
-        legacy = component.get("LegacyUI")
+        legacy = component.get('LegacyUI')
         legacy.on_resize(*args)
         self.stdscr.erase()
         self.refresh()
@@ -156,8 +156,8 @@ class Preferences(BaseMode):
 
         self.stdscr.erase()
         self.add_string(0, self.statusbars.topbar)
-        hstr = "%sPress [h] for help" % (" " * (self.cols - len(self.statusbars.bottombar) - 10))
-        self.add_string(self.rows - 1, "%s%s" % (self.statusbars.bottombar, hstr))
+        hstr = '%sPress [h] for help' % (' ' * (self.cols - len(self.statusbars.bottombar) - 10))
+        self.add_string(self.rows - 1, '%s%s' % (self.statusbars.bottombar, hstr))
 
         self.__draw_catetories()
         self.__draw_actions()
@@ -165,7 +165,7 @@ class Preferences(BaseMode):
         # do this last since it moves the cursor
         self.__draw_preferences()
 
-        if component.get("ConsoleUI").screen != self:
+        if component.get('ConsoleUI').screen != self:
             return
 
         self.stdscr.noutrefresh()
@@ -244,7 +244,7 @@ class Preferences(BaseMode):
 
     def back_to_parent(self):
         self.stdscr.erase()
-        component.get("ConsoleUI").set_mode(self.parent_mode)
+        component.get('ConsoleUI').set_mode(self.parent_mode)
         self.parent_mode.resume()
 
     def read_input(self):
@@ -257,7 +257,7 @@ class Preferences(BaseMode):
             return
 
         if c > 31 and c < 256:
-            if chr(c) == "Q":
+            if chr(c) == 'Q':
                 from twisted.internet import reactor
                 if client.connected():
                     def on_disconnect(result):
@@ -266,8 +266,8 @@ class Preferences(BaseMode):
                 else:
                     reactor.stop()
                 return
-            elif chr(c) == "h":
-                self.popup = Popup(self, "Preferences Help")
+            elif chr(c) == 'h':
+                self.popup = Popup(self, 'Preferences Help')
                 for l in HELP_LINES:
                     self.popup.add_line(l)
 

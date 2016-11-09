@@ -21,9 +21,9 @@ rpcserver = None
 
 # This is called by torrent.py when calling component.get("...")
 def get(key):
-    if key is "Core":
+    if key is 'Core':
         return core
-    elif key is "RPCServer":
+    elif key is 'RPCServer':
         return rpcserver
     else:
         return None
@@ -35,7 +35,7 @@ class TorrentTestCase(unittest.TestCase):
         global config_setup
         config_setup = True
         config_dir = common.set_tmp_config_dir()
-        core_config = deluge.config.Config("core.conf", defaults=deluge.core.preferencesmanager.DEFAULT_PREFS,
+        core_config = deluge.config.Config('core.conf', defaults=deluge.core.preferencesmanager.DEFAULT_PREFS,
                                            config_dir=config_dir)
         core_config.save()
 
@@ -65,26 +65,26 @@ class TorrentTestCase(unittest.TestCase):
             if i % 100 == 0:
                 print(tmp)
                 tmp = ''
-            tmp += "%s" % p
+            tmp += '%s' % p
         print(tmp)
 
     def get_torrent_atp(self, filename):
         filename = os.path.join(os.path.dirname(__file__), filename)
         e = lt.bdecode(open(filename, 'rb').read())
         info = lt.torrent_info(e)
-        atp = {"ti": info}
-        atp["save_path"] = os.getcwd()
-        atp["storage_mode"] = lt.storage_mode_t.storage_mode_sparse
-        atp["add_paused"] = False
-        atp["auto_managed"] = True
-        atp["duplicate_is_error"] = True
+        atp = {'ti': info}
+        atp['save_path'] = os.getcwd()
+        atp['storage_mode'] = lt.storage_mode_t.storage_mode_sparse
+        atp['add_paused'] = False
+        atp['auto_managed'] = True
+        atp['duplicate_is_error'] = True
         return atp
 
     def test_set_prioritize_first_last_pieces(self):
         piece_indexes = [(0, 1), (0, 1), (0, 1), (0, 1), (0, 2), (50, 52),
                          (51, 53), (110, 112), (111, 114), (200, 203),
                          (202, 203), (212, 213), (212, 218), (457, 463)]
-        self.run_test_set_prioritize_first_last_pieces("dir_with_6_files.torrent", piece_indexes)
+        self.run_test_set_prioritize_first_last_pieces('dir_with_6_files.torrent', piece_indexes)
 
     def run_test_set_prioritize_first_last_pieces(self, torrent_file, prioritized_piece_indexes):
         atp = self.get_torrent_atp(torrent_file)
@@ -116,7 +116,7 @@ class TorrentTestCase(unittest.TestCase):
         # self.print_priority_list(priorities)
 
     def test_set_prioritize_first_last_pieces_false(self):
-        atp = self.get_torrent_atp("dir_with_6_files.torrent")
+        atp = self.get_torrent_atp('dir_with_6_files.torrent')
         handle = self.session.add_torrent(atp)
         self.torrent = Torrent(handle, {})
         # First set some pieces prioritized

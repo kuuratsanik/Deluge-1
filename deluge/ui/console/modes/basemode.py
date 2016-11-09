@@ -46,7 +46,7 @@ class CursesStdIO(object):
         pass
 
     def logPrefix(self):  # NOQA
-        return "CursesClient"
+        return 'CursesClient'
 
 
 class BaseMode(CursesStdIO):
@@ -71,20 +71,20 @@ class BaseMode(CursesStdIO):
         self.topbar - top statusbar
         self.bottombar - bottom statusbar
         """
-        log.debug("BaseMode init!")
+        log.debug('BaseMode init!')
         self.stdscr = stdscr
         # Make the input calls non-blocking
         self.stdscr.nodelay(1)
 
         # Strings for the 2 status bars
-        self.statusbars = component.get("StatusBars")
+        self.statusbars = component.get('StatusBars')
 
         # Keep track of the screen size
         self.rows, self.cols = self.stdscr.getmaxyx()
         try:
             signal.signal(signal.SIGWINCH, self.on_resize)
         except Exception:
-            log.debug("Unable to catch SIGWINCH signal!")
+            log.debug('Unable to catch SIGWINCH signal!')
 
         if not encoding:
             self.encoding = sys.getdefaultencoding()
@@ -98,9 +98,9 @@ class BaseMode(CursesStdIO):
             self.refresh()
 
     def on_resize_norefresh(self, *args):
-        log.debug("on_resize_from_signal")
+        log.debug('on_resize_from_signal')
         # Get the new rows and cols value
-        self.rows, self.cols = struct.unpack("hhhh", ioctl(0, termios.TIOCGWINSZ, "\000" * 8))[0:2]
+        self.rows, self.cols = struct.unpack('hhhh', ioctl(0, termios.TIOCGWINSZ, '\000' * 8))[0:2]
         curses.resizeterm(self.rows, self.cols)
 
     def on_resize(self, *args):
@@ -147,17 +147,17 @@ class BaseMode(CursesStdIO):
         try:
             parsed = colors.parse_color_string(string, self.encoding)
         except colors.BadColorString as ex:
-            log.error("Cannot add bad color string %s: %s", string, ex)
+            log.error('Cannot add bad color string %s: %s', string, ex)
             return
 
         for index, (color, s) in enumerate(parsed):
             if index + 1 == len(parsed) and pad:
                 # This is the last string so lets append some " " to it
-                s += " " * (self.cols - (col + len(s)) - 1)
+                s += ' ' * (self.cols - (col + len(s)) - 1)
             if trim:
                 y, x = screen.getmaxyx()
                 if (col + len(s)) > x:
-                    s = "%s..." % s[0:x - 4 - col]
+                    s = '%s...' % s[0:x - 4 - col]
             screen.addstr(row, col, s, color)
             col += len(s)
 

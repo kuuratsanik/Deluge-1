@@ -39,20 +39,20 @@ MAX_HISTFILE_SIZE = 2000
 
 
 def complete_line(line, possible_matches):
-    "Find the common prefix of possible matches, proritizing matching-case elements"
+    'Find the common prefix of possible matches, proritizing matching-case elements'
 
     if not possible_matches:
         return line
 
-    line = line.replace(r"\ ", " ")
+    line = line.replace(r'\ ', ' ')
 
     matches1 = []
     matches2 = []
 
     for match in possible_matches:
         match = format_utils.remove_formatting(match)
-        match = match.replace(r"\ ", " ")
-        m1, m2 = "", ""
+        match = match.replace(r'\ ', ' ')
+        m1, m2 = '', ''
         for i, c in enumerate(line):
             if m1 and m2:
                 break
@@ -79,13 +79,13 @@ def complete_line(line, possible_matches):
                 maxlen = min(maxlen, i)
                 break
 
-    return possible_matches[0][:maxlen].replace(" ", r"\ ")
+    return possible_matches[0][:maxlen].replace(' ', r'\ ')
 
 
 def commonprefix(m):
-    "Given a list of pathnames, returns the longest common leading component"
+    'Given a list of pathnames, returns the longest common leading component'
     if not m:
-        return ""
+        return ''
     s1 = min(m)
     s2 = max(m)
     for i, c in enumerate(s1):
@@ -97,7 +97,7 @@ def commonprefix(m):
 class Legacy(BaseMode, component.Component):
     def __init__(self, stdscr, encoding=None):
 
-        component.Component.__init__(self, "LegacyUI", 1, depend=["SessionProxy"])
+        component.Component.__init__(self, 'LegacyUI', 1, depend=['SessionProxy'])
 
         self.batch_write = False
 
@@ -107,11 +107,11 @@ class Legacy(BaseMode, component.Component):
         self.display_lines_offset = 0
 
         # Holds the user input and is cleared on 'enter'
-        self.input = ""
-        self.input_incomplete = ""
+        self.input = ''
+        self.input_incomplete = ''
         self._old_char = 0
         self._last_char = 0
-        self._last_del_char = ""
+        self._last_del_char = ''
 
         # Keep track of where the cursor is
         self.input_cursor = 0
@@ -123,9 +123,9 @@ class Legacy(BaseMode, component.Component):
         self.tab_count = 0
 
         # Get a handle to the main console
-        self.console = component.get("ConsoleUI")
+        self.console = component.get('ConsoleUI')
 
-        self.console_config = component.get("AllTorrents").config
+        self.console_config = component.get('AllTorrents').config
 
         # To avoid having to truncate the file every time we're writing
         # or doing it on exit(and therefore relying on an error-less
@@ -133,21 +133,21 @@ class Legacy(BaseMode, component.Component):
         # that we swap around based on length
         config_dir = deluge.configmanager.get_config_dir()
         self.history_file = [
-            os.path.join(config_dir, "legacy.hist1"),
-            os.path.join(config_dir, "legacy.hist2")
+            os.path.join(config_dir, 'legacy.hist1'),
+            os.path.join(config_dir, 'legacy.hist2')
         ]
         self._hf_lines = [0, 0]
 
-        if self.console_config["save_legacy_history"]:
+        if self.console_config['save_legacy_history']:
             try:
-                lines1 = open(self.history_file[0], "r").read().splitlines()
+                lines1 = open(self.history_file[0], 'r').read().splitlines()
                 self._hf_lines[0] = len(lines1)
             except:
                 lines1 = []
                 self._hf_lines[0] = 0
 
             try:
-                lines2 = open(self.history_file[1], "r").read().splitlines()
+                lines2 = open(self.history_file[1], 'r').read().splitlines()
                 self._hf_lines[1] = len(lines2)
             except:
                 lines2 = []
@@ -169,9 +169,9 @@ class Legacy(BaseMode, component.Component):
                     # line = line.encode(self.encoding)
                     # self.lines[i] = line
                 line = format_utils.remove_formatting(line)
-                if line.startswith(">>> "):
+                if line.startswith('>>> '):
                     input = line[4:]
-                    if self.console_config["ignore_duplicate_lines"]:
+                    if self.console_config['ignore_duplicate_lines']:
                         if len(self.input_history) > 0:
                             if self.input_history[-1] != input:
                                 self.input_history.append(input)
@@ -180,7 +180,7 @@ class Legacy(BaseMode, component.Component):
 
             self.input_history_index = len(self.input_history)
 
-            component.start("LegacyUI")
+            component.start('LegacyUI')
 
         # show the cursor
         curses.curs_set(2)
@@ -196,18 +196,18 @@ class Legacy(BaseMode, component.Component):
         def on_session_state(result):
             def on_torrents_status(torrents):
                 for torrent_id, status in torrents.items():
-                    self.torrents.append((torrent_id, status["name"]))
+                    self.torrents.append((torrent_id, status['name']))
                 self.started_deferred.callback(True)
 
-            client.core.get_torrents_status({"id": result}, ["name"]).addCallback(on_torrents_status)
+            client.core.get_torrents_status({'id': result}, ['name']).addCallback(on_torrents_status)
         client.core.get_session_state().addCallback(on_session_state)
 
         # Register some event handlers to keep the torrent list up-to-date
-        client.register_event_handler("TorrentAddedEvent", self.on_torrent_added_event)
-        client.register_event_handler("TorrentRemovedEvent", self.on_torrent_removed_event)
+        client.register_event_handler('TorrentAddedEvent', self.on_torrent_added_event)
+        client.register_event_handler('TorrentRemovedEvent', self.on_torrent_removed_event)
 
     def update(self):
-        if component.get("ConsoleUI").screen != self:
+        if component.get('ConsoleUI').screen != self:
             return
 
         # Update just the status bars
@@ -238,16 +238,16 @@ class Legacy(BaseMode, component.Component):
             if self.input:
                 self.input = self.input.encode(self.encoding)
 
-                if self.input.endswith("\\"):
+                if self.input.endswith('\\'):
                     self.input = self.input[:-1]
                     self.input_cursor -= 1
-                self.add_line("{!yellow,black,bold!}>>>{!input!} %s" % self.input)
+                self.add_line('{!yellow,black,bold!}>>>{!input!} %s' % self.input)
                 self.do_command(self.input)
                 if len(self.input_history) == INPUT_HISTORY_SIZE:
                     # Remove the oldest input history if the max history size
                     # is reached.
                     del self.input_history[0]
-                if self.console_config["ignore_duplicate_lines"]:
+                if self.console_config['ignore_duplicate_lines']:
                     if len(self.input_history) > 0:
                         if self.input_history[-1] != self.input:
                             self.input_history.append(self.input)
@@ -256,8 +256,8 @@ class Legacy(BaseMode, component.Component):
                 else:
                     self.input_history.append(self.input)
                 self.input_history_index = len(self.input_history)
-                self.input = ""
-                self.input_incomplete = ""
+                self.input = ''
+                self.input_incomplete = ''
                 self.input_cursor = 0
                 self.stdscr.refresh()
 
@@ -269,7 +269,7 @@ class Legacy(BaseMode, component.Component):
             if self.tab_completer:
                 # We only call the tab completer function if we're at the end of
                 # the input string on the cursor is on a space
-                if self.input_cursor == len(self.input) or self.input[self.input_cursor] == " ":
+                if self.input_cursor == len(self.input) or self.input[self.input_cursor] == ' ':
                     self.input, self.input_cursor = self.tab_completer(self.input, self.input_cursor, self.tab_count)
 
         # We use the UP and DOWN keys to cycle through input history
@@ -356,7 +356,7 @@ class Legacy(BaseMode, component.Component):
             if c > 31 and c < 256:
                 # Emulate getwch
                 stroke = chr(c)
-                uchar = ""
+                uchar = ''
                 while not uchar:
                     try:
                         uchar = stroke.decode(self.encoding)
@@ -387,7 +387,7 @@ class Legacy(BaseMode, component.Component):
 
         # We need to also refresh AllTorrents because otherwise it will
         # be only us that get properly resized
-        all_torrents = component.get("AllTorrents")
+        all_torrents = component.get('AllTorrents')
         all_torrents.on_resize(*args)
         self.stdscr.erase()
         self.refresh()
@@ -415,7 +415,7 @@ class Legacy(BaseMode, component.Component):
         elif len(self.lines) == available_lines:
             lines = self.lines
         else:
-            lines = [""] * (available_lines - len(self.lines))
+            lines = [''] * (available_lines - len(self.lines))
             lines.extend(self.lines)
 
         # Add the lines to the screen
@@ -425,7 +425,7 @@ class Legacy(BaseMode, component.Component):
         # Add the input string
         self.add_string(self.rows - 1, self.input)
 
-        if component.get("ConsoleUI").screen != self:
+        if component.get('ConsoleUI').screen != self:
             return
 
         # Move the cursor
@@ -463,7 +463,7 @@ class Legacy(BaseMode, component.Component):
 
         """
 
-        if self.console_config["save_legacy_history"]:
+        if self.console_config['save_legacy_history']:
             # Determine which file is the active one
             # If both are under maximum, it's first, otherwise it's the one not full
             if self._hf_lines[0] < MAX_HISTFILE_SIZE and self._hf_lines[1] < MAX_HISTFILE_SIZE:
@@ -474,7 +474,7 @@ class Legacy(BaseMode, component.Component):
                 active_file = 0
 
             # Write the line
-            f = open(self.history_file[active_file], "a")
+            f = open(self.history_file[active_file], 'a')
 
             if isinstance(text, unicode):
                 text = text.encode(self.encoding)
@@ -489,7 +489,7 @@ class Legacy(BaseMode, component.Component):
             # therefore swapping the currently active file
             if self._hf_lines[active_file] == MAX_HISTFILE_SIZE:
                 self._hf_lines[1 - active_file] = 0
-                f = open(self.history_file[1 - active_file], "w")
+                f = open(self.history_file[1 - active_file], 'w')
                 f.truncate(0)
 
         def get_line_chunks(line):
@@ -497,21 +497,21 @@ class Legacy(BaseMode, component.Component):
             Returns a list of 2-tuples (color string, text)
 
             """
-            if not line or line.count("{!") != line.count("!}"):
+            if not line or line.count('{!') != line.count('!}'):
                 return []
 
             chunks = []
-            if not line.startswith("{!"):
-                begin = line.find("{!")
+            if not line.startswith('{!'):
+                begin = line.find('{!')
                 if begin == -1:
                     begin = len(line)
-                chunks.append(("", line[:begin]))
+                chunks.append(('', line[:begin]))
                 line = line[begin:]
 
             while line:
                 # We know the line starts with "{!" here
-                end_color = line.find("!}")
-                next_color = line.find("{!", end_color)
+                end_color = line.find('!}')
+                next_color = line.find('{!', end_color)
                 if next_color == -1:
                     next_color = len(line)
                 chunks.append((line[:end_color + 2], line[end_color + 2:next_color]))
@@ -523,11 +523,11 @@ class Legacy(BaseMode, component.Component):
             try:
                 line_length = colors.get_line_width(line)
             except colors.BadColorString:
-                log.error("Passed a bad colored line: %s", line)
+                log.error('Passed a bad colored line: %s', line)
                 continue
 
             if line_length >= (self.cols - 1):
-                s = ""
+                s = ''
                 # The length of the text without the color tags
                 s_len = 0
                 # We need to split this over multiple lines
@@ -572,13 +572,13 @@ class Legacy(BaseMode, component.Component):
         try:
             parsed = colors.parse_color_string(string, self.encoding)
         except colors.BadColorString as ex:
-            log.error("Cannot add bad color string %s: %s", string, ex)
+            log.error('Cannot add bad color string %s: %s', string, ex)
             return
 
         for index, (color, s) in enumerate(parsed):
             if index + 1 == len(parsed):
                 # This is the last string so lets append some " " to it
-                s += " " * (self.cols - (col + strwidth(s)) - 1)
+                s += ' ' * (self.cols - (col + strwidth(s)) - 1)
             try:
                 self.stdscr.addstr(row, col, s, color)
             except curses.error:
@@ -595,17 +595,17 @@ class Legacy(BaseMode, component.Component):
         """
         if not cmd:
             return
-        cmd, _, line = cmd.partition(" ")
+        cmd, _, line = cmd.partition(' ')
         try:
             parser = self.console._commands[cmd].create_parser()
         except KeyError:
-            self.write("{!error!}Unknown command: %s" % cmd)
+            self.write('{!error!}Unknown command: %s' % cmd)
             return
 
         try:
             args = self.console._commands[cmd].split(line)
         except ValueError as ex:
-            self.write("{!error!}Error parsing command: %s" % ex)
+            self.write('{!error!}Error parsing command: %s' % ex)
             return
 
         # Do a little hack here to print 'command --help' properly
@@ -616,30 +616,30 @@ class Legacy(BaseMode, component.Component):
         parser.print_help = print_help
 
         # Only these commands can be run when not connected to a daemon
-        not_connected_cmds = ["help", "connect", "quit"]
+        not_connected_cmds = ['help', 'connect', 'quit']
         aliases = []
         for c in not_connected_cmds:
             aliases.extend(self.console._commands[c].aliases)
         not_connected_cmds.extend(aliases)
 
         if not client.connected() and cmd not in not_connected_cmds:
-            self.write("{!error!}Not connected to a daemon, please use the connect command first.")
+            self.write('{!error!}Not connected to a daemon, please use the connect command first.')
             return
 
         try:
             options, args = parser.parse_args(args)
         except TypeError as ex:
-            self.write("{!error!}Error parsing options: %s" % ex)
+            self.write('{!error!}Error parsing options: %s' % ex)
             return
 
-        if not getattr(options, "_exit", False):
+        if not getattr(options, '_exit', False):
             try:
                 ret = self.console._commands[cmd].handle(*args, **options.__dict__)
             except Exception as ex:
-                self.write("{!error!} %s" % ex)
+                self.write('{!error!} %s' % ex)
                 log.exception(ex)
                 import traceback
-                self.write("%s" % traceback.format_exc())
+                self.write('%s' % traceback.format_exc())
                 return defer.succeed(True)
             else:
                 return ret
@@ -686,9 +686,9 @@ class Legacy(BaseMode, component.Component):
 
         # We don't want to split by escaped spaces
         def split(string):
-            return re.split(r"(?<!\\) ", string)
+            return re.split(r'(?<!\\) ', string)
 
-        if " " not in line:
+        if ' ' not in line:
             possible_matches = []
             # Iterate through the commands looking for ones that startwith the
             # line.
@@ -696,13 +696,13 @@ class Legacy(BaseMode, component.Component):
                 if cmd.startswith(line):
                     possible_matches.append(cmd)
 
-            line_prefix = ""
+            line_prefix = ''
         else:
             cmd = split(line)[0]
             if cmd in self.console._commands:
                 # Call the command's complete method to get 'er done
                 possible_matches = self.console._commands[cmd].complete(split(line)[-1])
-                line_prefix = " ".join(split(line)[:-1]) + " "
+                line_prefix = ' '.join(split(line)[:-1]) + ' '
             else:
                 # This is a bogus command
                 return (line, cursor)
@@ -716,70 +716,70 @@ class Legacy(BaseMode, component.Component):
         elif len(possible_matches) == 1:
             # Do not append space after directory names
             new_line = line_prefix + possible_matches[0]
-            if not new_line.endswith("/") and not new_line.endswith(r"\\"):
-                new_line += " "
+            if not new_line.endswith('/') and not new_line.endswith(r'\\'):
+                new_line += ' '
             # We only want to print eventual colors or other control characters, not return them
             new_line = format_utils.remove_formatting(new_line)
             return (new_line, len(new_line))
         else:
             if hits == 1:
-                p = " ".join(split(line)[:-1])
+                p = ' '.join(split(line)[:-1])
 
                 try:
                     l_arg = split(line)[-1]
                 except IndexError:
-                    l_arg = ""
+                    l_arg = ''
 
-                new_line = " ".join([p, complete_line(l_arg, possible_matches)]).lstrip()
+                new_line = ' '.join([p, complete_line(l_arg, possible_matches)]).lstrip()
 
                 if len(format_utils.remove_formatting(new_line)) > len(line):
                     line = new_line
                     cursor = len(line)
             elif hits >= 2:
-                max_list = self.console_config["torrents_per_tab_press"]
+                max_list = self.console_config['torrents_per_tab_press']
                 match_count = len(possible_matches)
                 listed = (hits - 2) * max_list
                 pages = (match_count - 1) // max_list + 1
                 left = match_count - listed
                 if hits == 2:
-                    self.write(" ")
+                    self.write(' ')
 
                     if match_count >= 4:
-                        self.write("{!green!}Autocompletion matches:")
+                        self.write('{!green!}Autocompletion matches:')
                 # Only list some of the matching torrents as there can be hundreds of them
-                if self.console_config["third_tab_lists_all"]:
+                if self.console_config['third_tab_lists_all']:
                     if hits == 2 and left > max_list:
                         for i in range(listed, listed + max_list):
                             match = possible_matches[i]
-                            self.write(match.replace(r"\ ", " "))
-                        self.write("{!error!}And %i more. Press <tab> to list them" % (left - max_list))
+                            self.write(match.replace(r'\ ', ' '))
+                        self.write('{!error!}And %i more. Press <tab> to list them' % (left - max_list))
                     else:
                         self.tab_count = 0
                         for match in possible_matches[listed:]:
-                            self.write(match.replace(r"\ ", " "))
+                            self.write(match.replace(r'\ ', ' '))
                 else:
                     if left > max_list:
                         for i in range(listed, listed + max_list):
                             match = possible_matches[i]
-                            self.write(match.replace(r"\ ", " "))
-                        self.write("{!error!}And %i more (%i/%i). Press <tab> to view more" % (
+                            self.write(match.replace(r'\ ', ' '))
+                        self.write('{!error!}And %i more (%i/%i). Press <tab> to view more' % (
                             left - max_list, hits - 1, pages))
                     else:
                         self.tab_count = 0
                         for match in possible_matches[listed:]:
-                            self.write(match.replace(r"\ ", " "))
+                            self.write(match.replace(r'\ ', ' '))
                         if hits > 2:
-                            self.write("{!green!}Finished listing %i torrents (%i/%i)" % (match_count, hits - 1, pages))
+                            self.write('{!green!}Finished listing %i torrents (%i/%i)' % (match_count, hits - 1, pages))
 
             # We only want to print eventual colors or other control characters, not return them
             line = format_utils.remove_formatting(line)
             cursor = len(line)
             return (line, cursor)
 
-    def tab_complete_path(self, line, type="file", ext="", sort="name", dirs_first=1):
-        self.console = component.get("ConsoleUI")
+    def tab_complete_path(self, line, type='file', ext='', sort='name', dirs_first=1):
+        self.console = component.get('ConsoleUI')
 
-        line = line.replace("\ ", " ")
+        line = line.replace('\ ', ' ')
         line = os.path.abspath(os.path.expanduser(line))
         ret = []
         if os.path.exists(line):
@@ -790,19 +790,19 @@ class Legacy(BaseMode, component.Component):
                 try:
                     for f in os.listdir(line):
                         # Skip hidden
-                        if f.startswith("."):
+                        if f.startswith('.'):
                             continue
                         f = os.path.join(line, f)
                         if os.path.isdir(f):
-                            if os.sep == "\\":  # Windows path support
-                                f += "\\"
+                            if os.sep == '\\':  # Windows path support
+                                f += '\\'
                             else:  # Unix
-                                f += "/"
+                                f += '/'
                         elif not f.endswith(ext):
                             continue
                         ret.append(f)
                 except OSError:
-                    self.console.write("{!error!}Permission denied: {!info!}%s" % line)
+                    self.console.write('{!error!}Permission denied: {!info!}%s' % line)
             else:
                 try:
                     # This is a file, but we could be looking for another file that
@@ -811,7 +811,7 @@ class Legacy(BaseMode, component.Component):
                         if f.startswith(os.path.split(line)[1]):
                             ret.append(os.path.join(os.path.dirname(line), f))
                 except OSError:
-                    self.console.write("{!error!}Permission denied: {!info!}%s" % line)
+                    self.console.write('{!error!}Permission denied: {!info!}%s' % line)
         else:
             # This path does not exist, so lets do a listdir on it's parent
             # and find any matches.
@@ -823,15 +823,15 @@ class Legacy(BaseMode, component.Component):
                             p = os.path.join(os.path.dirname(line), f)
 
                             if os.path.isdir(p):
-                                if os.sep == "\\":  # Windows path support
-                                    p += "\\"
+                                if os.sep == '\\':  # Windows path support
+                                    p += '\\'
                                 else:  # Unix
-                                    p += "/"
+                                    p += '/'
                             ret.append(p)
             except OSError:
-                self.console.write("{!error!}Permission denied: {!info!}%s" % line)
+                self.console.write('{!error!}Permission denied: {!info!}%s' % line)
 
-        if sort == "date":
+        if sort == 'date':
             ret = sorted(ret, key=lambda p: os.stat(p).st_mtime, reverse=True)
 
         if dirs_first == 1:
@@ -842,10 +842,10 @@ class Legacy(BaseMode, component.Component):
         # Highlight directory names
         for i, filename in enumerate(ret):
             if os.path.isdir(filename):
-                ret[i] = "{!cyan!}%s" % filename
+                ret[i] = '{!cyan!}%s' % filename
 
         for i in range(0, len(ret)):
-            ret[i] = ret[i].replace(" ", r"\ ")
+            ret[i] = ret[i].replace(' ', r'\ ')
         return ret
 
     def tab_complete_torrent(self, line):
@@ -864,11 +864,11 @@ class Legacy(BaseMode, component.Component):
             empty = False
 
         # Remove dangling backslashes to avoid breaking shlex
-        if line.endswith("\\"):
+        if line.endswith('\\'):
             line = line[:-1]
 
         raw_line = line
-        line = line.replace("\\ ", " ")
+        line = line.replace('\\ ', ' ')
 
         possible_matches = []
         possible_matches2 = []
@@ -887,7 +887,7 @@ class Legacy(BaseMode, component.Component):
         for torrent_id, torrent_name in self.torrents:
             # Escape spaces to avoid, for example, expanding "Doc" into "Doctor Who" and removing
             # everything containing one of these words
-            escaped_name = torrent_name.replace(" ", "\\ ")
+            escaped_name = torrent_name.replace(' ', '\\ ')
             # If we only matched one torrent, don't add the full name or it'll also get autocompleted
             if match_count == 1:
                 if torrent_id.startswith(line):
@@ -909,11 +909,11 @@ class Legacy(BaseMode, component.Component):
                     text = "{!info!}%s{!input!}%s - '%s'" % (torrent_id[:l], torrent_id[l:], torrent_name)
                     possible_matches.append(text)
                 if torrent_name.startswith(line):
-                    text = "{!info!}%s{!input!}%s ({!cyan!}%s{!input!})" % (
+                    text = '{!info!}%s{!input!}%s ({!cyan!}%s{!input!})' % (
                         escaped_name[:l], escaped_name[l:], torrent_id)
                     possible_matches.append(text)
                 elif torrent_name.lower().startswith(line.lower()):
-                    text = "{!info!}%s{!input!}%s ({!cyan!}%s{!input!})" % (
+                    text = '{!info!}%s{!input!}%s ({!cyan!}%s{!input!})' % (
                         escaped_name[:l], escaped_name[l:], torrent_id)
                     possible_matches2.append(text)
 
@@ -960,8 +960,8 @@ class Legacy(BaseMode, component.Component):
 
     def on_torrent_added_event(self, event, from_state=False):
         def on_torrent_status(status):
-            self.torrents.append((event, status["name"]))
-        client.core.get_torrent_status(event, ["name"]).addCallback(on_torrent_status)
+            self.torrents.append((event, status['name']))
+        client.core.get_torrent_status(event, ['name']).addCallback(on_torrent_status)
 
     def on_torrent_removed_event(self, event):
         for index, (tid, name) in enumerate(self.torrents):

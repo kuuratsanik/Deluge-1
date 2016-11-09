@@ -17,18 +17,18 @@ from deluge.ui.client import client
 from deluge.ui.console.main import BaseCommand
 
 torrent_options = {
-    "max_download_speed": float,
-    "max_upload_speed": float,
-    "max_connections": int,
-    "max_upload_slots": int,
-    "private": bool,
-    "prioritize_first_last": bool,
-    "is_auto_managed": bool,
-    "stop_at_ratio": bool,
-    "stop_ratio": float,
-    "remove_at_ratio": bool,
-    "move_on_completed": bool,
-    "move_on_completed_path": str
+    'max_download_speed': float,
+    'max_upload_speed': float,
+    'max_connections': int,
+    'max_upload_slots': int,
+    'private': bool,
+    'prioritize_first_last': bool,
+    'is_auto_managed': bool,
+    'stop_at_ratio': bool,
+    'stop_ratio': float,
+    'remove_at_ratio': bool,
+    'move_on_completed': bool,
+    'move_on_completed_path': str
 }
 
 
@@ -36,13 +36,13 @@ class Command(BaseCommand):
     """Show and manage per-torrent options"""
 
     option_list = BaseCommand.option_list + (
-        make_option("-s", "--set", action="store", nargs=2, dest="set", help="set value for key"),
+        make_option('-s', '--set', action='store', nargs=2, dest='set', help='set value for key'),
     )
-    usage = "Usage: manage <torrent-id> [<key1> [<key2> ...]]\n"\
-            "       manage <torrent-id> --set <key> <value>"
+    usage = 'Usage: manage <torrent-id> [<key1> [<key2> ...]]\n'\
+            '       manage <torrent-id> --set <key> <value>'
 
     def handle(self, *args, **options):
-        self.console = component.get("ConsoleUI")
+        self.console = component.get('ConsoleUI')
         if options['set']:
             return self._set_option(*args, **options)
         else:
@@ -76,7 +76,7 @@ class Command(BaseCommand):
             request_options = [opt for opt in torrent_options.keys()]
         request_options.append('name')
 
-        d = client.core.get_torrents_status({"id": torrent_ids}, request_options)
+        d = client.core.get_torrents_status({'id': torrent_ids}, request_options)
         d.addCallback(on_torrents_status)
         d.addErrback(on_torrents_status_fail)
         return d
@@ -85,8 +85,8 @@ class Command(BaseCommand):
         deferred = defer.Deferred()
         torrent_ids = []
         torrent_ids.extend(self.console.match_torrent(args[0]))
-        key = options["set"][0]
-        val = options["set"][1] + " " .join(args[1:])
+        key = options['set'][0]
+        val = options['set'][1] + ' ' .join(args[1:])
 
         if key not in torrent_options:
             self.console.write("{!error!}The key '%s' is invalid!" % key)
@@ -95,21 +95,21 @@ class Command(BaseCommand):
         val = torrent_options[key](val)
 
         def on_set_config(result):
-            self.console.write("{!success!}Torrent option successfully updated.")
+            self.console.write('{!success!}Torrent option successfully updated.')
             deferred.callback(True)
 
-        self.console.write("Setting %s to %s for torrents %s.." % (key, val, torrent_ids))
+        self.console.write('Setting %s to %s for torrents %s..' % (key, val, torrent_ids))
 
         for tid in torrent_ids:
-            if key == "move_on_completed_path":
+            if key == 'move_on_completed_path':
                 client.core.set_torrent_move_completed_path(tid, val).addCallback(on_set_config)
-            elif key == "move_on_completed":
+            elif key == 'move_on_completed':
                 client.core.set_torrent_move_completed(tid, val).addCallback(on_set_config)
-            elif key == "is_auto_managed":
+            elif key == 'is_auto_managed':
                 client.core.set_torrent_auto_managed(tid, val).addCallback(on_set_config)
-            elif key == "remove_at_ratio":
+            elif key == 'remove_at_ratio':
                 client.core.set_torrent_remove_at_ratio(tid, val).addCallback(on_set_config)
-            elif key == "prioritize_first_last":
+            elif key == 'prioritize_first_last':
                 client.core.set_torrent_prioritize_first_last(tid, val).addCallback(on_set_config)
             else:
                 client.core.set_torrent_options(torrent_ids, {key: val}).addCallback(on_set_config)
@@ -118,4 +118,4 @@ class Command(BaseCommand):
 
     def complete(self, line):
         # We use the ConsoleUI torrent tab complete method
-        return component.get("ConsoleUI").tab_complete_torrent(line)
+        return component.get('ConsoleUI').tab_complete_torrent(line)

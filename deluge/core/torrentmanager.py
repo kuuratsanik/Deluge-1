@@ -40,7 +40,7 @@ class TorrentState:
                  torrent_id=None,
                  filename=None,
                  trackers=None,
-                 storage_mode="sparse",
+                 storage_mode='sparse',
                  paused=False,
                  save_path=None,
                  max_connections=-1,
@@ -68,7 +68,7 @@ class TorrentState:
                  ):
         # Build the class atrribute list from args
         for key, value in locals().items():
-            if key == "self":
+            if key == 'self':
                 continue
             setattr(self, key, value)
 
@@ -87,21 +87,21 @@ class TorrentManager(component.Component):
     """
 
     def __init__(self):
-        component.Component.__init__(self, "TorrentManager", interval=5,
-                                     depend=["CorePluginManager", "AlertManager"])
-        log.debug("TorrentManager init...")
+        component.Component.__init__(self, 'TorrentManager', interval=5,
+                                     depend=['CorePluginManager', 'AlertManager'])
+        log.debug('TorrentManager init...')
         # Set the libtorrent session
-        self.session = component.get("Core").session
+        self.session = component.get('Core').session
         # Set the alertmanager
-        self.alerts = component.get("AlertManager")
+        self.alerts = component.get('AlertManager')
         # Get the core config
-        self.config = ConfigManager("core.conf")
+        self.config = ConfigManager('core.conf')
 
         # Make sure the state folder has been created
-        self.state_dir = os.path.join(get_config_dir(), "state")
+        self.state_dir = os.path.join(get_config_dir(), 'state')
         if not os.path.exists(self.state_dir):
             os.makedirs(self.state_dir)
-        self.temp_file = os.path.join(self.state_dir, ".safe_state_check")
+        self.temp_file = os.path.join(self.state_dir, '.safe_state_check')
 
         # Create the torrents dict { torrent_id: Torrent }
         self.torrents = {}
@@ -122,36 +122,36 @@ class TorrentManager(component.Component):
         self.last_state_update_alert_ts = 0
 
         # Register set functions
-        self.config.register_set_function("max_connections_per_torrent",
+        self.config.register_set_function('max_connections_per_torrent',
                                           self.on_set_max_connections_per_torrent)
-        self.config.register_set_function("max_upload_slots_per_torrent",
+        self.config.register_set_function('max_upload_slots_per_torrent',
                                           self.on_set_max_upload_slots_per_torrent)
-        self.config.register_set_function("max_upload_speed_per_torrent",
+        self.config.register_set_function('max_upload_speed_per_torrent',
                                           self.on_set_max_upload_speed_per_torrent)
-        self.config.register_set_function("max_download_speed_per_torrent",
+        self.config.register_set_function('max_download_speed_per_torrent',
                                           self.on_set_max_download_speed_per_torrent)
 
         # Register alert functions
-        self.alerts.register_handler("torrent_finished_alert", self.on_alert_torrent_finished)
-        self.alerts.register_handler("torrent_paused_alert", self.on_alert_torrent_paused)
-        self.alerts.register_handler("torrent_checked_alert", self.on_alert_torrent_checked)
-        self.alerts.register_handler("tracker_reply_alert", self.on_alert_tracker_reply)
-        self.alerts.register_handler("tracker_announce_alert", self.on_alert_tracker_announce)
-        self.alerts.register_handler("tracker_warning_alert", self.on_alert_tracker_warning)
-        self.alerts.register_handler("tracker_error_alert", self.on_alert_tracker_error)
-        self.alerts.register_handler("storage_moved_alert", self.on_alert_storage_moved)
-        self.alerts.register_handler("storage_moved_failed_alert", self.on_alert_storage_moved_failed)
-        self.alerts.register_handler("torrent_resumed_alert", self.on_alert_torrent_resumed)
-        self.alerts.register_handler("state_changed_alert", self.on_alert_state_changed)
-        self.alerts.register_handler("save_resume_data_alert", self.on_alert_save_resume_data)
-        self.alerts.register_handler("save_resume_data_failed_alert", self.on_alert_save_resume_data_failed)
-        self.alerts.register_handler("file_renamed_alert", self.on_alert_file_renamed)
-        self.alerts.register_handler("metadata_received_alert", self.on_alert_metadata_received)
-        self.alerts.register_handler("file_error_alert", self.on_alert_file_error)
-        self.alerts.register_handler("file_completed_alert", self.on_alert_file_completed)
-        self.alerts.register_handler("state_update_alert", self.on_alert_state_update)
-        self.alerts.register_handler("external_ip_alert", self.on_alert_external_ip)
-        self.alerts.register_handler("performance_alert", self.on_alert_performance)
+        self.alerts.register_handler('torrent_finished_alert', self.on_alert_torrent_finished)
+        self.alerts.register_handler('torrent_paused_alert', self.on_alert_torrent_paused)
+        self.alerts.register_handler('torrent_checked_alert', self.on_alert_torrent_checked)
+        self.alerts.register_handler('tracker_reply_alert', self.on_alert_tracker_reply)
+        self.alerts.register_handler('tracker_announce_alert', self.on_alert_tracker_announce)
+        self.alerts.register_handler('tracker_warning_alert', self.on_alert_tracker_warning)
+        self.alerts.register_handler('tracker_error_alert', self.on_alert_tracker_error)
+        self.alerts.register_handler('storage_moved_alert', self.on_alert_storage_moved)
+        self.alerts.register_handler('storage_moved_failed_alert', self.on_alert_storage_moved_failed)
+        self.alerts.register_handler('torrent_resumed_alert', self.on_alert_torrent_resumed)
+        self.alerts.register_handler('state_changed_alert', self.on_alert_state_changed)
+        self.alerts.register_handler('save_resume_data_alert', self.on_alert_save_resume_data)
+        self.alerts.register_handler('save_resume_data_failed_alert', self.on_alert_save_resume_data_failed)
+        self.alerts.register_handler('file_renamed_alert', self.on_alert_file_renamed)
+        self.alerts.register_handler('metadata_received_alert', self.on_alert_metadata_received)
+        self.alerts.register_handler('file_error_alert', self.on_alert_file_error)
+        self.alerts.register_handler('file_completed_alert', self.on_alert_file_completed)
+        self.alerts.register_handler('state_update_alert', self.on_alert_state_update)
+        self.alerts.register_handler('external_ip_alert', self.on_alert_external_ip)
+        self.alerts.register_handler('performance_alert', self.on_alert_performance)
 
         # Define timers
         self.save_state_timer = LoopingCall(self.save_state)
@@ -165,24 +165,24 @@ class TorrentManager(component.Component):
                 """Archives the file in 'archive' sub-directory with timestamp appended"""
                 import datetime
                 filepath = os.path.join(self.state_dir, filename)
-                filepath_bak = filepath + ".bak"
-                archive_dir = os.path.join(get_config_dir(), "archive")
+                filepath_bak = filepath + '.bak'
+                archive_dir = os.path.join(get_config_dir(), 'archive')
                 if not os.path.exists(archive_dir):
                     os.makedirs(archive_dir)
 
                 for _filepath in (filepath, filepath_bak):
                     timestamp = datetime.datetime.now().replace(microsecond=0).isoformat().replace(':', '-')
-                    archive_filepath = os.path.join(archive_dir, filename + "-" + timestamp)
+                    archive_filepath = os.path.join(archive_dir, filename + '-' + timestamp)
                     try:
                         shutil.copy2(_filepath, archive_filepath)
                     except IOError:
-                        log.error("Unable to archive: %s", filename)
+                        log.error('Unable to archive: %s', filename)
                     else:
-                        log.info("Archive of %s successful: %s", filename, archive_filepath)
+                        log.info('Archive of %s successful: %s', filename, archive_filepath)
 
-            log.warning("Potential bad shutdown of Deluge detected, archiving torrent state files...")
-            archive_file("torrents.state")
-            archive_file("torrents.fastresume")
+            log.warning('Potential bad shutdown of Deluge detected, archiving torrent state files...')
+            archive_file('torrents.state')
+            archive_file('torrents.fastresume')
         else:
             with file(self.temp_file, 'a'):
                 os.utime(self.temp_file, None)
@@ -223,15 +223,15 @@ class TorrentManager(component.Component):
     def update(self):
         for torrent_id, torrent in self.torrents.items():
             # XXX: Should the state check be those that _can_ be stopped at ratio
-            if torrent.options["stop_at_ratio"] and torrent.state not in (
-                    "Checking", "Allocating", "Paused", "Queued"):
+            if torrent.options['stop_at_ratio'] and torrent.state not in (
+                    'Checking', 'Allocating', 'Paused', 'Queued'):
                 # If the global setting is set, but the per-torrent isn't...
                 # Just skip to the next torrent.
                 # This is so that a user can turn-off the stop at ratio option on a per-torrent basis
-                if not torrent.options["stop_at_ratio"]:
+                if not torrent.options['stop_at_ratio']:
                     continue
-                if torrent.get_ratio() >= torrent.options["stop_ratio"] and torrent.is_finished:
-                    if torrent.options["remove_at_ratio"]:
+                if torrent.get_ratio() >= torrent.options['stop_ratio'] and torrent.is_finished:
+                    if torrent.options['remove_at_ratio']:
                         self.remove(torrent_id)
                         break
                     if not torrent.handle.status().paused:
@@ -255,13 +255,13 @@ class TorrentManager(component.Component):
             list: A list of torrent_ids.
         """
         torrent_ids = self.torrents.keys()
-        if component.get("RPCServer").get_session_auth_level() == AUTH_LEVEL_ADMIN:
+        if component.get('RPCServer').get_session_auth_level() == AUTH_LEVEL_ADMIN:
             return torrent_ids
 
-        current_user = component.get("RPCServer").get_session_user()
+        current_user = component.get('RPCServer').get_session_user()
         for torrent_id in torrent_ids[:]:
-            torrent_status = self[torrent_id].get_status(["owner", "shared"])
-            if torrent_status["owner"] != current_user and not torrent_status["shared"]:
+            torrent_status = self[torrent_id].get_status(['owner', 'shared'])
+            if torrent_status['owner'] != current_user and not torrent_status['shared']:
                 torrent_ids.pop(torrent_ids.index(torrent_id))
         return torrent_ids
 
@@ -278,12 +278,12 @@ class TorrentManager(component.Component):
         """
         # Get the torrent data from the torrent file
         if log.isEnabledFor(logging.DEBUG):
-            log.debug("Attempting to extract torrent_info from %s", filepath)
+            log.debug('Attempting to extract torrent_info from %s', filepath)
         try:
-            with open(filepath, "rb") as _file:
+            with open(filepath, 'rb') as _file:
                 torrent_info = lt.torrent_info(lt.bdecode(_file.read()))
         except (IOError, RuntimeError) as ex:
-            log.warning("Unable to open torrent file %s: %s", filepath, ex)
+            log.warning('Unable to open torrent file %s: %s', filepath, ex)
         else:
             return torrent_info
 
@@ -308,7 +308,7 @@ class TorrentManager(component.Component):
 
         """
         if torrent_info is None and state is None and filedump is None and magnet is None:
-            log.debug("You must specify a valid torrent_info, torrent state or magnet.")
+            log.debug('You must specify a valid torrent_info, torrent state or magnet.')
             return
 
         add_torrent_params = {}
@@ -317,7 +317,7 @@ class TorrentManager(component.Component):
             try:
                 torrent_info = lt.torrent_info(lt.bdecode(filedump))
             except RuntimeError as ex:
-                log.error("Unable to decode torrent file!: %s", ex)
+                log.error('Unable to decode torrent file!: %s', ex)
                 # XXX: Probably should raise an exception here...
                 return
 
@@ -327,64 +327,64 @@ class TorrentManager(component.Component):
 
             # Populate the options dict from state
             options = TorrentOptions()
-            options["max_connections"] = state.max_connections
-            options["max_upload_slots"] = state.max_upload_slots
-            options["max_upload_speed"] = state.max_upload_speed
-            options["max_download_speed"] = state.max_download_speed
-            options["prioritize_first_last_pieces"] = state.prioritize_first_last
-            options["sequential_download"] = state.sequential_download
-            options["file_priorities"] = state.file_priorities
+            options['max_connections'] = state.max_connections
+            options['max_upload_slots'] = state.max_upload_slots
+            options['max_upload_speed'] = state.max_upload_speed
+            options['max_download_speed'] = state.max_download_speed
+            options['prioritize_first_last_pieces'] = state.prioritize_first_last
+            options['sequential_download'] = state.sequential_download
+            options['file_priorities'] = state.file_priorities
             storage_mode = state.storage_mode
-            options["pre_allocate_storage"] = (storage_mode == "allocate")
-            options["download_location"] = state.save_path
-            options["auto_managed"] = state.auto_managed
-            options["stop_at_ratio"] = state.stop_at_ratio
-            options["stop_ratio"] = state.stop_ratio
-            options["remove_at_ratio"] = state.remove_at_ratio
-            options["move_completed"] = state.move_completed
-            options["move_completed_path"] = state.move_completed_path
-            options["add_paused"] = state.paused
-            options["shared"] = state.shared
-            options["super_seeding"] = state.super_seeding
-            options["priority"] = state.priority
-            options["owner"] = state.owner
-            options["name"] = state.name
+            options['pre_allocate_storage'] = (storage_mode == 'allocate')
+            options['download_location'] = state.save_path
+            options['auto_managed'] = state.auto_managed
+            options['stop_at_ratio'] = state.stop_at_ratio
+            options['stop_ratio'] = state.stop_ratio
+            options['remove_at_ratio'] = state.remove_at_ratio
+            options['move_completed'] = state.move_completed
+            options['move_completed_path'] = state.move_completed_path
+            options['add_paused'] = state.paused
+            options['shared'] = state.shared
+            options['super_seeding'] = state.super_seeding
+            options['priority'] = state.priority
+            options['owner'] = state.owner
+            options['name'] = state.name
 
             torrent_info = self.get_torrent_info_from_file(
-                os.path.join(self.state_dir, state.torrent_id + ".torrent"))
+                os.path.join(self.state_dir, state.torrent_id + '.torrent'))
             if torrent_info:
-                add_torrent_params["ti"] = torrent_info
+                add_torrent_params['ti'] = torrent_info
             elif state.magnet:
                 magnet = state.magnet
             else:
-                log.error("Unable to add torrent!")
+                log.error('Unable to add torrent!')
                 return
 
             if resume_data:
-                add_torrent_params["resume_data"] = resume_data
+                add_torrent_params['resume_data'] = resume_data
         else:
             # We have a torrent_info object or magnet uri so we're not loading from state.
             if torrent_info:
                 add_torrent_id = str(torrent_info.info_hash())
                 # If this torrent id is already in the session, merge any additional trackers.
                 if add_torrent_id in self.get_torrent_list():
-                    log.info("Merging trackers for torrent (%s) already in session...", add_torrent_id)
+                    log.info('Merging trackers for torrent (%s) already in session...', add_torrent_id)
                     # Don't merge trackers if either torrent has private flag set
-                    if self[add_torrent_id].get_status(["private"])["private"]:
-                        log.info("Merging trackers abandoned: Torrent has private flag set.")
+                    if self[add_torrent_id].get_status(['private'])['private']:
+                        log.info('Merging trackers abandoned: Torrent has private flag set.')
                         return
 
                     add_torrent_trackers = []
                     for value in torrent_info.trackers():
                         tracker = {}
-                        tracker["url"] = value.url
-                        tracker["tier"] = value.tier
+                        tracker['url'] = value.url
+                        tracker['tier'] = value.tier
                         add_torrent_trackers.append(tracker)
 
                     torrent_trackers = {}
                     tracker_list = []
-                    for tracker in self[add_torrent_id].get_status(["trackers"])["trackers"]:
-                        torrent_trackers[(tracker["url"])] = tracker
+                    for tracker in self[add_torrent_id].get_status(['trackers'])['trackers']:
+                        torrent_trackers[(tracker['url'])] = tracker
                         tracker_list.append(tracker)
 
                     added_tracker = 0
@@ -394,7 +394,7 @@ class TorrentManager(component.Component):
                             added_tracker += 1
 
                     if added_tracker:
-                        log.info("%s tracker(s) merged into torrent.", added_tracker)
+                        log.info('%s tracker(s) merged into torrent.', added_tracker)
                         self[add_torrent_id].set_trackers(tracker_list)
                     return
 
@@ -408,49 +408,49 @@ class TorrentManager(component.Component):
 
             # Check for renamed files and if so, rename them in the torrent_info
             # before adding to the session.
-            if options["mapped_files"]:
-                for index, fname in options["mapped_files"].items():
+            if options['mapped_files']:
+                for index, fname in options['mapped_files'].items():
                     fname = sanitize_filepath(decode_string(fname))
-                    log.debug("renaming file index %s to %s", index, fname)
+                    log.debug('renaming file index %s to %s', index, fname)
                     try:
                         torrent_info.rename_file(index, fname)
                     except TypeError:
                         torrent_info.rename_file(index, utf8_encoded(fname))
 
-            if options["pre_allocate_storage"]:
-                storage_mode = "allocate"
+            if options['pre_allocate_storage']:
+                storage_mode = 'allocate'
             else:
-                storage_mode = "sparse"
+                storage_mode = 'sparse'
 
-            add_torrent_params["ti"] = torrent_info
+            add_torrent_params['ti'] = torrent_info
 
         if log.isEnabledFor(logging.DEBUG):
-            log.debug("options: %s", options)
+            log.debug('options: %s', options)
 
-        if not options["owner"]:
-            options["owner"] = component.get("RPCServer").get_session_user()
-        account_exists = component.get("AuthManager").has_account(options["owner"])
+        if not options['owner']:
+            options['owner'] = component.get('RPCServer').get_session_user()
+        account_exists = component.get('AuthManager').has_account(options['owner'])
         if not account_exists:
-            options["owner"] = "localclient"
+            options['owner'] = 'localclient'
 
         # Fill in the rest of the add_torrent_params dictionary
-        add_torrent_params["save_path"] = utf8_encoded(options["download_location"])
+        add_torrent_params['save_path'] = utf8_encoded(options['download_location'])
 
         try:
-            add_torrent_params["storage_mode"] = lt.storage_mode_t.names["storage_mode_" + storage_mode]
+            add_torrent_params['storage_mode'] = lt.storage_mode_t.names['storage_mode_' + storage_mode]
         except KeyError:
-            add_torrent_params["storage_mode"] = lt.storage_mode_t.storage_mode_sparse
+            add_torrent_params['storage_mode'] = lt.storage_mode_t.storage_mode_sparse
 
         default_flags = (lt.add_torrent_params_flags_t.flag_paused |
                          lt.add_torrent_params_flags_t.flag_auto_managed |
                          lt.add_torrent_params_flags_t.flag_update_subscribe |
                          lt.add_torrent_params_flags_t.flag_apply_ip_filter)
         # Set flags: enable duplicate_is_error and disable auto_managed
-        add_torrent_params["flags"] = ((default_flags
+        add_torrent_params['flags'] = ((default_flags
                                        | lt.add_torrent_params_flags_t.flag_duplicate_is_error)
                                        ^ lt.add_torrent_params_flags_t.flag_auto_managed)
-        if options["seed_mode"]:
-            add_torrent_params["flags"] |= lt.add_torrent_params_flags_t.flag_seed_mode
+        if options['seed_mode']:
+            add_torrent_params['flags'] |= lt.add_torrent_params_flags_t.flag_seed_mode
 
         if magnet:
             magnet_info = get_magnet_info(magnet)
@@ -463,27 +463,27 @@ class TorrentManager(component.Component):
         elif torrent_info:
             name = torrent_info.name()
             if not name:
-                name = torrent_info.file_at(0).path.replace("\\", "/", 1).split("/", 1)[0]
+                name = torrent_info.file_at(0).path.replace('\\', '/', 1).split('/', 1)[0]
             add_torrent_params['name'] = name
 
         # We need to pause the AlertManager momentarily to prevent alerts
         # for this torrent being generated before a Torrent object is created.
-        component.pause("AlertManager")
+        component.pause('AlertManager')
 
         handle = None
         try:
             handle = self.session.add_torrent(add_torrent_params)
         except RuntimeError as ex:
-            log.warning("Error adding torrent: %s", ex)
+            log.warning('Error adding torrent: %s', ex)
 
         if not handle or not handle.is_valid():
-            log.debug("torrent handle is invalid!")
+            log.debug('torrent handle is invalid!')
             # The torrent was not added to the session
-            component.resume("AlertManager")
+            component.resume('AlertManager')
             return
 
         if log.isEnabledFor(logging.DEBUG):
-            log.debug("handle id: %s", str(handle.info_hash()))
+            log.debug('handle id: %s', str(handle.info_hash()))
         # Set auto_managed to False because the torrent is paused
         handle.auto_managed(False)
         # Create a Torrent object
@@ -491,13 +491,13 @@ class TorrentManager(component.Component):
 
         # Add the torrent object to the dictionary
         self.torrents[torrent.torrent_id] = torrent
-        if self.config["queue_new_to_top"]:
+        if self.config['queue_new_to_top']:
             handle.queue_position_top()
 
-        component.resume("AlertManager")
+        component.resume('AlertManager')
 
         # Resume the torrent if needed
-        if not options["add_paused"]:
+        if not options['add_paused']:
             torrent.resume()
 
         # Add to queued torrents set
@@ -513,14 +513,14 @@ class TorrentManager(component.Component):
 
         # Emit torrent_added signal
         from_state = state is not None
-        component.get("EventManager").emit(TorrentAddedEvent(torrent.torrent_id, from_state))
+        component.get('EventManager').emit(TorrentAddedEvent(torrent.torrent_id, from_state))
 
         if log.isEnabledFor(logging.INFO):
-            name_and_owner = torrent.get_status(["name", "owner"])
+            name_and_owner = torrent.get_status(['name', 'owner'])
             log.info("Torrent %s from user \"%s\" %s",
-                     name_and_owner["name"],
-                     name_and_owner["owner"],
-                     from_state and "loaded" or "added")
+                     name_and_owner['name'],
+                     name_and_owner['owner'],
+                     from_state and 'loaded' or 'added')
         return torrent.torrent_id
 
     def remove(self, torrent_id, remove_data=False, save_state=True):
@@ -544,12 +544,12 @@ class TorrentManager(component.Component):
             raise InvalidTorrentError("torrent_id '%s' not in session." % torrent_id)
 
         # Emit the signal to the clients
-        component.get("EventManager").emit(PreTorrentRemovedEvent(torrent_id))
+        component.get('EventManager').emit(PreTorrentRemovedEvent(torrent_id))
 
         try:
             self.session.remove_torrent(torrent.handle, 1 if remove_data else 0)
         except RuntimeError as ex:
-            log.warning("Error removing torrent: %s", ex)
+            log.warning('Error removing torrent: %s', ex)
             return False
 
         # Remove fastresume data if it is exists
@@ -559,15 +559,15 @@ class TorrentManager(component.Component):
         torrent.delete_torrentfile()
 
         # Remove the torrent file from the user specified directory
-        torrent_name = torrent.get_status(["name"])["name"]
+        torrent_name = torrent.get_status(['name'])['name']
         filename = torrent.filename
-        if self.config["copy_torrent_file"] and self.config["del_copy_torrent_file"] and filename:
-            users_torrent_file = os.path.join(self.config["torrentfiles_location"], filename)
+        if self.config['copy_torrent_file'] and self.config['del_copy_torrent_file'] and filename:
+            users_torrent_file = os.path.join(self.config['torrentfiles_location'], filename)
             log.info("Delete user's torrent file: %s", users_torrent_file)
             try:
                 os.remove(users_torrent_file)
             except OSError as ex:
-                log.warning("Unable to remove copy torrent file: %s", ex)
+                log.warning('Unable to remove copy torrent file: %s', ex)
 
         # Remove from set if it wasn't finished
         if not torrent.is_finished:
@@ -584,26 +584,26 @@ class TorrentManager(component.Component):
             self.save_state()
 
         # Emit the signal to the clients
-        component.get("EventManager").emit(TorrentRemovedEvent(torrent_id))
-        log.info("Torrent %s removed by user: %s", torrent_name, component.get("RPCServer").get_session_user())
+        component.get('EventManager').emit(TorrentRemovedEvent(torrent_id))
+        log.info('Torrent %s removed by user: %s', torrent_name, component.get('RPCServer').get_session_user())
         return True
 
     def load_state(self):
         """Load the state of the TorrentManager from the torrents.state file"""
-        filename = "torrents.state"
+        filename = 'torrents.state'
         filepath = os.path.join(self.state_dir, filename)
-        filepath_bak = filepath + ".bak"
+        filepath_bak = filepath + '.bak'
 
         for _filepath in (filepath, filepath_bak):
-            log.info("Opening %s for load: %s", filename, _filepath)
+            log.info('Opening %s for load: %s', filename, _filepath)
             try:
-                with open(_filepath, "rb") as _file:
+                with open(_filepath, 'rb') as _file:
                     state = cPickle.load(_file)
             except (IOError, EOFError, cPickle.UnpicklingError) as ex:
-                log.warning("Unable to load %s: %s", _filepath, ex)
+                log.warning('Unable to load %s: %s', _filepath, ex)
                 state = None
             else:
-                log.info("Successfully loaded %s: %s", filename, _filepath)
+                log.info('Successfully loaded %s: %s', filename, _filepath)
                 break
 
         if state is None:
@@ -616,16 +616,16 @@ class TorrentManager(component.Component):
                 try:
                     for attr in (set(dir(state_tmp)) - set(dir(state.torrents[0]))):
                         for t_state in state.torrents:
-                            if attr == "storage_mode" and getattr(t_state, "compact", None):
-                                setattr(t_state, attr, "compact")
+                            if attr == 'storage_mode' and getattr(t_state, 'compact', None):
+                                setattr(t_state, attr, 'compact')
                             else:
                                 setattr(t_state, attr, getattr(state_tmp, attr, None))
                 except AttributeError as ex:
-                    log.exception("Unable to update state file to a compatible version: %s", ex)
+                    log.exception('Unable to update state file to a compatible version: %s', ex)
 
         # Reorder the state.torrents list to add torrents in the correct queue
         # order.
-        state.torrents.sort(key=operator.attrgetter("queue"), reverse=self.config["queue_new_to_top"])
+        state.torrents.sort(key=operator.attrgetter('queue'), reverse=self.config['queue_new_to_top'])
         resume_data = self.load_resume_data_file()
 
         # Tell alertmanager to wait for the handlers while adding torrents.
@@ -637,14 +637,14 @@ class TorrentManager(component.Component):
                 self.add(state=torrent_state, save_state=False,
                          resume_data=resume_data.get(torrent_state.torrent_id))
             except AttributeError as ex:
-                log.error("Torrent state file is either corrupt or incompatible! %s", ex)
+                log.error('Torrent state file is either corrupt or incompatible! %s', ex)
                 import traceback
                 traceback.print_exc()
                 break
 
         self.alerts.wait_on_handler = False
-        log.info("Finished loading %d torrents.", len(state.torrents))
-        component.get("EventManager").emit(SessionStartedEvent())
+        log.info('Finished loading %d torrents.', len(state.torrents))
+        component.get('EventManager').emit(SessionStartedEvent())
 
     def save_state(self):
         """Save the state of the TorrentManager to the torrents.state file"""
@@ -652,65 +652,65 @@ class TorrentManager(component.Component):
         # Create the state for each Torrent and append to the list
         for torrent in self.torrents.values():
             paused = False
-            if torrent.state in ["Paused", "Error"]:
+            if torrent.state in ['Paused', 'Error']:
                 paused = True
 
             torrent_state = TorrentState(
                 torrent.torrent_id,
                 torrent.filename,
                 torrent.trackers,
-                torrent.get_status(["storage_mode"])["storage_mode"],
+                torrent.get_status(['storage_mode'])['storage_mode'],
                 paused,
-                torrent.options["download_location"],
-                torrent.options["max_connections"],
-                torrent.options["max_upload_slots"],
-                torrent.options["max_upload_speed"],
-                torrent.options["max_download_speed"],
-                torrent.options["prioritize_first_last_pieces"],
-                torrent.options["sequential_download"],
-                torrent.options["file_priorities"],
+                torrent.options['download_location'],
+                torrent.options['max_connections'],
+                torrent.options['max_upload_slots'],
+                torrent.options['max_upload_speed'],
+                torrent.options['max_download_speed'],
+                torrent.options['prioritize_first_last_pieces'],
+                torrent.options['sequential_download'],
+                torrent.options['file_priorities'],
                 torrent.get_queue_position(),
-                torrent.options["auto_managed"],
+                torrent.options['auto_managed'],
                 torrent.is_finished,
                 torrent.error_statusmsg,
-                torrent.options["stop_ratio"],
-                torrent.options["stop_at_ratio"],
-                torrent.options["remove_at_ratio"],
-                torrent.options["move_completed"],
-                torrent.options["move_completed_path"],
+                torrent.options['stop_ratio'],
+                torrent.options['stop_at_ratio'],
+                torrent.options['remove_at_ratio'],
+                torrent.options['move_completed'],
+                torrent.options['move_completed_path'],
                 torrent.magnet,
-                torrent.options["owner"],
-                torrent.options["shared"],
-                torrent.options["super_seeding"],
-                torrent.options["priority"],
-                torrent.options["name"]
+                torrent.options['owner'],
+                torrent.options['shared'],
+                torrent.options['super_seeding'],
+                torrent.options['priority'],
+                torrent.options['name']
             )
             state.torrents.append(torrent_state)
 
-        filename = "torrents.state"
+        filename = 'torrents.state'
         filepath = os.path.join(self.state_dir, filename)
-        filepath_bak = filepath + ".bak"
-        filepath_tmp = filepath + ".tmp"
+        filepath_bak = filepath + '.bak'
+        filepath_tmp = filepath + '.tmp'
 
         try:
             if os.path.isfile(filepath):
-                log.debug("Creating backup of %s at: %s", filename, filepath_bak)
+                log.debug('Creating backup of %s at: %s', filename, filepath_bak)
                 shutil.copy2(filepath, filepath_bak)
         except IOError as ex:
-            log.error("Unable to backup %s to %s: %s", filepath, filepath_bak, ex)
+            log.error('Unable to backup %s to %s: %s', filepath, filepath_bak, ex)
         else:
-            log.info("Saving the %s at: %s", filename, filepath)
+            log.info('Saving the %s at: %s', filename, filepath)
             try:
-                with open(filepath_tmp, "wb") as _file:
+                with open(filepath_tmp, 'wb') as _file:
                     # Pickle the TorrentManagerState object
                     cPickle.dump(state, _file)
                     _file.flush()
                     os.fsync(_file.fileno())
                 shutil.move(filepath_tmp, filepath)
             except (IOError, cPickle.PicklingError) as ex:
-                log.error("Unable to save %s: %s", filename, ex)
+                log.error('Unable to save %s: %s', filename, ex)
                 if os.path.isfile(filepath_bak):
-                    log.info("Restoring backup of %s from: %s", filename, filepath_bak)
+                    log.info('Restoring backup of %s from: %s', filename, filepath_bak)
                     shutil.move(filepath_bak, filepath)
         # We return True so that the timer thread will continue
         return True
@@ -768,21 +768,21 @@ class TorrentManager(component.Component):
             dict: A dict of torrents and their resume_data
 
         """
-        filename = "torrents.fastresume"
+        filename = 'torrents.fastresume'
         filepath = os.path.join(self.state_dir, filename)
-        filepath_bak = filepath + ".bak"
+        filepath_bak = filepath + '.bak'
         old_data_filepath = os.path.join(get_config_dir(), filename)
 
         for _filepath in (filepath, filepath_bak, old_data_filepath):
-            log.info("Opening %s for load: %s", filename, _filepath)
+            log.info('Opening %s for load: %s', filename, _filepath)
             try:
-                with open(_filepath, "rb") as _file:
+                with open(_filepath, 'rb') as _file:
                     resume_data = lt.bdecode(_file.read())
             except (IOError, EOFError, RuntimeError) as ex:
-                log.warning("Unable to load %s: %s", _filepath, ex)
+                log.warning('Unable to load %s: %s', _filepath, ex)
                 resume_data = None
             else:
-                log.info("Successfully loaded %s: %s", filename, _filepath)
+                log.info('Successfully loaded %s: %s', filename, _filepath)
                 break
         # If the libtorrent bdecode doesn't happen properly, it will return None
         # so we need to make sure we return a {}
@@ -793,29 +793,29 @@ class TorrentManager(component.Component):
 
     def save_resume_data_file(self):
         """Saves the resume data file with the contents of self.resume_data"""
-        filename = "torrents.fastresume"
+        filename = 'torrents.fastresume'
         filepath = os.path.join(self.state_dir, filename)
-        filepath_bak = filepath + ".bak"
-        filepath_tmp = filepath + ".tmp"
+        filepath_bak = filepath + '.bak'
+        filepath_tmp = filepath + '.tmp'
 
         try:
             if os.path.isfile(filepath):
-                log.debug("Creating backup of %s at: %s", filename, filepath_bak)
+                log.debug('Creating backup of %s at: %s', filename, filepath_bak)
                 shutil.copy2(filepath, filepath_bak)
         except IOError as ex:
-            log.error("Unable to backup %s to %s: %s", filepath, filepath_bak, ex)
+            log.error('Unable to backup %s to %s: %s', filepath, filepath_bak, ex)
         else:
-            log.info("Saving the %s at: %s", filename, filepath)
+            log.info('Saving the %s at: %s', filename, filepath)
             try:
-                with open(filepath_tmp, "wb") as _file:
+                with open(filepath_tmp, 'wb') as _file:
                     _file.write(lt.bencode(self.resume_data))
                     _file.flush()
                     os.fsync(_file.fileno())
                 shutil.move(filepath_tmp, filepath)
             except (IOError, EOFError) as ex:
-                log.error("Unable to save %s: %s", filename, ex)
+                log.error('Unable to save %s: %s', filename, ex)
                 if os.path.isfile(filepath_bak):
-                    log.info("Restoring backup of %s from: %s", filename, filepath_bak)
+                    log.info('Restoring backup of %s from: %s', filename, filepath_bak)
                     shutil.move(filepath_bak, filepath)
             else:
                 return True
@@ -863,58 +863,58 @@ class TorrentManager(component.Component):
 
     def on_set_max_connections_per_torrent(self, key, value):
         """Sets the per-torrent connection limit"""
-        log.debug("max_connections_per_torrent set to %s...", value)
+        log.debug('max_connections_per_torrent set to %s...', value)
         for key in self.torrents.keys():
             self.torrents[key].set_max_connections(value)
 
     def on_set_max_upload_slots_per_torrent(self, key, value):
         """Sets the per-torrent upload slot limit"""
-        log.debug("max_upload_slots_per_torrent set to %s...", value)
+        log.debug('max_upload_slots_per_torrent set to %s...', value)
         for key in self.torrents.keys():
             self.torrents[key].set_max_upload_slots(value)
 
     def on_set_max_upload_speed_per_torrent(self, key, value):
         """Sets the per-torrent upload speed limit"""
-        log.debug("max_upload_speed_per_torrent set to %s...", value)
+        log.debug('max_upload_speed_per_torrent set to %s...', value)
         for key in self.torrents.keys():
             self.torrents[key].set_max_upload_speed(value)
 
     def on_set_max_download_speed_per_torrent(self, key, value):
         """Sets the per-torrent download speed limit"""
-        log.debug("max_download_speed_per_torrent set to %s...", value)
+        log.debug('max_download_speed_per_torrent set to %s...', value)
         for key in self.torrents.keys():
             self.torrents[key].set_max_download_speed(value)
 
     # --- Alert handlers ---
     def on_alert_torrent_finished(self, alert):
         """Alert handler for libtorrent torrent_finished_alert"""
-        log.debug("on_alert_torrent_finished")
+        log.debug('on_alert_torrent_finished')
         try:
             torrent_id = str(alert.handle.info_hash())
             torrent = self.torrents[torrent_id]
         except (RuntimeError, KeyError):
             return
-        log.debug("Finished %s ", torrent_id)
+        log.debug('Finished %s ', torrent_id)
 
         # If total_download is 0, do not move, it's likely the torrent wasn't downloaded, but just added.
         # Get fresh data from libtorrent, the cache isn't always up to date
-        total_download = torrent.get_status(["total_payload_download"], update=True)["total_payload_download"]
+        total_download = torrent.get_status(['total_payload_download'], update=True)['total_payload_download']
 
         if log.isEnabledFor(logging.DEBUG):
-            log.debug("Torrent settings: is_finished: %s, total_download: %s, move_completed: %s, move_path: %s",
-                      torrent.is_finished, total_download, torrent.options["move_completed"],
-                      torrent.options["move_completed_path"])
+            log.debug('Torrent settings: is_finished: %s, total_download: %s, move_completed: %s, move_path: %s',
+                      torrent.is_finished, total_download, torrent.options['move_completed'],
+                      torrent.options['move_completed_path'])
 
         torrent.update_state()
         if not torrent.is_finished and total_download:
             # Move completed download to completed folder if needed
-            if torrent.options["move_completed"] and \
-                    torrent.options["download_location"] != torrent.options["move_completed_path"]:
+            if torrent.options['move_completed'] and \
+                    torrent.options['download_location'] != torrent.options['move_completed_path']:
                 self.waiting_on_finish_moving.append(torrent_id)
-                torrent.move_storage(torrent.options["move_completed_path"])
+                torrent.move_storage(torrent.options['move_completed_path'])
             else:
                 torrent.is_finished = True
-                component.get("EventManager").emit(TorrentFinishedEvent(torrent_id))
+                component.get('EventManager').emit(TorrentFinishedEvent(torrent_id))
         else:
             torrent.is_finished = True
 
@@ -937,7 +937,7 @@ class TorrentManager(component.Component):
     def on_alert_torrent_paused(self, alert):
         """Alert handler for libtorrent torrent_paused_alert"""
         if log.isEnabledFor(logging.DEBUG):
-            log.debug("on_alert_torrent_paused")
+            log.debug('on_alert_torrent_paused')
         try:
             torrent_id = str(alert.handle.info_hash())
             torrent = self.torrents[torrent_id]
@@ -947,7 +947,7 @@ class TorrentManager(component.Component):
         old_state = torrent.state
         torrent.update_state()
         if torrent.state != old_state:
-            component.get("EventManager").emit(TorrentStateChangedEvent(torrent_id, torrent.state))
+            component.get('EventManager').emit(TorrentStateChangedEvent(torrent_id, torrent.state))
 
         # Write the fastresume file if we are not waiting on a bulk write
         if torrent_id not in self.waiting_on_resume_data:
@@ -956,7 +956,7 @@ class TorrentManager(component.Component):
     def on_alert_torrent_checked(self, alert):
         """Alert handler for libtorrent torrent_checked_alert"""
         if log.isEnabledFor(logging.DEBUG):
-            log.debug("on_alert_torrent_checked")
+            log.debug('on_alert_torrent_checked')
         try:
             torrent = self.torrents[str(alert.handle.info_hash())]
         except (RuntimeError, KeyError):
@@ -975,14 +975,14 @@ class TorrentManager(component.Component):
     def on_alert_tracker_reply(self, alert):
         """Alert handler for libtorrent tracker_reply_alert"""
         if log.isEnabledFor(logging.DEBUG):
-            log.debug("on_alert_tracker_reply: %s", decode_string(alert.message()))
+            log.debug('on_alert_tracker_reply: %s', decode_string(alert.message()))
         try:
             torrent = self.torrents[str(alert.handle.info_hash())]
         except (RuntimeError, KeyError):
             return
 
         # Set the tracker status for the torrent
-        torrent.set_tracker_status("Announce OK")
+        torrent.set_tracker_status('Announce OK')
 
         # Check for peer information from the tracker, if none then send a scrape request.
         if alert.handle.status().num_complete == -1 or alert.handle.status().num_incomplete == -1:
@@ -991,24 +991,24 @@ class TorrentManager(component.Component):
     def on_alert_tracker_announce(self, alert):
         """Alert handler for libtorrent tracker_announce_alert"""
         if log.isEnabledFor(logging.DEBUG):
-            log.debug("on_alert_tracker_announce")
+            log.debug('on_alert_tracker_announce')
         try:
             torrent = self.torrents[str(alert.handle.info_hash())]
         except (RuntimeError, KeyError):
             return
 
         # Set the tracker status for the torrent
-        torrent.set_tracker_status("Announce Sent")
+        torrent.set_tracker_status('Announce Sent')
 
     def on_alert_tracker_warning(self, alert):
         """Alert handler for libtorrent tracker_warning_alert"""
-        log.debug("on_alert_tracker_warning")
+        log.debug('on_alert_tracker_warning')
         try:
             torrent = self.torrents[str(alert.handle.info_hash())]
         except (RuntimeError, KeyError):
             return
         # Set the tracker status for the torrent
-        torrent.set_tracker_status("Warning: %s" % decode_string(alert.message()))
+        torrent.set_tracker_status('Warning: %s' % decode_string(alert.message()))
 
     def on_alert_tracker_error(self, alert):
         """Alert handler for libtorrent tracker_error_alert"""
@@ -1017,17 +1017,17 @@ class TorrentManager(component.Component):
         # cannot be replaced by a.e.message because the code is included in the string (for non-'-1').
         if not error_message:
             error_message = decode_string(alert.error.message())
-        log.debug("Tracker Error Alert: %s [%s]", decode_string(alert.message()), error_message)
+        log.debug('Tracker Error Alert: %s [%s]', decode_string(alert.message()), error_message)
         try:
             torrent = self.torrents[str(alert.handle.info_hash())]
         except (RuntimeError, KeyError):
             return
 
-        torrent.set_tracker_status("Error: " + error_message)
+        torrent.set_tracker_status('Error: ' + error_message)
 
     def on_alert_storage_moved(self, alert):
         """Alert handler for libtorrent storage_moved_alert"""
-        log.debug("on_alert_storage_moved")
+        log.debug('on_alert_storage_moved')
         try:
             torrent_id = str(alert.handle.info_hash())
             torrent = self.torrents[torrent_id]
@@ -1041,11 +1041,11 @@ class TorrentManager(component.Component):
         if torrent_id in self.waiting_on_finish_moving:
             self.waiting_on_finish_moving.remove(torrent_id)
             torrent.is_finished = True
-            component.get("EventManager").emit(TorrentFinishedEvent(torrent_id))
+            component.get('EventManager').emit(TorrentFinishedEvent(torrent_id))
 
     def on_alert_storage_moved_failed(self, alert):
         """Alert handler for libtorrent storage_moved_failed_alert"""
-        log.warning("on_alert_storage_moved_failed: %s", decode_string(alert.message()))
+        log.warning('on_alert_storage_moved_failed: %s', decode_string(alert.message()))
         try:
             torrent_id = str(alert.handle.info_hash())
             torrent = self.torrents[torrent_id]
@@ -1053,7 +1053,7 @@ class TorrentManager(component.Component):
             return
         # Set an Error message and pause the torrent
         alert_msg = decode_string(alert.message()).split(':', 1)[1].strip()
-        torrent.set_error_statusmsg("Failed to move download folder: %s" % alert_msg)
+        torrent.set_error_statusmsg('Failed to move download folder: %s' % alert_msg)
         torrent.moving_storage = False
         torrent.pause()
         torrent.update_state()
@@ -1061,11 +1061,11 @@ class TorrentManager(component.Component):
         if torrent_id in self.waiting_on_finish_moving:
             self.waiting_on_finish_moving.remove(torrent_id)
             torrent.is_finished = True
-            component.get("EventManager").emit(TorrentFinishedEvent(torrent_id))
+            component.get('EventManager').emit(TorrentFinishedEvent(torrent_id))
 
     def on_alert_torrent_resumed(self, alert):
         """Alert handler for libtorrent torrent_resumed_alert"""
-        log.debug("on_alert_torrent_resumed")
+        log.debug('on_alert_torrent_resumed')
         try:
             torrent_id = str(alert.handle.info_hash())
             torrent = self.torrents[torrent_id]
@@ -1075,15 +1075,15 @@ class TorrentManager(component.Component):
         torrent.update_state()
         if torrent.state != old_state:
             # We need to emit a TorrentStateChangedEvent too
-            component.get("EventManager").emit(TorrentStateChangedEvent(torrent_id, torrent.state))
-        component.get("EventManager").emit(TorrentResumedEvent(torrent_id))
+            component.get('EventManager').emit(TorrentStateChangedEvent(torrent_id, torrent.state))
+        component.get('EventManager').emit(TorrentResumedEvent(torrent_id))
 
     def on_alert_state_changed(self, alert):
         """Alert handler for libtorrent state_changed_alert
         Emits a TorrentStateChangedEvent if state has changed
         """
         if log.isEnabledFor(logging.DEBUG):
-            log.debug("on_alert_state_changed")
+            log.debug('on_alert_state_changed')
         try:
             torrent_id = str(alert.handle.info_hash())
             torrent = self.torrents[torrent_id]
@@ -1100,12 +1100,12 @@ class TorrentManager(component.Component):
 
         # Only emit a state changed event if the state has actually changed
         if torrent.state != old_state:
-            component.get("EventManager").emit(TorrentStateChangedEvent(torrent_id, torrent.state))
+            component.get('EventManager').emit(TorrentStateChangedEvent(torrent_id, torrent.state))
 
     def on_alert_save_resume_data(self, alert):
         """Alert handler for libtorrent save_resume_data_alert"""
         if log.isEnabledFor(logging.DEBUG):
-            log.debug("on_alert_save_resume_data")
+            log.debug('on_alert_save_resume_data')
         try:
             torrent_id = str(alert.handle.info_hash())
         except RuntimeError:
@@ -1120,7 +1120,7 @@ class TorrentManager(component.Component):
 
     def on_alert_save_resume_data_failed(self, alert):
         """Alert handler for libtorrent save_resume_data_failed_alert"""
-        log.debug("on_alert_save_resume_data_failed: %s", decode_string(alert.message()))
+        log.debug('on_alert_save_resume_data_failed: %s', decode_string(alert.message()))
         try:
             torrent_id = str(alert.handle.info_hash())
         except RuntimeError:
@@ -1133,8 +1133,8 @@ class TorrentManager(component.Component):
         """Alert handler for libtorrent file_renamed_alert
         Emits a TorrentFileCompletedEvent for renamed files
         """
-        log.debug("on_alert_file_renamed")
-        log.debug("index: %s name: %s", alert.index, decode_string(alert.name))
+        log.debug('on_alert_file_renamed')
+        log.debug('index: %s name: %s', alert.index, decode_string(alert.name))
         try:
             torrent_id = str(alert.handle.info_hash())
             torrent = self.torrents[torrent_id]
@@ -1148,12 +1148,12 @@ class TorrentManager(component.Component):
                 break
         else:
             # This is just a regular file rename so send the signal
-            component.get("EventManager").emit(TorrentFileRenamedEvent(torrent_id, alert.index, alert.name))
+            component.get('EventManager').emit(TorrentFileRenamedEvent(torrent_id, alert.index, alert.name))
             self.save_resume_data((torrent_id,))
 
     def on_alert_metadata_received(self, alert):
         """Alert handler for libtorrent metadata_received_alert"""
-        log.debug("on_alert_metadata_received")
+        log.debug('on_alert_metadata_received')
         try:
             torrent = self.torrents[str(alert.handle.info_hash())]
         except (RuntimeError, KeyError):
@@ -1162,7 +1162,7 @@ class TorrentManager(component.Component):
 
     def on_alert_file_error(self, alert):
         """Alert handler for libtorrent file_error_alert"""
-        log.debug("on_alert_file_error: %s", decode_string(alert.message()))
+        log.debug('on_alert_file_error: %s', decode_string(alert.message()))
         try:
             torrent = self.torrents[str(alert.handle.info_hash())]
         except (RuntimeError, KeyError):
@@ -1175,13 +1175,13 @@ class TorrentManager(component.Component):
         Emits a TorrentFileCompletedEvent when an individual file completes downloading
 
         """
-        log.debug("file_completed_alert: %s", decode_string(alert.message()))
+        log.debug('file_completed_alert: %s', decode_string(alert.message()))
         try:
             torrent_id = str(alert.handle.info_hash())
         except RuntimeError:
             return
         if torrent_id in self.torrents:
-            component.get("EventManager").emit(TorrentFileCompletedEvent(torrent_id, alert.index))
+            component.get('EventManager').emit(TorrentFileCompletedEvent(torrent_id, alert.index))
 
     def on_alert_state_update(self, alert):
         """Alert handler for libtorrent state_update_alert
@@ -1190,7 +1190,7 @@ class TorrentManager(component.Component):
         of all torrents that changed since last time this was posted.
 
         """
-        log.debug("on_status_notification: %s", decode_string(alert.message()))
+        log.debug('on_status_notification: %s', decode_string(alert.message()))
         self.last_state_update_alert_ts = time.time()
 
         for t_status in alert.status:
@@ -1205,24 +1205,24 @@ class TorrentManager(component.Component):
 
     def on_alert_external_ip(self, alert):
         """Alert handler for libtorrent external_ip_alert"""
-        log.info("on_alert_external_ip: %s", decode_string(alert.message()))
+        log.info('on_alert_external_ip: %s', decode_string(alert.message()))
 
     def on_alert_performance(self, alert):
         """Alert handler for libtorrent performance_alert"""
-        log.warning("on_alert_performance: %s, %s", decode_string(alert.message()), alert.warning_code)
+        log.warning('on_alert_performance: %s, %s', decode_string(alert.message()), alert.warning_code)
         if alert.warning_code == lt.performance_warning_t.send_buffer_watermark_too_low:
             max_send_buffer_watermark = 3 * 1024 * 1024  # 3MiB
             settings = self.session.get_settings()
-            send_buffer_watermark = settings["send_buffer_watermark"]
+            send_buffer_watermark = settings['send_buffer_watermark']
 
             # If send buffer is too small, try increasing its size by 512KiB (up to max_send_buffer_watermark)
             if send_buffer_watermark < max_send_buffer_watermark:
                 value = send_buffer_watermark + (500 * 1024)
-                log.info("Increasing send_buffer_watermark from %s to %s Bytes", send_buffer_watermark, value)
-                settings["send_buffer_watermark"] = value
+                log.info('Increasing send_buffer_watermark from %s to %s Bytes', send_buffer_watermark, value)
+                settings['send_buffer_watermark'] = value
                 self.session.set_settings(settings)
             else:
-                log.warning("send_buffer_watermark reached maximum value: %s Bytes", max_send_buffer_watermark)
+                log.warning('send_buffer_watermark reached maximum value: %s Bytes', max_send_buffer_watermark)
 
     def separate_keys(self, keys, torrent_ids):
         """Separates the input keys into torrent class keys and plugins keys"""

@@ -14,16 +14,16 @@ from deluge.ui.console.main import BaseCommand
 
 
 class Command(BaseCommand):
-    "Shutdown the deluge server"
-    usage = "Usage: halt"
+    'Shutdown the deluge server'
+    usage = 'Usage: halt'
 
     def handle(self, *args, **options):
-        self.console = component.get("ConsoleUI")
+        self.console = component.get('ConsoleUI')
 
         def on_shutdown(result):
-            self.console.write("{!success!}Daemon was shutdown")
+            self.console.write('{!success!}Daemon was shutdown')
 
         def on_shutdown_fail(reason):
-            self.console.write("{!error!}Unable to shutdown daemon: %s" % reason)
+            self.console.write('{!error!}Unable to shutdown daemon: %s' % reason)
 
         return client.daemon.shutdown().addCallback(on_shutdown).addErrback(on_shutdown_fail)

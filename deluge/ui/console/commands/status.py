@@ -20,25 +20,25 @@ from deluge.ui.console.main import BaseCommand
 class Command(BaseCommand):
     """Shows a various status information from the daemon."""
     option_list = BaseCommand.option_list + (
-        make_option("-r", "--raw", action="store_true", default=False, dest="raw",
+        make_option('-r', '--raw', action='store_true', default=False, dest='raw',
                     help="Don't format upload/download rates in KiB/s \
 (useful for scripts that want to do their own parsing)"),
-        make_option("-n", "--no-torrents", action="store_false", default=True, dest="show_torrents",
+        make_option('-n', '--no-torrents', action='store_false', default=True, dest='show_torrents',
                     help="Don't show torrent status (this will make the command a bit faster)"),
     )
 
-    usage = "Usage: status [-r] [-n]"
+    usage = 'Usage: status [-r] [-n]'
 
     def handle(self, *args, **options):
-        self.console = component.get("ConsoleUI")
+        self.console = component.get('ConsoleUI')
         self.status = None
         self.connections = None
-        if options["show_torrents"]:
+        if options['show_torrents']:
             self.torrents = None
         else:
             self.torrents = -2
 
-        self.raw = options["raw"]
+        self.raw = options['raw']
 
         def on_session_status(status):
             self.status = status
@@ -57,12 +57,12 @@ class Command(BaseCommand):
 
         deferreds = []
 
-        ds = client.core.get_session_status(["num_peers", "payload_upload_rate", "payload_download_rate", "dht_nodes"])
+        ds = client.core.get_session_status(['num_peers', 'payload_upload_rate', 'payload_download_rate', 'dht_nodes'])
         ds.addCallback(on_session_status)
         deferreds.append(ds)
 
-        if options["show_torrents"]:
-            dt = client.core.get_torrents_status({}, ["state"])
+        if options['show_torrents']:
+            dt = client.core.get_torrents_status({}, ['state'])
             dt.addCallback(on_torrents_status)
             dt.addErrback(on_torrents_status_fail)
             deferreds.append(dt)
@@ -72,25 +72,25 @@ class Command(BaseCommand):
     def print_status(self):
         self.console.set_batch_write(True)
         if self.raw:
-            self.console.write("{!info!}Total upload: %f" % self.status["payload_upload_rate"])
-            self.console.write("{!info!}Total download: %f" % self.status["payload_download_rate"])
+            self.console.write('{!info!}Total upload: %f' % self.status['payload_upload_rate'])
+            self.console.write('{!info!}Total download: %f' % self.status['payload_download_rate'])
         else:
-            self.console.write("{!info!}Total upload: %s" % fspeed(self.status["payload_upload_rate"]))
-            self.console.write("{!info!}Total download: %s" % fspeed(self.status["payload_download_rate"]))
-        self.console.write("{!info!}DHT Nodes: %i" % self.status["dht_nodes"])
-        self.console.write("{!info!}Total connections: %i" % self.connections)
+            self.console.write('{!info!}Total upload: %s' % fspeed(self.status['payload_upload_rate']))
+            self.console.write('{!info!}Total download: %s' % fspeed(self.status['payload_download_rate']))
+        self.console.write('{!info!}DHT Nodes: %i' % self.status['dht_nodes'])
+        self.console.write('{!info!}Total connections: %i' % self.connections)
         if self.torrents == -1:
-            self.console.write("{!error!}Error getting torrent info")
+            self.console.write('{!error!}Error getting torrent info')
         elif self.torrents != -2:
-            self.console.write("{!info!}Total torrents: %i" % len(self.torrents))
+            self.console.write('{!info!}Total torrents: %i' % len(self.torrents))
 
             state_counts = {}
             for state in TORRENT_STATE:
                 state_counts[state] = 0
             for t in self.torrents:
                 s = self.torrents[t]
-                state_counts[s["state"]] += 1
+                state_counts[s['state']] += 1
             for state in TORRENT_STATE:
-                self.console.write("{!info!} %s: %i" % (state, state_counts[state]))
+                self.console.write('{!info!} %s: %i' % (state, state_counts[state]))
 
         self.console.set_batch_write(False)

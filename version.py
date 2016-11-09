@@ -30,28 +30,28 @@
 #   include RELEASE-VERSION
 #
 
-__all__ = ("get_version")
+__all__ = ('get_version')
 
 from subprocess import PIPE, Popen
 
-VERSION_FILE = "RELEASE-VERSION"
+VERSION_FILE = 'RELEASE-VERSION'
 
 
-def call_git_describe(prefix="", suffix=""):
-    cmd = "git describe --tags --match %s[0-9]*" % prefix
+def call_git_describe(prefix='', suffix=''):
+    cmd = 'git describe --tags --match %s[0-9]*' % prefix
     try:
         version = Popen(cmd.split(), stdout=PIPE).communicate()[0]
-        version = version.strip().replace(prefix, "")
-        if "-" in version:
-            version = ".dev".join(version.replace(suffix, "").split("-")[:2])
+        version = version.strip().replace(prefix, '')
+        if '-' in version:
+            version = '.dev'.join(version.replace(suffix, '').split('-')[:2])
         return version
     except:
         return None
 
 
-def get_version(prefix="", suffix=""):
+def get_version(prefix='', suffix=''):
     try:
-        with open(VERSION_FILE, "r") as f:
+        with open(VERSION_FILE, 'r') as f:
             release_version = f.readline().strip()
     except:
         release_version = None
@@ -61,13 +61,13 @@ def get_version(prefix="", suffix=""):
     if version is None:
         version = release_version
     if version is None:
-        raise ValueError("Cannot find the version number!")
+        raise ValueError('Cannot find the version number!')
 
     if version != release_version:
-        with open(VERSION_FILE, "w") as f:
-            f.write("%s\n" % version)
+        with open(VERSION_FILE, 'w') as f:
+            f.write('%s\n' % version)
 
     return version
 
-if __name__ == "__main__":
-    print get_version(prefix="deluge-", suffix=".dev0")
+if __name__ == '__main__':
+    print get_version(prefix='deluge-', suffix='.dev0')

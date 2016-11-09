@@ -11,12 +11,12 @@ class LogTestCase(unittest.TestCase):
         setup_logger(logging.DEBUG)
 
     def tearDown(self):  # NOQA
-        setup_logger("none")
+        setup_logger('none')
 
     def test_old_log_deprecation_warning(self):
         import warnings
         from deluge.log import LOG
         d = defer.Deferred()
-        d.addCallback(LOG.debug, "foo")
+        d.addCallback(LOG.debug, 'foo')
         self.assertFailure(d, DeprecationWarning)
         warnings.resetwarnings()

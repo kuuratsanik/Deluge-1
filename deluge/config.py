@@ -82,16 +82,16 @@ def find_json_objects(s):
     """
     objects = []
     opens = 0
-    start = s.find("{")
+    start = s.find('{')
     offset = start
 
     if start < 0:
         return []
 
     for index, c in enumerate(s[offset:]):
-        if c == "{":
+        if c == '{':
             opens += 1
-        elif c == "}":
+        elif c == '}':
             opens -= 1
             if opens == 0:
                 objects.append((start, index + offset + 1))
@@ -116,8 +116,8 @@ class Config(object):
 
         # These hold the version numbers and they will be set when loaded
         self.__version = {
-            "format": 1,
-            "file": 1
+            'format': 1,
+            'file': 1
         }
 
         # This will get set with a reactor.callLater whenever a config option
@@ -184,7 +184,7 @@ what is currently in the config and it could not convert the value
             try:
                 oldtype = type(self.__config[key])
                 if isinstance(self.__config[key], unicode):
-                    value = oldtype(value, "utf8")
+                    value = oldtype(value, 'utf8')
                 else:
                     value = oldtype(value)
             except ValueError:
@@ -242,7 +242,7 @@ what is currently in the config and it could not convert the value
         """
         if isinstance(self.__config[key], str):
             try:
-                return self.__config[key].decode("utf8")
+                return self.__config[key].decode('utf8')
             except UnicodeDecodeError:
                 return self.__config[key]
         else:
@@ -336,7 +336,7 @@ what is currently in the config and it could not convert the value
         test 5
 
         """
-        log.debug("Registering function for %s key..", key)
+        log.debug('Registering function for %s key..', key)
         if key not in self.__set_functions:
             self.__set_functions[key] = []
 
@@ -362,7 +362,7 @@ what is currently in the config and it could not convert the value
         test 5
 
         """
-        log.debug("Calling all set functions..")
+        log.debug('Calling all set functions..')
         for key, value in self.__set_functions.iteritems():
             for func in value:
                 func(key, self.__config[key])
@@ -374,7 +374,7 @@ what is currently in the config and it could not convert the value
         :param key: str, the config key
 
         """
-        log.debug("Calling set functions for key %s..", key)
+        log.debug('Calling set functions for key %s..', key)
         if key in self.__set_functions:
             for func in self.__set_functions[key]:
                 func(key, self.__config[key])
@@ -391,9 +391,9 @@ what is currently in the config and it could not convert the value
             filename = self.__config_file
 
         try:
-            data = open(filename, "rb").read()
+            data = open(filename, 'rb').read()
         except IOError as ex:
-            log.warning("Unable to open config file %s: %s", filename, ex)
+            log.warning('Unable to open config file %s: %s', filename, ex)
             return
 
         objects = find_json_objects(data)
@@ -404,14 +404,14 @@ what is currently in the config and it could not convert the value
                 self.__config.update(pickle.loads(data))
             except Exception as ex:
                 log.exception(ex)
-                log.warning("Unable to load config file: %s", filename)
+                log.warning('Unable to load config file: %s', filename)
         elif len(objects) == 1:
             start, end = objects[0]
             try:
                 self.__config.update(json.loads(data[start:end]))
             except Exception as ex:
                 log.exception(ex)
-                log.warning("Unable to load config file: %s", filename)
+                log.warning('Unable to load config file: %s', filename)
         elif len(objects) == 2:
             try:
                 start, end = objects[0]
@@ -420,10 +420,10 @@ what is currently in the config and it could not convert the value
                 self.__config.update(json.loads(data[start:end]))
             except Exception as ex:
                 log.exception(ex)
-                log.warning("Unable to load config file: %s", filename)
+                log.warning('Unable to load config file: %s', filename)
 
-        log.debug("Config %s version: %s.%s loaded: %s", filename,
-                  self.__version["format"], self.__version["file"], self.__config)
+        log.debug('Config %s version: %s.%s loaded: %s', filename,
+                  self.__version['format'], self.__version['file'], self.__config)
 
     def save(self, filename=None):
         """
@@ -439,7 +439,7 @@ what is currently in the config and it could not convert the value
         # Check to see if the current config differs from the one on disk
         # We will only write a new config file if there is a difference
         try:
-            data = open(filename, "rb").read()
+            data = open(filename, 'rb').read()
             objects = find_json_objects(data)
             start, end = objects[0]
             version = json.loads(data[start:end])
@@ -451,35 +451,35 @@ what is currently in the config and it could not convert the value
                     self._save_timer.cancel()
                 return True
         except (IOError, IndexError) as ex:
-            log.warning("Unable to open config file: %s because: %s", filename, ex)
+            log.warning('Unable to open config file: %s because: %s', filename, ex)
 
         # Save the new config and make sure it's written to disk
         try:
-            log.debug("Saving new config file %s", filename + ".new")
-            f = open(filename + ".new", "wb")
+            log.debug('Saving new config file %s', filename + '.new')
+            f = open(filename + '.new', 'wb')
             json.dump(self.__version, f, indent=2)
             json.dump(self.__config, f, indent=2)
             f.flush()
             os.fsync(f.fileno())
             f.close()
         except IOError as ex:
-            log.error("Error writing new config file: %s", ex)
+            log.error('Error writing new config file: %s', ex)
             return False
 
         # Make a backup of the old config
         try:
-            log.debug("Backing up old config file to %s.bak", filename)
-            shutil.move(filename, filename + ".bak")
+            log.debug('Backing up old config file to %s.bak', filename)
+            shutil.move(filename, filename + '.bak')
         except IOError as ex:
-            log.warning("Unable to backup old config: %s", ex)
+            log.warning('Unable to backup old config: %s', ex)
 
         # The new config file has been written successfully, so let's move it over
         # the existing one.
         try:
-            log.debug("Moving new config file %s to %s..", filename + ".new", filename)
-            shutil.move(filename + ".new", filename)
+            log.debug('Moving new config file %s to %s..', filename + '.new', filename)
+            shutil.move(filename + '.new', filename)
         except IOError as ex:
-            log.error("Error moving new config file: %s", ex)
+            log.error('Error moving new config file: %s', ex)
             return False
         else:
             return True
@@ -502,22 +502,22 @@ what is currently in the config and it could not convert the value
 
         """
         if output_version in input_range or output_version <= max(input_range):
-            raise ValueError("output_version needs to be greater than input_range")
+            raise ValueError('output_version needs to be greater than input_range')
 
-        if self.__version["file"] not in input_range:
-            log.debug("File version %s is not in input_range %s, ignoring converter function..",
-                      self.__version["file"], input_range)
+        if self.__version['file'] not in input_range:
+            log.debug('File version %s is not in input_range %s, ignoring converter function..',
+                      self.__version['file'], input_range)
             return
 
         try:
             self.__config = func(self.__config)
         except Exception as ex:
             log.exception(ex)
-            log.error("There was an exception try to convert config file %s %s to %s",
-                      self.__config_file, self.__version["file"], output_version)
+            log.error('There was an exception try to convert config file %s %s to %s',
+                      self.__config_file, self.__version['file'], output_version)
             raise ex
         else:
-            self.__version["file"] = output_version
+            self.__version['file'] = output_version
             self.save()
 
     @property

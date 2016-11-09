@@ -29,23 +29,23 @@ log = logging.getLogger(__name__)
 def _(message):
     return message
 STATE_TRANSLATION = {
-    "All": _("All"),
-    "Active": _("Active"),
-    "Allocating": _("Allocating"),
-    "Checking": _("Checking"),
-    "Downloading": _("Downloading"),
-    "Seeding": _("Seeding"),
-    "Paused": _("Paused"),
-    "Checking": _("Checking"),
-    "Queued": _("Queued"),
-    "Error": _("Error"),
+    'All': _('All'),
+    'Active': _('Active'),
+    'Allocating': _('Allocating'),
+    'Checking': _('Checking'),
+    'Downloading': _('Downloading'),
+    'Seeding': _('Seeding'),
+    'Paused': _('Paused'),
+    'Checking': _('Checking'),
+    'Queued': _('Queued'),
+    'Error': _('Error'),
 }
 
 TRACKER_STATUS_TRANSLATION = {
-    "Error": _("Error"),
-    "Warning": _("Warning"),
-    "Announce OK": _("Announce OK"),
-    "Announce Sent": _("Announce Sent")
+    'Error': _('Error'),
+    'Warning': _('Warning'),
+    'Announce OK': _('Announce OK'),
+    'Announce Sent': _('Announce Sent')
 }
 del _
 
@@ -61,66 +61,66 @@ class TorrentInfo(object):
     def __init__(self, filename, filetree=1):
         # Get the torrent data from the torrent file
         try:
-            log.debug("Attempting to open %s.", filename)
-            self.__m_filedata = open(filename, "rb").read()
+            log.debug('Attempting to open %s.', filename)
+            self.__m_filedata = open(filename, 'rb').read()
             self.__m_metadata = bencode.bdecode(self.__m_filedata)
         except Exception as ex:
-            log.warning("Unable to open %s: %s", filename, ex)
+            log.warning('Unable to open %s: %s', filename, ex)
             raise ex
 
-        self.__m_info_hash = sha(bencode.bencode(self.__m_metadata["info"])).hexdigest()
+        self.__m_info_hash = sha(bencode.bencode(self.__m_metadata['info'])).hexdigest()
 
         # Get encoding from torrent file if available
         self.encoding = None
-        if "encoding" in self.__m_metadata:
-            self.encoding = self.__m_metadata["encoding"]
-        elif "codepage" in self.__m_metadata:
-            self.encoding = str(self.__m_metadata["codepage"])
+        if 'encoding' in self.__m_metadata:
+            self.encoding = self.__m_metadata['encoding']
+        elif 'codepage' in self.__m_metadata:
+            self.encoding = str(self.__m_metadata['codepage'])
         if not self.encoding:
-            self.encoding = "UTF-8"
+            self.encoding = 'UTF-8'
 
         # Check if 'name.utf-8' is in the torrent and if not try to decode the string
         # using the encoding found.
-        if "name.utf-8" in self.__m_metadata["info"]:
-            self.__m_name = utf8_encoded(self.__m_metadata["info"]["name.utf-8"])
+        if 'name.utf-8' in self.__m_metadata['info']:
+            self.__m_name = utf8_encoded(self.__m_metadata['info']['name.utf-8'])
         else:
-            self.__m_name = utf8_encoded(self.__m_metadata["info"]["name"], self.encoding)
+            self.__m_name = utf8_encoded(self.__m_metadata['info']['name'], self.encoding)
 
         # Get list of files from torrent info
         paths = {}
         dirs = {}
-        if "files" in self.__m_metadata["info"]:
-            prefix = ""
-            if len(self.__m_metadata["info"]["files"]) > 1:
+        if 'files' in self.__m_metadata['info']:
+            prefix = ''
+            if len(self.__m_metadata['info']['files']) > 1:
                 prefix = self.__m_name
 
-            for index, f in enumerate(self.__m_metadata["info"]["files"]):
-                if "path.utf-8" in f:
-                    path = os.path.join(prefix, *f["path.utf-8"])
-                    del f["path.utf-8"]
+            for index, f in enumerate(self.__m_metadata['info']['files']):
+                if 'path.utf-8' in f:
+                    path = os.path.join(prefix, *f['path.utf-8'])
+                    del f['path.utf-8']
                 else:
-                    path = utf8_encoded(os.path.join(prefix, utf8_encoded(os.path.join(*f["path"]),
+                    path = utf8_encoded(os.path.join(prefix, utf8_encoded(os.path.join(*f['path']),
                                                                           self.encoding)), self.encoding)
-                f["path"] = path
-                f["index"] = index
-                if "sha1" in f and len(f["sha1"]) == 20:
-                        f["sha1"] = f["sha1"].encode('hex')
-                if "ed2k" in f and len(f["ed2k"]) == 16:
-                        f["ed2k"] = f["ed2k"].encode('hex')
+                f['path'] = path
+                f['index'] = index
+                if 'sha1' in f and len(f['sha1']) == 20:
+                        f['sha1'] = f['sha1'].encode('hex')
+                if 'ed2k' in f and len(f['ed2k']) == 16:
+                        f['ed2k'] = f['ed2k'].encode('hex')
                 paths[path] = f
                 dirname = os.path.dirname(path)
                 while dirname:
                     dirinfo = dirs.setdefault(dirname, {})
-                    dirinfo["length"] = dirinfo.get("length", 0) + f["length"]
+                    dirinfo['length'] = dirinfo.get('length', 0) + f['length']
                     dirname = os.path.dirname(dirname)
 
             if filetree == 2:
                 def walk(path, item):
-                    if item["type"] == "dir":
+                    if item['type'] == 'dir':
                         item.update(dirs[path])
                     else:
                         item.update(paths[path])
-                    item["download"] = True
+                    item['download'] = True
 
                 file_tree = FileTree2(paths.keys())
                 file_tree.walk(walk)
@@ -128,7 +128,7 @@ class TorrentInfo(object):
                 def walk(path, item):
                     if type(item) is dict:
                         return item
-                    return [paths[path]["index"], paths[path]["length"], True]
+                    return [paths[path]['index'], paths[path]['length'], True]
 
                 file_tree = FileTree(paths)
                 file_tree.walk(walk)
@@ -136,37 +136,37 @@ class TorrentInfo(object):
         else:
             if filetree == 2:
                 self.__m_files_tree = {
-                    "contents": {
+                    'contents': {
                         self.__m_name: {
-                            "type": "file",
-                            "index": 0,
-                            "length": self.__m_metadata["info"]["length"],
-                            "download": True
+                            'type': 'file',
+                            'index': 0,
+                            'length': self.__m_metadata['info']['length'],
+                            'download': True
                         }
                     }
                 }
             else:
                 self.__m_files_tree = {
-                    self.__m_name: (0, self.__m_metadata["info"]["length"], True)
+                    self.__m_name: (0, self.__m_metadata['info']['length'], True)
                 }
 
         self.__m_files = []
-        if "files" in self.__m_metadata["info"]:
-            prefix = ""
-            if len(self.__m_metadata["info"]["files"]) > 1:
+        if 'files' in self.__m_metadata['info']:
+            prefix = ''
+            if len(self.__m_metadata['info']['files']) > 1:
                 prefix = self.__m_name
 
-            for f in self.__m_metadata["info"]["files"]:
+            for f in self.__m_metadata['info']['files']:
                 self.__m_files.append({
-                    'path': f["path"],
-                    'size': f["length"],
+                    'path': f['path'],
+                    'size': f['length'],
                     'download': True
                 })
         else:
             self.__m_files.append({
-                "path": self.__m_name,
-                "size": self.__m_metadata["info"]["length"],
-                "download": True
+                'path': self.__m_name,
+                'size': self.__m_metadata['info']['length'],
+                'download': True
             })
 
     def as_dict(self, *keys):
@@ -252,33 +252,33 @@ class FileTree2(object):
     """
 
     def __init__(self, paths):
-        self.tree = {"contents": {}, "type": "dir"}
+        self.tree = {'contents': {}, 'type': 'dir'}
 
         def get_parent(path):
             parent = self.tree
-            while "/" in path:
-                directory, path = path.split("/", 1)
-                child = parent["contents"].get(directory)
+            while '/' in path:
+                directory, path = path.split('/', 1)
+                child = parent['contents'].get(directory)
                 if child is None:
-                    parent["contents"][directory] = {
-                        "type": "dir",
-                        "contents": {}
+                    parent['contents'][directory] = {
+                        'type': 'dir',
+                        'contents': {}
                     }
-                parent = parent["contents"][directory]
+                parent = parent['contents'][directory]
             return parent, path
 
         for path in paths:
-            if path[-1] == "/":
+            if path[-1] == '/':
                 path = path[:-1]
                 parent, path = get_parent(path)
-                parent["contents"][path] = {
-                    "type": "dir",
-                    "contents": {}
+                parent['contents'][path] = {
+                    'type': 'dir',
+                    'contents': {}
                 }
             else:
                 parent, path = get_parent(path)
-                parent["contents"][path] = {
-                    "type": "file"
+                parent['contents'][path] = {
+                    'type': 'file'
                 }
 
     def get_tree(self):
@@ -301,27 +301,27 @@ class FileTree2(object):
         :type callback: function
         """
         def walk(directory, parent_path):
-            for path in directory["contents"].keys():
+            for path in directory['contents'].keys():
                 full_path = path_join(parent_path, path)
-                if directory["contents"][path]["type"] == "dir":
-                    directory["contents"][path] = callback(full_path, directory["contents"][path]
-                                                           ) or directory["contents"][path]
-                    walk(directory["contents"][path], full_path)
+                if directory['contents'][path]['type'] == 'dir':
+                    directory['contents'][path] = callback(full_path, directory['contents'][path]
+                                                           ) or directory['contents'][path]
+                    walk(directory['contents'][path], full_path)
                 else:
-                    directory["contents"][path] = callback(full_path, directory["contents"][path]
-                                                           ) or directory["contents"][path]
-        walk(self.tree, "")
+                    directory['contents'][path] = callback(full_path, directory['contents'][path]
+                                                           ) or directory['contents'][path]
+        walk(self.tree, '')
 
     def __str__(self):
         lines = []
 
         def write(path, item):
-            depth = path.count("/")
+            depth = path.count('/')
             path = os.path.basename(path)
-            path = path + "/" if item["type"] == "dir" else path
-            lines.append("  " * depth + path)
+            path = path + '/' if item['type'] == 'dir' else path
+            lines.append('  ' * depth + path)
         self.walk(write)
-        return "\n".join(lines)
+        return '\n'.join(lines)
 
 
 class FileTree(object):
@@ -337,8 +337,8 @@ class FileTree(object):
 
         def get_parent(path):
             parent = self.tree
-            while "/" in path:
-                directory, path = path.split("/", 1)
+            while '/' in path:
+                directory, path = path.split('/', 1)
                 child = parent.get(directory)
                 if child is None:
                     parent[directory] = {}
@@ -346,7 +346,7 @@ class FileTree(object):
             return parent, path
 
         for path in paths:
-            if path[-1] == "/":
+            if path[-1] == '/':
                 path = path[:-1]
                 parent, path = get_parent(path)
                 parent[path] = {}
@@ -386,18 +386,18 @@ class FileTree(object):
                     walk(directory[path], full_path)
                 else:
                     directory[path] = callback(full_path, directory[path]) or directory[path]
-        walk(self.tree, "")
+        walk(self.tree, '')
 
     def __str__(self):
         lines = []
 
         def write(path, item):
-            depth = path.count("/")
+            depth = path.count('/')
             path = os.path.basename(path)
-            path = type(item) is dict and path + "/" or path
-            lines.append("  " * depth + path)
+            path = type(item) is dict and path + '/' or path
+            lines.append('  ' * depth + path)
         self.walk(write)
-        return "\n".join(lines)
+        return '\n'.join(lines)
 
 
 def get_localhost_auth():
@@ -407,26 +407,26 @@ def get_localhost_auth():
     :returns: with the username and password to login as
     :rtype: tuple
     """
-    auth_file = deluge.configmanager.get_config_dir("auth")
+    auth_file = deluge.configmanager.get_config_dir('auth')
     if not os.path.exists(auth_file):
         from deluge.common import create_localclient_account
         create_localclient_account()
 
     with open(auth_file) as auth:
         for line in auth:
-            if line.startswith("#"):
+            if line.startswith('#'):
                 # This is a comment line
                 continue
 
-            lsplit = line.strip().split(":")
+            lsplit = line.strip().split(':')
 
             if len(lsplit) == 2:
                 username, password = lsplit
             elif len(lsplit) == 3:
                 username, password, level = lsplit
             else:
-                log.error("Your auth file is malformed: Incorrect number of fields!")
+                log.error('Your auth file is malformed: Incorrect number of fields!')
                 continue
 
-            if username == "localclient":
+            if username == 'localclient':
                 return (username, password)

@@ -13,7 +13,7 @@
 import os
 import re
 
-output_file = "js/gettext.js"
+output_file = 'js/gettext.js'
 string_re = re.compile('_\\(\'(.*?)\'\\)')
 strings = {}
 

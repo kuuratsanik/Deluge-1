@@ -25,18 +25,18 @@ log = logging.getLogger(__name__)
 
 def atom(next, token):
     """taken with slight modifications from http://effbot.org/zone/simple-iterator-parser.htm"""
-    if token[1] == "(":
+    if token[1] == '(':
         out = []
         token = next()
-        while token[1] != ")":
+        while token[1] != ')':
             out.append(atom(next, token))
             token = next()
-            if token[1] == ",":
+            if token[1] == ',':
                 token = next()
         return tuple(out)
-    elif token[0] is tokenize.NUMBER or token[1] == "-":
+    elif token[0] is tokenize.NUMBER or token[1] == '-':
         try:
-            if token[1] == "-":
+            if token[1] == '-':
                 return int(token[-1], 0)
             else:
                 return int(token[1], 0)
@@ -45,14 +45,14 @@ def atom(next, token):
                 return float(token[-1])
             except ValueError:
                 return str(token[-1])
-    elif token[1].lower() == "true":
+    elif token[1].lower() == 'true':
         return True
-    elif token[1].lower() == "false":
+    elif token[1].lower() == 'false':
         return False
-    elif token[0] is tokenize.STRING or token[1] == "/":
-        return token[-1].decode("string-escape")
+    elif token[0] is tokenize.STRING or token[1] == '/':
+        return token[-1].decode('string-escape')
 
-    raise SyntaxError("malformed expression (%s)" % token[1])
+    raise SyntaxError('malformed expression (%s)' % token[1])
 
 
 def simple_eval(source):
@@ -69,27 +69,27 @@ class Command(BaseCommand):
     """Show and set configuration values"""
 
     option_list = BaseCommand.option_list + (
-        make_option("-s", "--set", action="store", nargs=2, dest="set", help="set value for key"),
+        make_option('-s', '--set', action='store', nargs=2, dest='set', help='set value for key'),
     )
     usage = """Usage: config [key1 [key2 ...]]"
        config --set key value"""
 
     def handle(self, *args, **options):
-        self.console = component.get("ConsoleUI")
-        if options["set"]:
+        self.console = component.get('ConsoleUI')
+        if options['set']:
             return self._set_config(*args, **options)
         else:
             return self._get_config(*args, **options)
 
     def _get_config(self, *args, **options):
-        config = component.get("CoreConfig")
+        config = component.get('CoreConfig')
         keys = config.keys()
         keys.sort()
-        s = ""
+        s = ''
         for key in keys:
             if args and key not in args:
                 continue
-            color = "{!white,black,bold!}"
+            color = '{!white,black,bold!}'
             value = config[key]
             if type(value) in colors.type_color:
                 color = colors.type_color[type(value)]
@@ -100,19 +100,19 @@ class Command(BaseCommand):
                 value = pprint.pformat(value, 2, 80)
                 new_value = []
                 for line in value.splitlines():
-                    new_value.append("%s%s" % (color, line))
-                value = "\n".join(new_value)
+                    new_value.append('%s%s' % (color, line))
+                value = '\n'.join(new_value)
 
-            s += "  %s: %s%s\n" % (key, color, value)
+            s += '  %s: %s%s\n' % (key, color, value)
 
         self.console.write(s)
         return config
 
     def _set_config(self, *args, **options):
         deferred = defer.Deferred()
-        config = component.get("CoreConfig")
-        key = options["set"][0]
-        val = simple_eval(options["set"][1] + " " .join(args))
+        config = component.get('CoreConfig')
+        key = options['set'][0]
+        val = simple_eval(options['set'][1] + ' ' .join(args))
 
         if key not in config.keys():
             self.console.write("{!error!}The key '%s' is invalid!" % key)
@@ -122,16 +122,16 @@ class Command(BaseCommand):
             try:
                 val = type(config[key])(val)
             except:
-                self.config.write("{!error!}Configuration value provided has incorrect type.")
+                self.config.write('{!error!}Configuration value provided has incorrect type.')
                 return
 
         def on_set_config(result):
-            self.console.write("{!success!}Configuration value successfully updated.")
+            self.console.write('{!success!}Configuration value successfully updated.')
             deferred.callback(True)
 
-        self.console.write("Setting %s to %s.." % (key, val))
+        self.console.write('Setting %s to %s..' % (key, val))
         client.core.set_config({key: val}).addCallback(on_set_config)
         return deferred
 
     def complete(self, text):
-        return [k for k in component.get("CoreConfig").keys() if k.startswith(text)]
+        return [k for k in component.get('CoreConfig').keys() if k.startswith(text)]

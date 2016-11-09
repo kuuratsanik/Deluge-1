@@ -20,16 +20,16 @@ from deluge.plugins.pluginbase import CorePluginBase
 log = logging.getLogger(__name__)
 
 DEFAULT_PREFS = {
-    "enabled": False,
-    "ssl": False,
-    "port": 8112
+    'enabled': False,
+    'ssl': False,
+    'port': 8112
 }
 
 
 class Core(CorePluginBase):
 
     def enable(self):
-        self.config = configmanager.ConfigManager("web_plugin.conf", DEFAULT_PREFS)
+        self.config = configmanager.ConfigManager('web_plugin.conf', DEFAULT_PREFS)
         self.server = None
         if self.config['enabled']:
             self.start()
@@ -69,8 +69,8 @@ class Core(CorePluginBase):
 
             self.server = server.DelugeWeb()
 
-        self.server.port = self.config["port"]
-        self.server.https = self.config["ssl"]
+        self.server.port = self.config['port']
+        self.server.https = self.config['ssl']
         self.server.start(False)
         return True
 
@@ -81,14 +81,14 @@ class Core(CorePluginBase):
 
     @export
     def set_config(self, config):
-        "sets the config dictionary"
+        'sets the config dictionary'
 
         action = None
-        if "enabled" in config:
-            if config["enabled"] != self.config["enabled"]:
-                action = config["enabled"] and 'start' or 'stop'
+        if 'enabled' in config:
+            if config['enabled'] != self.config['enabled']:
+                action = config['enabled'] and 'start' or 'stop'
 
-        if "ssl" in config:
+        if 'ssl' in config:
             if not action:
                 action = 'restart'
 
@@ -105,5 +105,5 @@ class Core(CorePluginBase):
 
     @export
     def get_config(self):
-        "returns the config dictionary"
+        'returns the config dictionary'
         return self.config.config

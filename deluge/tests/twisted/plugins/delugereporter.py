@@ -17,12 +17,12 @@ class _Reporter(object):
         self.shortOpt = shortOpt
         self.klass = klass
 
-deluge = _Reporter("Deluge reporter that suppresses Stacktrace from TODO tests",
-                   "twisted.plugins.delugereporter",
-                   description="Deluge Reporter",
-                   longOpt="deluge-reporter",
+deluge = _Reporter('Deluge reporter that suppresses Stacktrace from TODO tests',
+                   'twisted.plugins.delugereporter',
+                   description='Deluge Reporter',
+                   longOpt='deluge-reporter',
                    shortOpt=None,
-                   klass="DelugeReporter")
+                   klass='DelugeReporter')
 
 
 class DelugeReporter(TreeReporter):

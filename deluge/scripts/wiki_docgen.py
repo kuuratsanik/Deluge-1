@@ -23,7 +23,7 @@ from deluge.core.core import Core
 from deluge.ui.client import aclient, sclient
 
 sclient.set_core_uri()
-print("\n\n")
+print('\n\n')
 
 
 if 0:  # aclient non-core
@@ -41,11 +41,11 @@ if 0:  # aclient non-core
         except:
             continue
 
-        print("\n'''%s(%s): '''\n" % (method_name, ", ".join(params)))
-        print("%s" % pydoc.getdoc(func))
+        print("\n'''%s(%s): '''\n" % (method_name, ', '.join(params)))
+        print('%s' % pydoc.getdoc(func))
 
 if 1:  # baseclient/core
-    methods = sorted([m for m in dir(Core) if m.startswith("export")]
+    methods = sorted([m for m in dir(Core) if m.startswith('export')]
                      + ['export_add_torrent_file_binary'])  # HACK
 
     for m in methods:
@@ -58,10 +58,10 @@ if 1:  # baseclient/core
 
         params = inspect.getargspec(func)[0][1:]
         if (aclient.has_callback(method_name) and method_name not in ['add_torrent_file_binary']):
-            params = ["[callback]"] + params
+            params = ['[callback]'] + params
 
-        print("\n'''%s(%s): '''\n" % (method_name, ", ".join(params)))
-        print("{{{\n%s\n}}}" % pydoc.getdoc(func))
+        print("\n'''%s(%s): '''\n" % (method_name, ', '.join(params)))
+        print('{{{\n%s\n}}}' % pydoc.getdoc(func))
 
 if 0:  # plugin-manager
     from WebUi.pluginmanager import PluginManager
@@ -70,14 +70,14 @@ if 0:  # plugin-manager
         func = getattr(PluginManager, m)
         method_name = m
         params = inspect.getargspec(func)[0][1:]
-        print("\n'''%s(%s): '''\n" % (method_name, ", ".join(params)))
-        print("%s" % pydoc.getdoc(func))
+        print("\n'''%s(%s): '''\n" % (method_name, ', '.join(params)))
+        print('%s' % pydoc.getdoc(func))
 
 if 0:  # possible config-values
-    print("=== config-values ===")
+    print('=== config-values ===')
     cfg = sclient.get_sconfig()
     for key in sorted(cfg.keys()):
-        print("%s:%s()" % (key, type(cfg[key]).__name__))
+        print('%s:%s()' % (key, type(cfg[key]).__name__))
 
 if 0:  # keys
     print("""== Notes ==
@@ -85,7 +85,7 @@ if 0:  # keys
     {{{
 #!python
 >>>sorted(sclient.get_status_keys())""")
-    print("\n".join(textwrap.wrap(str(sorted(sclient.get_status_keys())), 100)))
+    print('\n'.join(textwrap.wrap(str(sorted(sclient.get_status_keys())), 100)))
     print("""}}}""")
 
-print("\n\n")
+print('\n\n')

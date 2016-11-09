@@ -28,7 +28,7 @@ log = logging.getLogger(__name__)
 class Commander:
     def __init__(self, cmds, interactive=False):
         self._commands = cmds
-        self.console = component.get("ConsoleUI")
+        self.console = component.get('ConsoleUI')
         self.interactive = interactive
 
     def write(self, line):
@@ -43,11 +43,11 @@ class Commander:
         """
         if not cmd:
             return
-        cmd, _, line = cmd.partition(" ")
+        cmd, _, line = cmd.partition(' ')
         try:
             parser = self._commands[cmd].create_parser()
         except KeyError:
-            self.write("{!error!}Unknown command: %s" % cmd)
+            self.write('{!error!}Unknown command: %s' % cmd)
             return
         args = self._commands[cmd].split(line)
 
@@ -62,30 +62,30 @@ class Commander:
         parser.print_help = print_help
 
         # Only these commands can be run when not connected to a daemon
-        not_connected_cmds = ["help", "connect", "quit"]
+        not_connected_cmds = ['help', 'connect', 'quit']
         aliases = []
         for c in not_connected_cmds:
             aliases.extend(self._commands[c].aliases)
         not_connected_cmds.extend(aliases)
 
         if not client.connected() and cmd not in not_connected_cmds:
-            self.write("{!error!}Not connected to a daemon, please use the connect command first.")
+            self.write('{!error!}Not connected to a daemon, please use the connect command first.')
             return
 
         try:
             options, args = parser.parse_args(args)
         except TypeError as ex:
-            self.write("{!error!}Error parsing options: %s" % ex)
+            self.write('{!error!}Error parsing options: %s' % ex)
             return
 
-        if not getattr(options, "_exit", False):
+        if not getattr(options, '_exit', False):
             try:
                 ret = self._commands[cmd].handle(*args, **options.__dict__)
             except Exception as ex:
-                self.write("{!error!} %s" % ex)
+                self.write('{!error!} %s' % ex)
                 log.exception(ex)
                 import traceback
-                self.write("%s" % traceback.format_exc())
+                self.write('%s' % traceback.format_exc())
                 return defer.succeed(True)
             else:
                 return ret
@@ -94,7 +94,7 @@ class Commander:
         commands = []
         if args:
             # Multiple commands split by ";"
-            commands = [arg.strip() for arg in args.split(";")]
+            commands = [arg.strip() for arg in args.split(';')]
 
         def on_connect(result):
             def on_started(result):
@@ -103,10 +103,10 @@ class Commander:
                         return self.do_command(cmd)
                     d = defer.succeed(None)
                     for command in commands:
-                        if command in ("quit", "exit"):
+                        if command in ('quit', 'exit'):
                             break
                         d.addCallback(do_command, command)
-                    d.addCallback(do_command, "quit")
+                    d.addCallback(do_command, 'quit')
 
                 # We need to wait for the rpcs in start() to finish before processing
                 # any of the commands.
@@ -119,20 +119,20 @@ class Commander:
             else:
                 rm = reason.getErrorMessage()
             if host:
-                print("Could not connect to daemon: %s:%s\n %s" % (host, port, rm))
+                print('Could not connect to daemon: %s:%s\n %s' % (host, port, rm))
             else:
-                print("Could not connect to localhost daemon\n %s" % rm)
-            self.do_command("quit")
+                print('Could not connect to localhost daemon\n %s' % rm)
+            self.do_command('quit')
 
         if host:
             d = client.connect(host, port, username, password)
         else:
             d = client.connect()
         if not self.interactive:
-            if commands[0].startswith("connect"):
+            if commands[0].startswith('connect'):
                 d = self.do_command(commands.pop(0))
-            elif "help" in commands:
-                self.do_command("help")
+            elif 'help' in commands:
+                self.do_command('help')
                 sys.exit(0)
         d.addCallback(on_connect)
         d.addErrback(on_connect_fail)

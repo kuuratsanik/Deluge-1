@@ -38,17 +38,17 @@ class Console(_UI):
     help = """Starts the Deluge console interface"""
 
     def __init__(self):
-        super(Console, self).__init__("console")
-        group = optparse.OptionGroup(self.parser, "Console Options", "These daemon connect options will be "
-                                     "used for commands, or if console ui autoconnect is enabled.")
-        group.add_option("-d", "--daemon", dest="daemon_addr")
-        group.add_option("-p", "--port", dest="daemon_port", type="int")
-        group.add_option("-u", "--username", dest="daemon_user")
-        group.add_option("-P", "--password", dest="daemon_pass")
+        super(Console, self).__init__('console')
+        group = optparse.OptionGroup(self.parser, 'Console Options', 'These daemon connect options will be '
+                                     'used for commands, or if console ui autoconnect is enabled.')
+        group.add_option('-d', '--daemon', dest='daemon_addr')
+        group.add_option('-p', '--port', dest='daemon_port', type='int')
+        group.add_option('-u', '--username', dest='daemon_user')
+        group.add_option('-P', '--password', dest='daemon_pass')
         self.parser.add_option_group(group)
         self.parser.disable_interspersed_args()
 
-        self.console_cmds = load_commands(os.path.join(UI_PATH, "commands"))
+        self.console_cmds = load_commands(os.path.join(UI_PATH, 'commands'))
 
         class CommandOptionGroup(optparse.OptionGroup):
             def __init__(self, parser, title, description=None, cmds=None):
@@ -59,21 +59,21 @@ class Console(_UI):
                 result = formatter.format_heading(self.title)
                 formatter.indent()
                 if self.description:
-                    result += "%s\n" % formatter.format_description(self.description)
+                    result += '%s\n' % formatter.format_description(self.description)
                 for cname in self.cmds:
                     cmd = self.cmds[cname]
                     if cmd.interactive_only or cname in cmd.aliases:
                         continue
                     allnames = [cname]
                     allnames.extend(cmd.aliases)
-                    cname = "/".join(allnames)
-                    result += formatter.format_heading(" - ".join([cname, cmd.__doc__]))
+                    cname = '/'.join(allnames)
+                    result += formatter.format_heading(' - '.join([cname, cmd.__doc__]))
                     formatter.indent()
-                    result += "%*s%s\n" % (formatter.current_indent, "", cmd.usage.split("\n")[0])
+                    result += '%*s%s\n' % (formatter.current_indent, '', cmd.usage.split('\n')[0])
                     formatter.dedent()
                 formatter.dedent()
                 return result
-        cmd_group = CommandOptionGroup(self.parser, "Console Commands",
+        cmd_group = CommandOptionGroup(self.parser, 'Console Commands',
                                        description="""These commands can be issued from the command line.
                                                     They require quoting and multiple commands separated by ';'
                                                     e.g. Pause torrent with id 'abcd' and get information for id 'efgh':
@@ -97,20 +97,20 @@ class DelugeHelpFormatter (optparse.IndentedHelpFormatter):
     """
 
     replace_dict = {
-        "<torrent-id>": "{!green!}%s{!input!}",
-        "<state>": "{!yellow!}%s{!input!}",
-        "\.\.\.": "{!yellow!}%s{!input!}",
-        "\s\*\s": "{!blue!}%s{!input!}",
-        "(?<![\-a-z])(-[a-zA-Z0-9])": "{!red!}%s{!input!}",
+        '<torrent-id>': '{!green!}%s{!input!}',
+        '<state>': '{!yellow!}%s{!input!}',
+        '\.\.\.': '{!yellow!}%s{!input!}',
+        '\s\*\s': '{!blue!}%s{!input!}',
+        '(?<![\-a-z])(-[a-zA-Z0-9])': '{!red!}%s{!input!}',
         # "(\-[a-zA-Z0-9])": "{!red!}%s{!input!}",
-        "--[_\-a-zA-Z0-9]+": "{!green!}%s{!input!}",
-        "(\[|\])": "{!info!}%s{!input!}",
+        '--[_\-a-zA-Z0-9]+': '{!green!}%s{!input!}',
+        '(\[|\])': '{!info!}%s{!input!}',
 
-        "<tab>": "{!white!}%s{!input!}",
-        "[_A-Z]{3,}": "{!cyan!}%s{!input!}",
+        '<tab>': '{!white!}%s{!input!}',
+        '[_A-Z]{3,}': '{!cyan!}%s{!input!}',
 
-        "<download-folder>": "{!yellow!}%s{!input!}",
-        "<torrent-file>": "{!green!}%s{!input!}"
+        '<download-folder>': '{!yellow!}%s{!input!}',
+        '<torrent-file>': '{!green!}%s{!input!}'
 
     }
 
@@ -133,18 +133,18 @@ class DelugeHelpFormatter (optparse.IndentedHelpFormatter):
 
     def format_usage(self, usage):
 
-        return _("{!info!}Usage{!input!}: %s\n") % self._format_colors(usage)
+        return _('{!info!}Usage{!input!}: %s\n') % self._format_colors(usage)
 
     def format_option(self, option):
         result = []
         opts = self.option_strings[option]
         opt_width = self.help_position - self.current_indent - 2
         if len(opts) > opt_width:
-            opts = "%*s%s\n" % (self.current_indent, "", opts)
+            opts = '%*s%s\n' % (self.current_indent, '', opts)
             opts = self._format_colors(opts)
             indent_first = self.help_position
         else:  # start help on same line as opts
-            opts = "%*s%-*s  " % (self.current_indent, "", opt_width, opts)
+            opts = '%*s%-*s  ' % (self.current_indent, '', opt_width, opts)
             opts = self._format_colors(opts)
             indent_first = 0
         result.append(opts)
@@ -152,12 +152,12 @@ class DelugeHelpFormatter (optparse.IndentedHelpFormatter):
             help_text = self.expand_default(option)
             help_text = self._format_colors(help_text)
             help_lines = optparse.textwrap.wrap(help_text, self.help_width)
-            result.append("%*s%s\n" % (indent_first, "", help_lines[0]))
-            result.extend(["%*s%s\n" % (self.help_position, "", line)
+            result.append('%*s%s\n' % (indent_first, '', help_lines[0]))
+            result.extend(['%*s%s\n' % (self.help_position, '', line)
                            for line in help_lines[1:]])
-        elif opts[-1] != "\n":
-            result.append("\n")
-        return "".join(result)
+        elif opts[-1] != '\n':
+            result.append('\n')
+        return ''.join(result)
 
 
 class OptionParser(optparse.OptionParser):
@@ -182,13 +182,13 @@ class OptionParser(optparse.OptionParser):
         raise Exception(msg)
 
     def print_usage(self, file=None):
-        console = component.get("ConsoleUI")
+        console = component.get('ConsoleUI')
         if self.usage:
             for line in self.get_usage().splitlines():
                 console.write(line)
 
     def print_help(self, file=None):
-        console = component.get("ConsoleUI")
+        console = component.get('ConsoleUI')
         console.set_batch_write(True)
         for line in self.format_help().splitlines():
             console.write(line)
@@ -199,22 +199,22 @@ class OptionParser(optparse.OptionParser):
             formatter = self.formatter
         formatter.store_option_strings(self)
         result = []
-        result.append(formatter.format_heading(_("{!info!}Options{!input!}")))
+        result.append(formatter.format_heading(_('{!info!}Options{!input!}')))
         formatter.indent()
         if self.option_list:
             result.append(optparse.OptionContainer.format_option_help(self, formatter))
-            result.append("\\n")
+            result.append('\\n')
         for group in self.option_groups:
             result.append(group.format_help(formatter))
-            result.append("\\n")
+            result.append('\\n')
         formatter.dedent()
         # Drop the last "\\n", or the header if no options or option groups:
-        return "".join(result[:-1])
+        return ''.join(result[:-1])
 
 
 class BaseCommand(object):
 
-    usage = "usage"
+    usage = 'usage'
     interactive_only = False
     option_list = tuple()
     aliases = []
@@ -227,7 +227,7 @@ class BaseCommand(object):
 
     @property
     def name(self):
-        return "base"
+        return 'base'
 
     @property
     def epilog(self):
@@ -235,11 +235,11 @@ class BaseCommand(object):
 
     def split(self, text):
         if deluge.common.windows_check():
-            text = text.replace("\\", "\\\\")
+            text = text.replace('\\', '\\\\')
         result = shlex.split(text)
         for i, s in enumerate(result):
-            result[i] = s.replace(r"\ ", " ")
-        result = filter(lambda s: s != "", result)
+            result[i] = s.replace(r'\ ', ' ')
+        result = filter(lambda s: s != '', result)
         return result
 
     def create_parser(self):
@@ -248,17 +248,17 @@ class BaseCommand(object):
 
 def load_commands(command_dir, exclude=[]):
     def get_command(name):
-        return getattr(__import__("deluge.ui.console.commands.%s" % name, {}, {}, ["Command"]), "Command")()
+        return getattr(__import__('deluge.ui.console.commands.%s' % name, {}, {}, ['Command']), 'Command')()
 
     try:
         commands = []
         for filename in os.listdir(command_dir):
-            if filename.split(".")[0] in exclude or filename.startswith("_"):
+            if filename.split('.')[0] in exclude or filename.startswith('_'):
                 continue
-            if not (filename.endswith(".py") or filename.endswith(".pyc")):
+            if not (filename.endswith('.py') or filename.endswith('.pyc')):
                 continue
-            cmd = get_command(filename.split(".")[len(filename.split(".")) - 2])
-            aliases = [filename.split(".")[len(filename.split(".")) - 2]]
+            cmd = get_command(filename.split('.')[len(filename.split('.')) - 2])
+            aliases = [filename.split('.')[len(filename.split('.')) - 2]]
             aliases.extend(cmd.aliases)
             for a in aliases:
                 commands.append((a, cmd))
@@ -269,18 +269,18 @@ def load_commands(command_dir, exclude=[]):
 
 class ConsoleUI(component.Component):
     def __init__(self, args=None, cmds=None, daemon=None):
-        component.Component.__init__(self, "ConsoleUI", 2)
+        component.Component.__init__(self, 'ConsoleUI', 2)
 
         # keep track of events for the log view
         self.events = []
 
         try:
-            locale.setlocale(locale.LC_ALL, "")
+            locale.setlocale(locale.LC_ALL, '')
             self.encoding = locale.getpreferredencoding()
         except:
             self.encoding = sys.getdefaultencoding()
 
-        log.debug("Using encoding: %s", self.encoding)
+        log.debug('Using encoding: %s', self.encoding)
 
         # start up the session proxy
         self.sessionproxy = SessionProxy()
@@ -291,7 +291,7 @@ class ConsoleUI(component.Component):
         self.interactive = True
         self._commands = cmds
         if args:
-            args = " ".join(args)
+            args = ' '.join(args)
             self.interactive = False
             if not cmds:
                 print("Sorry, couldn't find any commands")
@@ -338,8 +338,8 @@ Please use commands from the command line, eg:\n
         self.screen = ConnectionManager(stdscr, self.encoding)
         self.eventlog = EventLog()
 
-        self.screen.topbar = "{!status!}Deluge " + deluge.common.get_version() + " Console"
-        self.screen.bottombar = "{!status!}"
+        self.screen.topbar = '{!status!}Deluge ' + deluge.common.get_version() + ' Console'
+        self.screen.bottombar = '{!status!}'
         self.screen.refresh()
 
         # The Screen object is designed to run as a twisted reader so that it
@@ -358,10 +358,10 @@ Please use commands from the command line, eg:\n
             def on_session_state(result):
                 def on_torrents_status(torrents):
                     for torrent_id, status in torrents.items():
-                        self.torrents.append((torrent_id, status["name"]))
+                        self.torrents.append((torrent_id, status['name']))
                     self.started_deferred.callback(True)
 
-                client.core.get_torrents_status({"id": result}, ["name"]).addCallback(on_torrents_status)
+                client.core.get_torrents_status({'id': result}, ['name']).addCallback(on_torrents_status)
             client.core.get_session_state().addCallback(on_session_state)
 
     def match_torrent(self, string):
@@ -387,7 +387,7 @@ Please use commands from the command line, eg:\n
         return matches
 
     def get_torrent_name(self, torrent_id):
-        if self.interactive and hasattr(self.screen, "get_torrent_name"):
+        if self.interactive and hasattr(self.screen, 'get_torrent_name'):
             return self.screen.get_torrent_name(torrent_id)
 
         for tid, name in self.torrents:
@@ -404,7 +404,7 @@ Please use commands from the command line, eg:\n
         if self.interactive and isinstance(self.screen, deluge.ui.console.modes.legacy.Legacy):
             return self.screen.tab_complete_torrent(line)
 
-    def tab_complete_path(self, line, type="file", ext="", sort="name", dirs_first=True):
+    def tab_complete_path(self, line, type='file', ext='', sort='name', dirs_first=True):
         if self.interactive and isinstance(self.screen, deluge.ui.console.modes.legacy.Legacy):
             return self.screen.tab_complete_path(line, type=type, ext=ext, sort=sort, dirs_first=dirs_first)
 
@@ -423,7 +423,7 @@ Please use commands from the command line, eg:\n
             if isinstance(self.screen, deluge.ui.console.modes.legacy.Legacy):
                 self.screen.write(s)
             else:
-                component.get("LegacyUI").add_line(s, False)
+                component.get('LegacyUI').add_line(s, False)
                 self.events.append(s)
         else:
             print(colors.strip_colors(s.encode(self.encoding)))
@@ -434,7 +434,7 @@ Please use commands from the command line, eg:\n
                 self.events.append(s)
                 self.screen.write(s)
             else:
-                component.get("LegacyUI").add_line(s, False)
+                component.get('LegacyUI').add_line(s, False)
                 self.events.append(s)
         else:
             print(colors.strip_colors(s.encode(self.encoding)))

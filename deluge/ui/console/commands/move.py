@@ -16,10 +16,10 @@ from deluge.ui.console.main import BaseCommand
 
 class Command(BaseCommand):
     """Move torrents' storage location"""
-    usage = "Usage: move <torrent-id> [<torrent-id> ...] <path>"
+    usage = 'Usage: move <torrent-id> [<torrent-id> ...] <path>'
 
     def handle(self, *args, **options):
-        self.console = component.get("ConsoleUI")
+        self.console = component.get('ConsoleUI')
 
         if len(args) < 2:
             self.console.write(self.usage)
@@ -28,7 +28,7 @@ class Command(BaseCommand):
         path = args[-1]
 
         if os.path.exists(path) and not os.path.isdir(path):
-            self.console.write("{!error!}Cannot Move Download Folder: %s exists and is not a directory" % path)
+            self.console.write('{!error!}Cannot Move Download Folder: %s exists and is not a directory' % path)
             return
 
         ids = []
@@ -38,7 +38,7 @@ class Command(BaseCommand):
         names = []
         for i in ids:
             names.append(self.console.get_torrent_name(i))
-        namestr = ", ".join(names)
+        namestr = ', '.join(names)
 
         def on_move(res):
             self.console.write("Moved \"%s\" to %s" % (namestr, path))
@@ -57,11 +57,11 @@ class Command(BaseCommand):
                 # ret.extend(os.listdir(line))
                 for f in os.listdir(line):
                     # Skip hidden
-                    if f.startswith("."):
+                    if f.startswith('.'):
                         continue
                     f = os.path.join(line, f)
                     if os.path.isdir(f):
-                        f += "/"
+                        f += '/'
                     ret.append(f)
             else:
                 # This is a file, but we could be looking for another file that
@@ -79,7 +79,7 @@ class Command(BaseCommand):
                         p = os.path.join(os.path.dirname(line), f)
 
                         if os.path.isdir(p):
-                            p += "/"
+                            p += '/'
                         ret.append(p)
 
         return ret

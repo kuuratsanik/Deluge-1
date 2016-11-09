@@ -18,4 +18,4 @@ import pkg_resources
 
 
 def get_resource(filename):
-    return pkg_resources.resource_filename("deluge.plugins.label", os.path.join("data", filename))
+    return pkg_resources.resource_filename('deluge.plugins.label', os.path.join('data', filename))

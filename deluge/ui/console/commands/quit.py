@@ -16,7 +16,7 @@ from deluge.ui.console.main import BaseCommand
 
 class Command(BaseCommand):
     """Exit from the client."""
-    aliases = ["exit"]
+    aliases = ['exit']
     interactive_only = True
 
     def handle(self, *args, **options):

@@ -10,12 +10,12 @@ import deluge.common
 import deluge.configmanager
 import deluge.log
 
-deluge.log.setup_logger("none")
+deluge.log.setup_logger('none')
 
 
 def disable_new_release_check():
     import deluge.core.preferencesmanager
-    deluge.core.preferencesmanager.DEFAULT_PREFS["new_release_check"] = False
+    deluge.core.preferencesmanager.DEFAULT_PREFS['new_release_check'] = False
 
 
 def set_tmp_config_dir():
@@ -49,18 +49,18 @@ deluge.main.start_daemon()
     core = Popen([sys.executable], cwd=cwd, stdin=fp, stdout=PIPE, stderr=PIPE)
     while True:
         line = core.stderr.readline()
-        if ("starting on %d" % listen_port) in line:
+        if ('starting on %d' % listen_port) in line:
             time.sleep(0.3)  # Slight pause just incase
             break
         elif ("Couldn't listen on localhost:%d" % listen_port) in line:
-            raise CannotListenError("localhost", listen_port, "Could not start deluge test client: %s" % line)
+            raise CannotListenError('localhost', listen_port, 'Could not start deluge test client: %s' % line)
         elif 'Traceback' in line:
             raise SystemExit(
                 "Failed to start core daemon. Do \"\"\" %s \"\"\" to see what's "
-                "happening" %
+                'happening' %
                 "python -c \"import sys; import tempfile; import deluge.main; "
-                "import deluge.configmanager; config_directory = tempfile.mkdtemp(); "
-                "deluge.configmanager.set_config_dir(config_directory); "
+                'import deluge.configmanager; config_directory = tempfile.mkdtemp(); '
+                'deluge.configmanager.set_config_dir(config_directory); '
                 "sys.argv.extend(['-d', '-c', config_directory, '-L', 'info']); "
                 "deluge.main.start_daemon()\""
             )

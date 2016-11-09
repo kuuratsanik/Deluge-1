@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 
 
 def fcount(value):
-    return "%s" % len(value)
+    return '%s' % len(value)
 
 
 def ftranslate(text):
@@ -31,28 +31,28 @@ class TrackersTab(Tab):
         Tab.__init__(self)
         # Get the labels we need to update.
         # widget name, modifier function, status keys
-        builder = component.get("MainWindow").get_builder()
+        builder = component.get('MainWindow').get_builder()
 
-        self._name = "Trackers"
-        self._child_widget = builder.get_object("trackers_tab")
-        self._tab_label = builder.get_object("trackers_tab_label")
+        self._name = 'Trackers'
+        self._child_widget = builder.get_object('trackers_tab')
+        self._tab_label = builder.get_object('trackers_tab_label')
 
         self.label_widgets = [
-            (builder.get_object("summary_next_announce"), ftime, ("next_announce",)),
-            (builder.get_object("summary_tracker"), None, ("tracker_host",)),
-            (builder.get_object("summary_tracker_status"), ftranslate, ("tracker_status",)),
-            (builder.get_object("summary_tracker_total"), fcount, ("trackers",)),
+            (builder.get_object('summary_next_announce'), ftime, ('next_announce',)),
+            (builder.get_object('summary_tracker'), None, ('tracker_host',)),
+            (builder.get_object('summary_tracker_status'), ftranslate, ('tracker_status',)),
+            (builder.get_object('summary_tracker_total'), fcount, ('trackers',)),
         ]
 
         self.status_keys = [status for widget in self.label_widgets for status in widget[2]]
 
-        component.get("MainWindow").connect_signals({
-            "on_button_edit_trackers_clicked": self._on_button_edit_trackers_clicked,
+        component.get('MainWindow').connect_signals({
+            'on_button_edit_trackers_clicked': self._on_button_edit_trackers_clicked,
         })
 
     def update(self):
         # Get the first selected torrent
-        selected = component.get("TorrentView").get_selected_torrents()
+        selected = component.get('TorrentView').get_selected_torrents()
 
         # Only use the first torrent in the list or return if None selected
         if selected:
@@ -61,7 +61,7 @@ class TrackersTab(Tab):
             self.clear()
             return
 
-        session = component.get("SessionProxy")
+        session = component.get('SessionProxy')
         session.get_torrent_status(selected, self.status_keys).addCallback(self._on_get_torrent_status)
 
     def _on_get_torrent_status(self, status):
@@ -77,7 +77,7 @@ class TrackersTab(Tab):
                 try:
                     args = [status[key] for key in widget[2]]
                 except KeyError as ex:
-                    log.debug("Unable to get status value: %s", ex)
+                    log.debug('Unable to get status value: %s', ex)
                     continue
                 txt = widget[1](*args)
 
@@ -86,11 +86,11 @@ class TrackersTab(Tab):
 
     def clear(self):
         for widget in self.label_widgets:
-            widget[0].set_text("")
+            widget[0].set_text('')
 
     def _on_button_edit_trackers_clicked(self, button):
-        torrent_id = component.get("TorrentView").get_selected_torrent()
+        torrent_id = component.get('TorrentView').get_selected_torrent()
         if torrent_id:
             from deluge.ui.gtkui.edittrackersdialog import EditTrackersDialog
-            dialog = EditTrackersDialog(torrent_id, component.get("MainWindow").window)
+            dialog = EditTrackersDialog(torrent_id, component.get('MainWindow').window)
             dialog.run()

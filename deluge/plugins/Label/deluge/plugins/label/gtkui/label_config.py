@@ -31,29 +31,29 @@ class LabelConfig(object):
     def load(self):
         log.debug('Adding Label Preferences page')
         self.main_builder = Gtk.Builder()
-        self.main_builder.add_from_file(get_resource("label_pref.ui"))
+        self.main_builder.add_from_file(get_resource('label_pref.ui'))
 
-        self.plugin.add_preferences_page(_("Label"), self.main_builder.get_object("label_prefs_box"))
-        self.plugin.register_hook("on_show_prefs", self.load_settings)
-        self.plugin.register_hook("on_apply_prefs", self.on_apply_prefs)
+        self.plugin.add_preferences_page(_('Label'), self.main_builder.get_object('label_prefs_box'))
+        self.plugin.register_hook('on_show_prefs', self.load_settings)
+        self.plugin.register_hook('on_apply_prefs', self.on_apply_prefs)
 
         self.load_settings()
 
     def unload(self):
-        self.plugin.remove_preferences_page(_("Label"))
-        self.plugin.deregister_hook("on_apply_prefs", self.on_apply_prefs)
-        self.plugin.deregister_hook("on_show_prefs", self.load_settings)
+        self.plugin.remove_preferences_page(_('Label'))
+        self.plugin.deregister_hook('on_apply_prefs', self.on_apply_prefs)
+        self.plugin.deregister_hook('on_show_prefs', self.load_settings)
 
     def get_resource(self, filename):
         return pkg_resources.resource_filename(
-            "deluge.plugins.label", os.path.join("data", filename)
+            'deluge.plugins.label', os.path.join('data', filename)
         )
 
     def load_settings(self, widget=None, data=None):
         client.label.get_config().addCallback(self.cb_global_options)
 
     def cb_global_options(self, options):
-        log.debug("options=%s" % options)
+        log.debug('options=%s' % options)
         """
         for id in self.chk_ids:
             self.glade.get_widget(id).set_active(bool(options[id]))

@@ -33,7 +33,7 @@ def check_running_daemon(pid_file):
     if os.path.isfile(pid_file):
         # Get the PID and the port of the supposedly running daemon
         with open(pid_file) as _file:
-            (pid, port) = _file.readline().strip().split(";")
+            (pid, port) = _file.readline().strip().split(';')
         try:
             pid, port = int(pid), int(port)
         except ValueError:
@@ -58,14 +58,14 @@ def check_running_daemon(pid_file):
             import socket
             _socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             try:
-                _socket.connect(("127.0.0.1", port))
+                _socket.connect(('127.0.0.1', port))
             except socket.error:
                 # Can't connect, so it must not be a deluged process..
                 pass
             else:
                 # This is a deluged!
                 _socket.close()
-                raise DaemonRunningError("Deluge daemon already running with this config directory!")
+                raise DaemonRunningError('Deluge daemon already running with this config directory!')
 
 
 class Daemon(object):
@@ -81,19 +81,19 @@ class Daemon(object):
                 False, start the daemon as separate process.
 
         """
-        log.info("Deluge daemon %s", get_version())
+        log.info('Deluge daemon %s', get_version())
 
-        pid_file = get_config_dir("deluged.pid")
+        pid_file = get_config_dir('deluged.pid')
         check_running_daemon(pid_file)
 
         # Twisted catches signals to terminate, so just have it call the shutdown method.
-        reactor.addSystemEventTrigger("before", "shutdown", self._shutdown)
+        reactor.addSystemEventTrigger('before', 'shutdown', self._shutdown)
 
         # Catch some Windows specific signals
         if windows_check():
             def win_handler(ctrl_type):
                 """Handle the Windows shutdown or close events."""
-                log.debug("windows handler ctrl_type: %s", ctrl_type)
+                log.debug('windows handler ctrl_type: %s', ctrl_type)
                 if ctrl_type == CTRL_CLOSE_EVENT or ctrl_type == CTRL_SHUTDOWN_EVENT:
                     self._shutdown()
                     return 1
@@ -103,53 +103,53 @@ class Daemon(object):
         self.core = Core(listen_interface=listen_interface)
 
         if port is None:
-            port = self.core.config["daemon_port"]
+            port = self.core.config['daemon_port']
 
         if interface and not is_ip(interface):
-            log.error("Invalid UI interface (must be IP Address): %s", interface)
+            log.error('Invalid UI interface (must be IP Address): %s', interface)
             interface = None
 
         self.rpcserver = RPCServer(
             port=port,
-            allow_remote=self.core.config["allow_remote"],
+            allow_remote=self.core.config['allow_remote'],
             listen=not classic,
             interface=interface
         )
 
-        log.debug("Listening to UI on: %s:%s and bittorrent on: %s", interface, port, listen_interface)
+        log.debug('Listening to UI on: %s:%s and bittorrent on: %s', interface, port, listen_interface)
 
         # Register the daemon and the core RPCs
         self.rpcserver.register_object(self.core)
         self.rpcserver.register_object(self)
 
         # Make sure we start the PreferencesManager first
-        component.start("PreferencesManager")
+        component.start('PreferencesManager')
 
         if not classic:
-            log.info("Deluge daemon starting...")
+            log.info('Deluge daemon starting...')
 
             # Create pid file to track if deluged is running, also includes the port number.
             pid = os.getpid()
-            log.debug("Storing pid %s & port %s in: %s", pid, port, pid_file)
-            with open(pid_file, "wb") as _file:
-                _file.write("%s;%s\n" % (pid, port))
+            log.debug('Storing pid %s & port %s in: %s', pid, port, pid_file)
+            with open(pid_file, 'wb') as _file:
+                _file.write('%s;%s\n' % (pid, port))
 
             component.start()
 
             try:
                 reactor.run()
             finally:
-                log.debug("Remove pid file: %s", pid_file)
+                log.debug('Remove pid file: %s', pid_file)
                 os.remove(pid_file)
-                log.info("Deluge daemon shutdown successfully")
+                log.info('Deluge daemon shutdown successfully')
 
     @export()
     def shutdown(self, *args, **kwargs):
-        log.debug("Deluge daemon shutdown requested...")
+        log.debug('Deluge daemon shutdown requested...')
         reactor.callLater(0, reactor.stop)
 
     def _shutdown(self, *args, **kwargs):
-        log.info("Deluge daemon shutting down, waiting for components to shutdown...")
+        log.info('Deluge daemon shutting down, waiting for components to shutdown...')
         return component.shutdown()
 
     @export()

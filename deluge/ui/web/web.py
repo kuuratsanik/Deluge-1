@@ -28,46 +28,46 @@ class Web(_UI):
     help = """Starts the Deluge web interface"""
 
     def __init__(self):
-        super(Web, self).__init__("web")
+        super(Web, self).__init__('web')
         self.__server = None
 
-        group = OptionGroup(self.parser, "Web Options")
-        group.add_option("-b", "--base", dest="base",
-                         help="Set the base path that the ui is running on (proxying)",
-                         action="store", default=None)
+        group = OptionGroup(self.parser, 'Web Options')
+        group.add_option('-b', '--base', dest='base',
+                         help='Set the base path that the ui is running on (proxying)',
+                         action='store', default=None)
         if not (deluge.common.windows_check() or deluge.common.osx_check()):
-                group.add_option("-d", "--do-not-daemonize", dest="donotdaemonize",
-                                 help="Do not daemonize the web interface",
-                                 action="store_true", default=False)
-        group.add_option("-P", "--pidfile", dest="pidfile", type="str",
-                         help="Use pidfile to store process id",
-                         action="store", default=None)
+                group.add_option('-d', '--do-not-daemonize', dest='donotdaemonize',
+                                 help='Do not daemonize the web interface',
+                                 action='store_true', default=False)
+        group.add_option('-P', '--pidfile', dest='pidfile', type='str',
+                         help='Use pidfile to store process id',
+                         action='store', default=None)
         if not deluge.common.windows_check():
-            group.add_option("-U", "--user", dest="user", type="str",
-                             help="User to switch to. Only use it when starting as root",
-                             action="store", default=None)
-            group.add_option("-g", "--group", dest="group", type="str",
-                             help="Group to switch to. Only use it when starting as root",
-                             action="store", default=None)
-        group.add_option("-i", "--interface", dest="interface",
-                         type="str", help="Binds the webserver to a specific IP address",
-                         action="store", default=None)
-        group.add_option("-p", "--port", dest="port", type="int",
-                         help="Sets the port to be used for the webserver",
-                         action="store", default=None)
-        group.add_option("--profile", dest="profile",
-                         help="Profile the web server code",
-                         action="store_true", default=False)
+            group.add_option('-U', '--user', dest='user', type='str',
+                             help='User to switch to. Only use it when starting as root',
+                             action='store', default=None)
+            group.add_option('-g', '--group', dest='group', type='str',
+                             help='Group to switch to. Only use it when starting as root',
+                             action='store', default=None)
+        group.add_option('-i', '--interface', dest='interface',
+                         type='str', help='Binds the webserver to a specific IP address',
+                         action='store', default=None)
+        group.add_option('-p', '--port', dest='port', type='int',
+                         help='Sets the port to be used for the webserver',
+                         action='store', default=None)
+        group.add_option('--profile', dest='profile',
+                         help='Profile the web server code',
+                         action='store_true', default=False)
         try:
             import OpenSSL
             OpenSSL.__version__
         except:
             pass
         else:
-            group.add_option("--no-ssl", dest="ssl", action="store_false",
-                             help="Forces the webserver to disable ssl", default=False)
-            group.add_option("--ssl", dest="ssl", action="store_true",
-                             help="Forces the webserver to use ssl", default=False)
+            group.add_option('--no-ssl', dest='ssl', action='store_false',
+                             help='Forces the webserver to disable ssl', default=False)
+            group.add_option('--ssl', dest='ssl', action='store_true',
+                             help='Forces the webserver to use ssl', default=False)
         self.parser.add_option_group(group)
 
     @property
@@ -79,7 +79,7 @@ class Web(_UI):
 
         # Steps taken from http://www.faqs.org/faqs/unix-faq/programmer/faq/
         # Section 1.7
-        if not self.options.ensure_value("donotdaemonize", True):
+        if not self.options.ensure_value('donotdaemonize', True):
             # fork() so the parent can exit, returns control to the command line
             # or shell invoking the program.
             if os.fork():
@@ -98,14 +98,14 @@ class Web(_UI):
             os.chdir(deluge.configmanager.get_config_dir())
 
         if self.options.pidfile:
-            open(self.options.pidfile, "wb").write("%d\n" % os.getpid())
+            open(self.options.pidfile, 'wb').write('%d\n' % os.getpid())
 
-        if self.options.ensure_value("group", None):
+        if self.options.ensure_value('group', None):
             if not self.options.group.isdigit():
                 import grp
                 self.options.group = grp.getgrnam(self.options.group)[2]
             os.setuid(self.options.group)
-        if self.options.ensure_value("user", None):
+        if self.options.ensure_value('user', None):
             if not self.options.user.isdigit():
                 import pwd
                 self.options.user = pwd.getpwnam(self.options.user)[2]
@@ -123,7 +123,7 @@ class Web(_UI):
         if self.options.port:
             self.server.port = self.options.port
 
-        if self.options.ensure_value("ssl", None):
+        if self.options.ensure_value('ssl', None):
             self.server.https = self.options.ssl
 
         def run_server():
@@ -133,16 +133,16 @@ class Web(_UI):
         if self.options.profile:
             import cProfile
             profiler = cProfile.Profile()
-            profile_output = deluge.configmanager.get_config_dir("delugeweb.profile")
+            profile_output = deluge.configmanager.get_config_dir('delugeweb.profile')
 
             # Twisted catches signals to terminate
             def save_profile_stats():
                 profiler.dump_stats(profile_output)
-                print("Profile stats saved to %s" % profile_output)
+                print('Profile stats saved to %s' % profile_output)
 
             from twisted.internet import reactor
-            reactor.addSystemEventTrigger("before", "shutdown", save_profile_stats)
-            print("Running with profiler...")
+            reactor.addSystemEventTrigger('before', 'shutdown', save_profile_stats)
+            print('Running with profiler...')
             profiler.runcall(run_server)
         else:
             run_server()

@@ -8,8 +8,8 @@ class AlertManagerTestCase(unittest.TestCase):
     def setUp(self):  # NOQA
         self.core = Core()
 
-        self.am = component.get("AlertManager")
-        component.start(["AlertManager"])
+        self.am = component.get('AlertManager')
+        component.start(['AlertManager'])
 
     def tearDown(self):  # NOQA
         def on_shutdown(result):
@@ -23,14 +23,14 @@ class AlertManagerTestCase(unittest.TestCase):
         def handler(alert):
             return
 
-        self.am.register_handler("dummy_alert", handler)
+        self.am.register_handler('dummy_alert', handler)
 
-        self.assertEquals(self.am.handlers["dummy_alert"], [handler])
+        self.assertEquals(self.am.handlers['dummy_alert'], [handler])
 
     def test_deregister_handler(self):
         def handler(alert):
             return
 
-        self.am.register_handler("dummy_alert", handler)
+        self.am.register_handler('dummy_alert', handler)
         self.am.deregister_handler(handler)
-        self.assertEquals(self.am.handlers["dummy_alert"], [])
+        self.assertEquals(self.am.handlers['dummy_alert'], [])

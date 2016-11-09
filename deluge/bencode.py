@@ -69,9 +69,9 @@ def bdecode(x):
     try:
         r, l = decode_func[x[0]](x, 0)
     except (IndexError, KeyError, ValueError):
-        raise Exception("not a valid bencoded string")
+        raise Exception('not a valid bencoded string')
     if l != len(x):
-        raise Exception("invalid bencoded value (data after valid prefix)")
+        raise Exception('invalid bencoded value (data after valid prefix)')
 
     return r
 

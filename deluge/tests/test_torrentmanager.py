@@ -10,7 +10,7 @@ from deluge.core.core import Core
 from deluge.core.rpcserver import RPCServer
 from deluge.error import InvalidTorrentError
 
-warnings.filterwarnings("ignore", category=RuntimeWarning)
+warnings.filterwarnings('ignore', category=RuntimeWarning)
 warnings.resetwarnings()
 
 
@@ -32,13 +32,13 @@ class TorrentmanagerTestCase(unittest.TestCase):
         return component.shutdown().addCallback(on_shutdown)
 
     def test_remove_torrent(self):
-        filename = os.path.join(os.path.dirname(__file__), "test.torrent")
+        filename = os.path.join(os.path.dirname(__file__), 'test.torrent')
         torrent_id = self.core.add_torrent_file(filename, base64.encodestring(open(filename).read()), {})
         self.assertTrue(self.torrentManager.remove(torrent_id, False))
 
     def test_remove_torrent_false(self):
         """Test when remove_torrent returns False"""
-        raise unittest.SkipTest("")
+        raise unittest.SkipTest('')
 
     def test_remove_invalid_torrent(self):
-        self.assertRaises(InvalidTorrentError, self.torrentManager.remove, "torrentidthatdoesntexist")
+        self.assertRaises(InvalidTorrentError, self.torrentManager.remove, 'torrentidthatdoesntexist')

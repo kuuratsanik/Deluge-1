@@ -28,7 +28,7 @@ import types
 try:
     StringTypes = types.StringTypes
 except AttributeError:
-    StringTypes = [type("")]
+    StringTypes = [type('')]
 
 
 class Structure:
@@ -71,29 +71,29 @@ class Structure:
 
 
 class ICONDIRHEADER(Structure):
-    _names_ = "idReserved", "idType", "idCount"
-    _format_ = "hhh"
+    _names_ = 'idReserved', 'idType', 'idCount'
+    _format_ = 'hhh'
 
 
 class ICONDIRENTRY(Structure):
-    _names_ = "bWidth", "bHeight", "bColorCount", "bReserved", "wPlanes", "wBitCount", "dwBytesInRes", "dwImageOffset"
-    _format_ = "bbbbhhii"
+    _names_ = 'bWidth', 'bHeight', 'bColorCount', 'bReserved', 'wPlanes', 'wBitCount', 'dwBytesInRes', 'dwImageOffset'
+    _format_ = 'bbbbhhii'
 
 
 class GRPICONDIR(Structure):
-    _names_ = "idReserved", "idType", "idCount"
-    _format_ = "hhh"
+    _names_ = 'idReserved', 'idType', 'idCount'
+    _format_ = 'hhh'
 
 
 class GRPICONDIRENTRY(Structure):
-    _names_ = "bWidth", "bHeight", "bColorCount", "bReserved", "wPlanes", "wBitCount", "dwBytesInRes", "nID"
-    _format_ = "bbbbhhih"
+    _names_ = 'bWidth', 'bHeight', 'bColorCount', 'bReserved', 'wPlanes', 'wBitCount', 'dwBytesInRes', 'nID'
+    _format_ = 'bbbbhhih'
 
 
 class IconFile:
     def __init__(self, path):
         self.path = path
-        file = open(path, "rb")
+        file = open(path, 'rb')
         self.entries = []
         self.images = []
         header = self.header = ICONDIRHEADER()
@@ -110,7 +110,7 @@ class IconFile:
         return self.header.tostring()
 
     def grp_icondir_entries(self, id=1):
-        data = ""
+        data = ''
         for entry in self.entries:
             e = GRPICONDIRENTRY()
             for n in e._names_[:-1]:
@@ -124,7 +124,7 @@ class IconFile:
 def CopyIcons_FromIco(dstpath, srcpath, id=1):  # NOQA
     import win32api
     icons = map(IconFile, srcpath)
-    print "I: Updating icons from", srcpath, "to", dstpath
+    print 'I: Updating icons from', srcpath, 'to', dstpath
 
     hdst = win32api.BeginUpdateResource(dstpath, 0)
 
@@ -166,9 +166,9 @@ def CopyIcons(dstpath, srcpath):  # NOQA
         for s in srcpath:
             e = os.path.splitext(s[0])[1]
             if string.lower(e) != '.ico':
-                raise ValueError("multiple icons supported only from .ico files")
+                raise ValueError('multiple icons supported only from .ico files')
             if s[1] is not None:
-                raise ValueError("index not allowed for .ico files")
+                raise ValueError('index not allowed for .ico files')
             srcs.append(s[0])
         return CopyIcons_FromIco(dstpath, srcs)
 
@@ -177,9 +177,9 @@ def CopyIcons(dstpath, srcpath):  # NOQA
     if string.lower(srcext) == '.ico':
         return CopyIcons_FromIco(dstpath, [srcpath])
     if index is not None:
-        print "I: Updating icons from", srcpath, ", %d to" % index, dstpath
+        print 'I: Updating icons from', srcpath, ', %d to' % index, dstpath
     else:
-        print "I: Updating icons from", srcpath, "to", dstpath
+        print 'I: Updating icons from', srcpath, 'to', dstpath
     import win32api
     hdst = win32api.BeginUpdateResource(dstpath, 0)
     hsrc = win32api.LoadLibraryEx(srcpath, 0, LOAD_LIBRARY_AS_DATAFILE)
@@ -197,7 +197,7 @@ def CopyIcons(dstpath, srcpath):  # NOQA
     win32api.FreeLibrary(hsrc)
     win32api.EndUpdateResource(hdst, 0)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     import sys
 
     dstpath = sys.argv[1]

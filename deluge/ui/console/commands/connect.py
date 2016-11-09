@@ -16,12 +16,12 @@ from deluge.ui.console.main import BaseCommand
 class Command(BaseCommand):
     """Connect to a new deluge server."""
 
-    usage = "Usage: connect <host[:port]> <username> <password>"
+    usage = 'Usage: connect <host[:port]> <username> <password>'
 
-    def handle(self, host="127.0.0.1:58846", username="", password="", **options):
-        self.console = component.get("ConsoleUI")
+    def handle(self, host='127.0.0.1:58846', username='', password='', **options):
+        self.console = component.get('ConsoleUI')
         try:
-            host, port = host.split(":")
+            host, port = host.split(':')
         except ValueError:
             port = 58846
         else:
@@ -32,7 +32,7 @@ class Command(BaseCommand):
 
             def on_connect(result):
                 if self.console.interactive:
-                    self.console.write("{!success!}Connected to %s:%s!" % (host, port))
+                    self.console.write('{!success!}Connected to %s:%s!' % (host, port))
                 return component.start()
 
             def on_connect_fail(result):
@@ -40,7 +40,7 @@ class Command(BaseCommand):
                     msg = result.value.exception_msg
                 except:
                     msg = result.value.args[0]
-                self.console.write("{!error!}Failed to connect to %s:%s with reason: %s" % (host, port, msg))
+                self.console.write('{!error!}Failed to connect to %s:%s with reason: %s' % (host, port, msg))
                 return result
 
             d.addCallback(on_connect)

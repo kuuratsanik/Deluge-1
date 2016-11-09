@@ -57,13 +57,13 @@ def neat_time(column, cell, model, iter):
     """Render seconds as seconds or minutes with label"""
     seconds = model.get_value(iter, 0)
     if seconds > 60:
-        text = "%d %s" % (seconds / 60, _("minutes"))
+        text = '%d %s' % (seconds / 60, _('minutes'))
     elif seconds == 60:
-        text = _("1 minute")
+        text = _('1 minute')
     elif seconds == 1:
-        text = _("1 second")
+        text = _('1 second')
     else:
-        text = "%d %s" % (seconds, _("seconds"))
+        text = '%d %s' % (seconds, _('seconds'))
     cell.set_property('text', text)
     return
 
@@ -119,7 +119,7 @@ class GraphsTab(Tab):
         cell = Gtk.CellRendererText()
         self.intervals_combo.pack_start(cell, True)
         self.intervals_combo.set_cell_data_func(cell, neat_time)
-        self.intervals_combo.connect("changed", self._on_selected_interval_changed)
+        self.intervals_combo.connect('changed', self._on_selected_interval_changed)
         self.update_intervals()
 
     def graph_expose(self, widget, event):
@@ -149,7 +149,7 @@ class GraphsTab(Tab):
         client.stats.get_intervals().addCallback(self._on_intervals_changed)
 
     def select_bandwidth_graph(self):
-        log.debug("Selecting bandwidth graph")
+        log.debug('Selecting bandwidth graph')
         self.graph_widget = self.bandwidth_graph
         self.graph = Graph()
         colors = self.colors['bandwidth_graph']
@@ -161,7 +161,7 @@ class GraphsTab(Tab):
                                  formatter_scale=size_formatter_scale)
 
     def select_connections_graph(self):
-        log.debug("Selecting connections graph")
+        log.debug('Selecting connections graph')
         self.graph_widget = self.connections_graph
         g = Graph()
         self.graph = g
@@ -173,7 +173,7 @@ class GraphsTab(Tab):
         g.set_left_axis(formatter=int_str, min=10)
 
     def select_seeds_graph(self):
-        log.debug("Selecting connections graph")
+        log.debug('Selecting connections graph')
         self.graph_widget = self.seeds_graph
         self.graph = Graph()
         colors = self.colors['seeds_graph']
@@ -222,34 +222,34 @@ class GraphsTab(Tab):
 
 class GtkUI(GtkPluginBase):
     def enable(self):
-        log.debug("Stats plugin enable called")
-        self.config = deluge.configmanager.ConfigManager("stats.gtkui.conf", DEFAULT_CONF)
+        log.debug('Stats plugin enable called')
+        self.config = deluge.configmanager.ConfigManager('stats.gtkui.conf', DEFAULT_CONF)
         self.main_builder = Gtk.Builder()
-        self.main_builder.add_from_file(get_resource("config.ui"))
-        component.get("Preferences").add_page("Stats", self.main_builder.get_object("prefs_box"))
-        component.get("PluginManager").register_hook("on_apply_prefs", self.on_apply_prefs)
-        component.get("PluginManager").register_hook("on_show_prefs", self.on_show_prefs)
+        self.main_builder.add_from_file(get_resource('config.ui'))
+        component.get('Preferences').add_page('Stats', self.main_builder.get_object('prefs_box'))
+        component.get('PluginManager').register_hook('on_apply_prefs', self.on_apply_prefs)
+        component.get('PluginManager').register_hook('on_show_prefs', self.on_show_prefs)
         self.on_show_prefs()
 
-        self.main_builder.add_from_file(get_resource("tabs.ui"))
+        self.main_builder.add_from_file(get_resource('tabs.ui'))
         self.graphs_tab = GraphsTab(self.main_builder, self.config['colors'])
         self.torrent_details = component.get('TorrentDetails')
         self.torrent_details.add_tab(self.graphs_tab)
 
     def disable(self):
-        component.get("Preferences").remove_page("Stats")
-        component.get("PluginManager").deregister_hook("on_apply_prefs", self.on_apply_prefs)
-        component.get("PluginManager").deregister_hook("on_show_prefs", self.on_show_prefs)
+        component.get('Preferences').remove_page('Stats')
+        component.get('PluginManager').deregister_hook('on_apply_prefs', self.on_apply_prefs)
+        component.get('PluginManager').deregister_hook('on_show_prefs', self.on_show_prefs)
         self.torrent_details.remove_tab(self.graphs_tab.get_name())
 
     def on_apply_prefs(self):
-        log.debug("applying prefs for Stats")
+        log.debug('applying prefs for Stats')
         gtkconf = {}
         for graph, colors in self.config['colors'].items():
             gtkconf[graph] = {}
             for value, color in colors.items():
                 try:
-                    color_btn = self.main_builder.get_object("%s_%s_color" % (graph, value))
+                    color_btn = self.main_builder.get_object('%s_%s_color' % (graph, value))
                     gtkconf[graph][value] = str(color_btn.get_rgba())
                 except:
                     gtkconf[graph][value] = DEFAULT_CONF['colors'][graph][value]
@@ -263,14 +263,14 @@ class GtkUI(GtkPluginBase):
         for graph, colors in self.config['colors'].items():
             for value, color in colors.items():
                 try:
-                    color_btn = self.main_builder.get_object("%s_%s_color" % (graph, value))
+                    color_btn = self.main_builder.get_object('%s_%s_color' % (graph, value))
                     # FIXME "eval does not seem good replacement code"
                     col_gdk_color = eval(color).to_color()
                     color_btn.set_color(col_gdk_color)
                 except:
-                    log.debug("Unable to set %s %s %s" % (graph, value, color))
+                    log.debug('Unable to set %s %s %s' % (graph, value, color))
         client.stats.get_config().addCallback(self.cb_get_config)
 
     def cb_get_config(self, config):
-        "callback for on show_prefs"
+        'callback for on show_prefs'
         pass

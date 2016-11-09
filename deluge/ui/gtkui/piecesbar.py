@@ -18,16 +18,16 @@ log = logging.getLogger(__name__)
 
 
 COLOR_STATES = {
-    0: "missing",
-    1: "waiting",
-    2: "downloading",
-    3: "completed"
+    0: 'missing',
+    1: 'waiting',
+    2: 'downloading',
+    3: 'completed'
 }
 
 
 class PiecesBar(Gtk.DrawingArea):
     # Draw in response to an expose-event
-    __gsignals__ = {"draw": "override"}
+    __gsignals__ = {'draw': 'override'}
 
     def __init__(self):
         Gtk.DrawingArea.__init__(self)
@@ -40,12 +40,12 @@ class PiecesBar(Gtk.DrawingArea):
         del pb, pb_style
 
         self.set_size_request(-1, 25)
-        self.gtkui_config = ConfigManager("gtkui.conf")
+        self.gtkui_config = ConfigManager('gtkui.conf')
         self.__width = self.__old_width = 0
         self.__height = self.__old_height = 0
         self.__pieces = self.__old_pieces = ()
         self.__num_pieces = self.__old_num_pieces = None
-        self.__text = self.__old_text = ""
+        self.__text = self.__old_text = ''
         self.__fraction = self.__old_fraction = 0.0
         self.__state = self.__old_state = None
         self.__progress_overlay = self.__text_overlay = self.__pieces_overlay = None
@@ -125,7 +125,7 @@ class PiecesBar(Gtk.DrawingArea):
             piece_width = self.__width * 1.0 / num_pieces
 
             for state in self.__pieces:
-                color = self.gtkui_config["pieces_color_%s" % COLOR_STATES[state]]
+                color = self.gtkui_config['pieces_color_%s' % COLOR_STATES[state]]
                 ctx.set_source_rgb(
                     color[0] / 65535.0,
                     color[1] / 65535.0,
@@ -150,7 +150,7 @@ class PiecesBar(Gtk.DrawingArea):
             start = 0
             for _ in range(self.__num_pieces):
                 # Like this to keep same aspect ratio
-                color = self.gtkui_config["pieces_color_%s" % COLOR_STATES[3]]
+                color = self.gtkui_config['pieces_color_%s' % COLOR_STATES[3]]
                 ctx.set_source_rgb(
                     color[0] / 65535.0,
                     color[1] / 65535.0,
@@ -197,18 +197,18 @@ class PiecesBar(Gtk.DrawingArea):
             pl.set_font_description(self.__text_font)
             pl.set_width(-1)    # No text wrapping
 
-            text = ""
+            text = ''
             if self.__text:
                 text += self.__text
             else:
                 if self.__state:
-                    text += _(self.__state) + " "
+                    text += _(self.__state) + ' '
                 if self.__fraction == 1.0:
-                    format = "%d%%"
+                    format = '%d%%'
                 else:
-                    format = "%.2f%%"
+                    format = '%.2f%%'
                 text += format % (self.__fraction * 100)
-            log.trace("PiecesBar text %r", text)
+            log.trace('PiecesBar text %r', text)
             pl.set_text(text)
             plsize = pl.get_size()
             text_width = plsize[0] / Pango.SCALE
@@ -256,11 +256,11 @@ class PiecesBar(Gtk.DrawingArea):
         return self.__state
 
     def update_from_status(self, status):
-        log.trace("Updating PiecesBar from status")
-        self.set_fraction(status["progress"] / 100)
-        torrent_state = status["state"]
+        log.trace('Updating PiecesBar from status')
+        self.set_fraction(status['progress'] / 100)
+        torrent_state = status['state']
         self.set_state(torrent_state)
-        if torrent_state == "Checking":
+        if torrent_state == 'Checking':
             self.update()
             # Skip the pieces assignment
             return
@@ -271,7 +271,7 @@ class PiecesBar(Gtk.DrawingArea):
     def clear(self):
         self.__pieces = self.__old_pieces = ()
         self.__num_pieces = self.__old_num_pieces = None
-        self.__text = self.__old_text = ""
+        self.__text = self.__old_text = ''
         self.__fraction = self.__old_fraction = 0.0
         self.__state = self.__old_state = None
         self.__progress_overlay = self.__text_overlay = self.__pieces_overlay = None
