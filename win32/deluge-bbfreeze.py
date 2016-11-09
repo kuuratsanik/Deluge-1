@@ -7,7 +7,6 @@ import bbfreeze.recipes
 import deluge.common
 import icon
 from bbfreeze import Freezer
-from gi.repository import Gtk  # NOQA
 
 # Get build_version from installed deluge
 build_version = deluge.common.get_version()
@@ -75,11 +74,10 @@ locale_include_list = ['gtk20.mo', 'locale.alias']
 def ignored_files(adir, filenames):
     return [
         filename for filename in filenames
-        if not os.path.isdir(os.path.join(adir, filename))
-        and filename not in locale_include_list
+        if not os.path.isdir(os.path.join(adir, filename)) and filename not in locale_include_list
     ]
 shutil.copytree(gtk_locale, os.path.join(dst, 'share/locale'), ignore=ignored_files)
 
 file = open('VERSION.tmp', 'w')
-file.write("build_version = \"%s\"" % build_version)
+file.write('build_version = \"%s\"' % build_version)
 file.close()
