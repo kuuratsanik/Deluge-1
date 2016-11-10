@@ -25,7 +25,6 @@ icon_inactive = GdkPixbuf.Pixbuf.new_from_file(common.get_pixmap('inactive16.png
 icon_alert = GdkPixbuf.Pixbuf.new_from_file(common.get_pixmap('alert16.png'))
 icon_queued = GdkPixbuf.Pixbuf.new_from_file(common.get_pixmap('queued16.png'))
 icon_checking = GdkPixbuf.Pixbuf.new_from_file(common.get_pixmap('checking16.png'))
-icon_empty = GdkPixbuf.Pixbuf.new_from_file(common.get_pixmap('empty16.png'))
 
 # Holds the info for which status icon to display based on TORRENT_STATE
 ICON_STATE = {
@@ -83,26 +82,6 @@ def cell_data_statusicon(column, cell, model, row, data):
     except KeyError:
         pass
 
-# FIXME: ????
-# from array import array
-# from gi.repository import Gtk as gtk, GdkPixbuf
-#
-# pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(icon.get_filename(), 16, 16)
-#
-# pixels = array('H')
-# for i in range(20):
-#    for j in range(20):
-#        px = (i < 10, j >= 10, (i < 10) ^ (j < 10))
-#        pixels.extend(65535 * c for c in px)
-#
-#
-# img_data = header + pixels
-#
-# l = GdkPixbuf.PixbufLoader.new_with_type('pnm')
-# l.write(img_data)
-#
-# w.add(gtk.Image.new_from_pixbuf(l.get_pixbuf()))
-
 
 def create_blank_pixbuf():
     return GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, 16, 16)
@@ -116,13 +95,11 @@ def set_icon(icon, cell):
                 pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(icon.get_filename(), 16, 16)
             except GObject.GError:
                 # Failed to load the pixbuf (Bad image file), so set a blank pixbuf
-                pixbuf = icon_empty
-                # pixbuf = create_blank_pixbuf()
+                pixbuf = create_blank_pixbuf()
             finally:
                 icon.set_cached_icon(pixbuf)
     else:
-        pixbuf = icon_empty
-        # pixbuf = create_blank_pixbuf()
+        pixbuf = create_blank_pixbuf()
 
     # Suppress Warning: g_object_set_qdata: assertion `G_IS_OBJECT (object)' failed
     with warnings.catch_warnings():

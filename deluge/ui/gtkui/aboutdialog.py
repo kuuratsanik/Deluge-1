@@ -7,20 +7,15 @@
 # See LICENSE for more details.
 #
 
-import gi
 from gi.repository import GdkPixbuf, Gtk
 
-from deluge.common import get_pixmap, get_version, open_url_in_browser
+from deluge.common import get_pixmap, get_version
 from deluge.ui.client import client
 from deluge.ui.gtkui.common import get_deluge_icon
-
-gi.require_version('Gtk', '3.0')
 
 
 class AboutDialog(object):
     def __init__(self):
-        def url_hook(dialog, url):
-            open_url_in_browser(url)
         self.about = Gtk.AboutDialog()
         self.about.set_transient_for(Gtk.Window(Gtk.WindowType.TOPLEVEL))
         self.about.set_position(Gtk.WindowPosition.CENTER)

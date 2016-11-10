@@ -11,7 +11,6 @@ import logging
 import os.path
 from hashlib import sha1 as sha
 
-import gi
 from gi.repository import Gdk, Gtk
 from twisted.internet import reactor
 from twisted.internet.error import ReactorNotRunning
@@ -23,8 +22,6 @@ from deluge.configmanager import ConfigManager
 from deluge.ui.client import client
 from deluge.ui.gtkui.dialogs import PasswordDialog
 from deluge.ui.gtkui.ipcinterface import process_args
-
-gi.require_version('Gtk', '3.0')
 
 
 try:
@@ -84,9 +81,6 @@ class MainWindow(component.Component):
         # The new release dialog
         self.main_builder.add_from_file(deluge.common.resource_filename(
             'deluge.ui.gtkui', os.path.join('glade', 'main_window.new_release.ui')))
-        # The move storage dialog
-        self.main_builder.add_from_file(deluge.common.resource_filename(
-            'deluge.ui.gtkui', os.path.join('glade', 'main_window.move_storage.ui')))
         # The tabs
         self.main_builder.add_from_file(deluge.common.resource_filename(
             'deluge.ui.gtkui', os.path.join('glade', 'main_window.tabs.ui')))
@@ -126,7 +120,6 @@ class MainWindow(component.Component):
         self.config.register_set_function('show_rate_in_title', self._on_set_show_rate_in_title, apply_now=False)
 
         client.register_event_handler('NewVersionAvailableEvent', self.on_newversionavailable_event)
-        client.register_event_handler('TorrentFinishedEvent', self.on_torrentfinished_event)
 
     def connect_signals(self, mapping_or_class):
         self.gtk_builder_signals_holder.connect_signals(mapping_or_class)
@@ -298,8 +291,7 @@ class MainWindow(component.Component):
             process_args(selection_data.get_uris())
         else:
             process_args(selection_data.data.split())
-        # FIXME TypeError: finish() takes exactly 4 arguments (3 given)
-        drag_context.finish(True, True)
+        drag_context.finish(True, True, timestamp)
 
     def on_expose_event(self, widget, event):
         component.get('SystemTray').blink(False)
@@ -327,10 +319,6 @@ class MainWindow(component.Component):
         if self.config['show_new_releases']:
             from deluge.ui.gtkui.new_release_dialog import NewReleaseDialog
             reactor.callLater(5.0, NewReleaseDialog().show, new_version)
-
-    def on_torrentfinished_event(self, torrent_id):
-        from deluge.ui.gtkui.notification import Notification
-        Notification().notify(torrent_id)
 
     def is_on_active_workspace(self):
         """Determines if MainWindow is on the active workspace.

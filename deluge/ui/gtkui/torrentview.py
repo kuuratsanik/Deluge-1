@@ -12,7 +12,6 @@
 import logging
 from locale import strcoll
 
-import gi
 from gi.repository import Gdk, GObject, Gtk
 from twisted.internet import reactor
 
@@ -22,7 +21,6 @@ from deluge.ui.gtkui import torrentview_data_funcs as funcs
 from deluge.ui.gtkui.listview import ListView
 from deluge.ui.gtkui.removetorrentdialog import RemoveTorrentDialog
 
-gi.require_version('Gtk', '3.0')
 
 log = logging.getLogger(__name__)
 
@@ -636,8 +634,8 @@ class TorrentView(ListView, component.Component):
             row = self.model_filter.get_iter(path[0])
 
             if self.get_selected_torrents():
-                if self.model_filter.get_value(row, self.columns['torrent_id'].column_indices[0]) \
-                        not in self.get_selected_torrents():
+                if (self.model_filter.get_value(row, self.columns['torrent_id'].column_indices[0])
+                        not in self.get_selected_torrents()):
                     self.treeview.get_selection().unselect_all()
                     self.treeview.get_selection().select_iter(row)
             else:

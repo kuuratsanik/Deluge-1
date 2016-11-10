@@ -21,7 +21,7 @@ from deluge.ui.gtkui.common import load_pickled_state_file, save_pickled_state_f
 log = logging.getLogger(__name__)
 
 
-class Tab:
+class Tab(object):
     def __init__(self):
         self.is_visible = True
         self.position = -1

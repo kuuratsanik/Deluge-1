@@ -12,7 +12,6 @@ import logging
 import os
 from hashlib import sha1 as sha
 
-import gi
 from gi.repository import Gdk, Gtk
 
 import deluge.common
@@ -29,8 +28,6 @@ try:
     import appindicator
 except ImportError:
     appindicator = False
-
-gi.require_version('Gtk', '3.0')
 
 
 log = logging.getLogger(__name__)
@@ -94,18 +91,10 @@ class Preferences(component.Component):
         self.accounts_liststore.set_sort_column_id(ACCOUNTS_USERNAME, Gtk.SortType.ASCENDING)
         self.accounts_listview = self.builder.get_object('accounts_listview')
         self.accounts_listview.append_column(
-            Gtk.TreeViewColumn(
-                _('Username'), Gtk.CellRendererText(), text=ACCOUNTS_USERNAME
-            )
-        )
+            Gtk.TreeViewColumn(_('Username'), Gtk.CellRendererText(), text=ACCOUNTS_USERNAME))
         self.accounts_listview.append_column(
-            Gtk.TreeViewColumn(
-                _('Level'), Gtk.CellRendererText(), text=ACCOUNTS_LEVEL
-            )
-        )
-        password_column = Gtk.TreeViewColumn(
-            'password', Gtk.CellRendererText(), text=ACCOUNTS_PASSWORD
-        )
+            Gtk.TreeViewColumn(_('Level'), Gtk.CellRendererText(), text=ACCOUNTS_LEVEL))
+        password_column = Gtk.TreeViewColumn('password', Gtk.CellRendererText(), text=ACCOUNTS_PASSWORD)
         self.accounts_listview.append_column(password_column)
         password_column.set_visible(False)
         self.accounts_listview.set_model(self.accounts_liststore)
@@ -856,8 +845,8 @@ class Preferences(component.Component):
                 self.builder.get_object('port_img').set_from_stock(Gtk.STOCK_DIALOG_WARNING, 4)
                 self.builder.get_object('port_img').show()
         client.core.test_listen_port().addCallback(on_get_test)
-        # XXX: Consider using Gtk.Spinner() instead of the loading gif
-        #      It requires Gtk.ver > 2.12
+        # XXX: Consider using gtk.Spinner() instead of the loading gif
+        #      It requires gtk.ver > 2.12
         self.builder.get_object('port_img').set_from_file(deluge.common.get_pixmap('loading.gif'))
         self.builder.get_object('port_img').show()
         client.force_call()

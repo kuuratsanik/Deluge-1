@@ -12,8 +12,8 @@ from __future__ import division
 import base64
 import logging
 import os
+from xml.sax.saxutils import escape as xml_escape
 
-import gi
 from gi.repository import Gdk, GObject, Gtk
 
 import deluge.common
@@ -27,7 +27,6 @@ from deluge.ui.gtkui.dialogs import ErrorDialog
 from deluge.ui.gtkui.path_chooser import PathChooser
 from deluge.ui.gtkui.torrentview_data_funcs import cell_data_size
 
-gi.require_version('Gtk', '3.0')
 
 log = logging.getLogger(__name__)
 
@@ -79,12 +78,14 @@ class AddTorrentDialog(component.Component):
 
         self.previous_selected_torrent = None
 
-        self.treeview_torrents = self.builder.get_object('treeview_torrents')
+        self.listview_torrents = self.builder.get_object('treeview_torrents')
         self.listview_files = self.builder.get_object('listview_files')
 
         render = Gtk.CellRendererText()
+        render.connect('edited', self._on_torrent_name_edit)
+        render.set_property('editable', True)
         column = Gtk.TreeViewColumn(_('Torrent'), render, text=1)
-        self.treeview_torrents.append_column(column)
+        self.listview_torrents.append_column(column)
 
         render = Gtk.CellRendererToggle()
         render.connect('toggled', self._on_file_toggled)
@@ -110,12 +111,12 @@ class AddTorrentDialog(component.Component):
         self.listview_files.append_column(column)
 
         self.torrent_liststore = Gtk.ListStore(str, str, str)
-        self.treeview_torrents.set_model(self.torrent_liststore)
-        self.treeview_torrents.set_tooltip_column(2)
+        self.listview_torrents.set_model(self.torrent_liststore)
+        self.listview_torrents.set_tooltip_column(2)
         self.listview_files.set_model(self.files_treestore)
 
         self.listview_files.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
-        self.treeview_torrents.get_selection().connect('changed', self._on_torrent_changed)
+        self.listview_torrents.get_selection().connect('changed', self._on_torrent_changed)
 
         self.setup_move_completed_path_chooser()
         self.setup_download_location_path_chooser()
@@ -196,19 +197,19 @@ class AddTorrentDialog(component.Component):
                 already_added += 1
                 continue
 
-            new_row = self.torrent_liststore.append([info.info_hash, info.name, filename])
+            new_row = self.torrent_liststore.append([info.info_hash, info.name, xml_escape(filename)])
             self.files[info.info_hash] = info.files
             self.infos[info.info_hash] = info.filedata
-            self.treeview_torrents.get_selection().select_iter(new_row)
+            self.listview_torrents.get_selection().select_iter(new_row)
 
             self.set_default_options()
             self.save_torrent_options(new_row)
 
-        (model, row) = self.treeview_torrents.get_selection().get_selected()
+        (model, row) = self.listview_torrents.get_selection().get_selected()
         if not row and new_row:
-            self.treeview_torrents.get_selection().select_iter(new_row)
+            self.listview_torrents.get_selection().select_iter(new_row)
 
-        self.builder.get_object('label_torrent_count').set_text('Torrents (%d)' % len(self.torrent_liststore))
+        self.dialog.set_title(_('Add Torrents (%d)') % len(self.torrent_liststore))
 
         if already_added:
             log.debug('Tried to add %d duplicate torrents!', already_added)
@@ -222,31 +223,23 @@ class AddTorrentDialog(component.Component):
         new_row = None
 
         for uri in uris:
-            s = uri.split('&')[0][20:]
-            if len(s) == 32:
-                info_hash = base64.b32decode(s).encode('hex')
-            elif len(s) == 40:
-                info_hash = s
-            if info_hash in self.infos:
-                log.debug('Torrent already in list!')
+            magnet = deluge.common.get_magnet_info(uri)
+            if not magnet:
+                log.error('Invalid magnet: %s', uri)
                 continue
-            name = None
-            for i in uri.split('&'):
-                if i[:3] == 'dn=':
-                    name = '%s (%s)' % (i.split('=')[1], uri)
-            if not name:
-                name = uri
-            new_row = self.torrent_liststore.append(
-                [info_hash, name, uri])
-            self.files[info_hash] = []
-            self.infos[info_hash] = None
-            self.treeview_torrents.get_selection().select_iter(new_row)
+            if magnet['info_hash'] in self.infos:
+                log.info('Torrent already in Add Dialog list: %s', uri)
+                continue
+            new_row = self.torrent_liststore.append([magnet['info_hash'], magnet['name'], xml_escape(uri)])
+            self.files[magnet['info_hash']] = magnet['files_tree']
+            self.infos[magnet['info_hash']] = None
+            self.listview_torrents.get_selection().select_iter(new_row)
             self.set_default_options()
             self.save_torrent_options(new_row)
 
-        (model, row) = self.treeview_torrents.get_selection().get_selected()
+        (model, row) = self.listview_torrents.get_selection().get_selected()
         if not row and new_row:
-            self.treeview_torrents.get_selection().select_iter(new_row)
+            self.listview_torrents.get_selection().select_iter(new_row)
 
     def _on_torrent_changed(self, treeselection):
         (model, row) = treeselection.get_selected()
@@ -673,7 +666,7 @@ class AddTorrentDialog(component.Component):
         dialog.show_all()
         response = dialog.run()
         infohash = entry.get_text().strip()
-        if response == Gtk.ResponseType.OK and len(entry.get_text()) == 40:
+        if response == Gtk.ResponseType.OK and deluge.common.is_infohash(infohash):
             trackers = []
             b = textview.get_buffer()
             lines = b.get_text(b.get_start_iter(), b.get_end_iter()).strip().split('\n')
@@ -694,7 +687,7 @@ class AddTorrentDialog(component.Component):
 
     def _on_button_remove_clicked(self, widget):
         log.debug('_on_button_remove_clicked')
-        (model, row) = self.treeview_torrents.get_selection().get_selected()
+        (model, row) = self.listview_torrents.get_selection().get_selected()
         if row is None:
             return
 
@@ -717,7 +710,7 @@ class AddTorrentDialog(component.Component):
         self.hide()
 
     def add_torrents(self):
-        (model, row) = self.treeview_torrents.get_selection().get_selected()
+        (model, row) = self.listview_torrents.get_selection().get_selected()
         if row is not None:
             self.save_torrent_options(row)
 
@@ -756,7 +749,7 @@ class AddTorrentDialog(component.Component):
 
     def _on_button_apply_clicked(self, widget):
         log.debug('_on_button_apply_clicked')
-        (model, row) = self.treeview_torrents.get_selection().get_selected()
+        (model, row) = self.listview_torrents.get_selection().get_selected()
         if row is None:
             return
 
@@ -775,7 +768,7 @@ class AddTorrentDialog(component.Component):
 
     def _on_button_revert_clicked(self, widget):
         log.debug('_on_button_revert_clicked')
-        (model, row) = self.treeview_torrents.get_selection().get_selected()
+        (model, row) = self.listview_torrents.get_selection().get_selected()
         if row is None:
             return
 
@@ -810,7 +803,7 @@ class AddTorrentDialog(component.Component):
         itr = self.files_treestore.get_iter(path)
 
         # Get the torrent_id
-        (model, row) = self.treeview_torrents.get_selection().get_selected()
+        (model, row) = self.listview_torrents.get_selection().get_selected()
         torrent_id = model[row][0]
 
         if 'mapped_files' not in self.options[torrent_id]:

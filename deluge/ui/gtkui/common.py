@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2008 Marcos Pinto ('markybob') <markybob@gmail.com>
+# Copyright (C) 2008 Marcos Mobley ('markybob') <markybob@gmail.com>
 #
 # This file is part of Deluge and is licensed under GNU General Public License 3.0, or later, with
 # the additional special exception to link portions of this program with the OpenSSL library.
@@ -15,13 +15,10 @@ import os
 import shutil
 import sys
 
-import gi
 from gi.repository import GdkPixbuf, Gtk
 from gi.repository.GLib import GError
 
 import deluge.common
-
-gi.require_version('Gtk', '3.0')
 
 
 log = logging.getLogger(__name__)
@@ -75,8 +72,7 @@ def build_menu_radio_list(value_list, callback, pref_value=None, suffix=None, sh
         item_text = str(value)
         if suffix:
             item_text += ' ' + suffix
-        # XXX: args order needs verified
-        menuitem = Gtk.RadioMenuItem(item_text, group)
+        menuitem = Gtk.RadioMenuItem(group=group, label=item_text)
         group = menuitem
         if pref_value and value == pref_value:
             menuitem.set_active(True)
@@ -85,8 +81,7 @@ def build_menu_radio_list(value_list, callback, pref_value=None, suffix=None, sh
         menu.append(menuitem)
 
     if show_notset:
-        # XXX: args order needs verified
-        menuitem = Gtk.RadioMenuItem(notset_label, group)
+        menuitem = Gtk.RadioMenuItem(group=group, label=notset_label)
         menuitem.set_name('unlimited')
         if pref_value and pref_value < notset_lessthan:
             menuitem.set_active(True)

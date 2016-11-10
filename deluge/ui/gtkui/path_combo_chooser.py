@@ -8,7 +8,7 @@
 # See LICENSE for more details.
 #
 
-from __future__ import print_function
+from __future__ import division, print_function
 
 import os
 import warnings
@@ -580,16 +580,16 @@ class PathChooserPopup(object):
 
         height_extra = 8
         buttonbox_width = 0
-        height = self.popup_window.size_request().height
-        width = self.popup_window.size_request().width
+        height = self.popup_window.get_preferred_size().height
+        width = self.popup_window.get_preferred_size().width
 
         if self.popup_buttonbox:
-            buttonbox_height = max(self.popup_buttonbox.size_request().height,
+            buttonbox_height = max(self.popup_buttonbox.get_preferred_size().height,
                                    self.popup_buttonbox.get_allocation().height)
-            buttonbox_width = max(self.popup_buttonbox.size_request().width,
+            buttonbox_width = max(self.popup_buttonbox.get_preferred_size().width,
                                   self.popup_buttonbox.get_allocation().width)
-            treeview_width = self.treeview.size_request().width
-            # After removing an element from the tree store, self.treeview.size_request()[0]
+            treeview_width = self.treeview.get_preferred_size().width
+            # After removing an element from the tree store, self.treeview.get_preferred_size()[0]
             # returns -1 for some reason, so the requested width cannot be used until the treeview
             # has been displayed once.
             if treeview_width != -1:
@@ -603,12 +603,12 @@ class PathChooserPopup(object):
             width = self.alignment_widget.get_allocation().width
 
         # 10 is extra spacing
-        content_width = self.treeview.size_request().width + buttonbox_width + 10
+        content_width = self.treeview.get_preferred_size().width + buttonbox_width + 10
 
         # Adjust height according to number of list items
         if len(self.tree_store) > 0 and self.max_visible_rows > 0:
             # The height for one row in the list
-            self.row_height = self.treeview.size_request().height / len(self.tree_store)
+            self.row_height = self.treeview.get_preferred_size().height / len(self.tree_store)
             # Set height to number of rows
             height = len(self.tree_store) * self.row_height + height_extra
             # Adjust the height according to the max number of rows
@@ -1065,11 +1065,11 @@ class PathChooserComboBox(GtkGI.Box, StoredValuesPopup, GObject.GObject):
         self.default_text = None
         self.button_properties = self.builder.get_object('button_properties')
 
-        self.window = self.builder.get_object('combobox_window')
+        self.combobox_window = self.builder.get_object('combobox_window')
         self.combo_hbox = self.builder.get_object('entry_combobox_hbox')
         # Change the parent of the hbox from the glade Window to this hbox.
-        self.window.remove(self.combo_hbox)
-        self.window = self.get_window()
+        self.combobox_window.remove(self.combo_hbox)
+        self.combobox_window = self.get_window()
         self.add(self.combo_hbox)
         StoredValuesPopup.__init__(self, self.builder, self, max_visible_rows, self.combo_hbox)
 

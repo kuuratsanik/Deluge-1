@@ -9,13 +9,10 @@
 
 import logging
 
-import gi
 from gi.repository import Gdk, GObject, Gtk
 from gi.repository.GObject import SIGNAL_RUN_LAST, TYPE_NONE, signal_new
 
 from deluge.ui.gtkui.common import load_pickled_state_file, save_pickled_state_file
-
-gi.require_version('Gtk', '3.0')
 
 # FIXME: ?
 signal_new('button-press-event', Gtk.TreeViewColumn, SIGNAL_RUN_LAST, TYPE_NONE, (Gdk.Event,))
@@ -102,11 +99,9 @@ class ListView(object):
             del widget.__realize
             button = widget.get_ancestor(Gtk.Button)
             if button is not None:
-                # FIXME: ?
                 button.connect('button-press-event', self.on_button_pressed)
 
         def on_button_pressed(self, widget, event):
-            # FIXME: ?
             self.emit('button-press-event', event)
 
         def set_cell_data_func_attributes(self, cell_renderer, func, func_data=None):
@@ -218,10 +213,10 @@ class ListView(object):
         if self.unique_column_id:
             self.last_sort_order = {}
 
-            def record_position(model, path, iter, data):
+            def record_position(model, path, _iter, data):
                 # FIXME: TypeError: 'TreePath' object does not support indexing
                 # Verify (old code: ` = path[0]`)
-                self.last_sort_order[model[iter][self.unique_column_id]] = int(str(model.get_path(iter)))
+                self.last_sort_order[model[_iter][self.unique_column_id]] = int(str(model.get_path(iter)))
             model.foreach(record_position, None)
 
     def on_model_row_inserted(self, model, path, _iter):

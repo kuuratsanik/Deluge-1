@@ -7,12 +7,17 @@
 # See LICENSE for more details.
 #
 
+
 from __future__ import division
 
 import logging
 import os
+import signal
 import sys
 import time
+
+import gi  # isort: skip
+gi.require_version('Gtk', '3.0')  # NOQA: E402
 
 from gi.repository import GObject, Gdk, Gtk
 from twisted.internet import defer, gtk3reactor
@@ -131,8 +136,8 @@ DEFAULT_PREFS = {
 
 class GtkUI(object):
     def __init__(self, args):
-        # Setup Gtkbuilder/glade translation
-        deluge.common.setup_translations(setup_gettext=False, setup_pygtk=True)
+        # Setup gtkbuilder/glade translation
+        lang.setup_translations(setup_gettext=False, setup_pygtk=True)
 
         # Setup signals
         def on_die(*args):
@@ -224,10 +229,9 @@ class GtkUI(object):
 
         def gtkui_sigint_handler(num, frame):
             log.debug("SIGINT signal caught - firing event: 'gtkui_close'")
+            reactor.callLater(0, reactor.fireSystemEvent, 'gtkui_close')
 
-        # Process any pending gtk events since the mainloop has been quit
-        while Gtk.events_pending():
-            Gtk.main_iteration_do(False)
+        signal.signal(signal.SIGINT, gtkui_sigint_handler)
 
     def start(self):
         reactor.callWhenRunning(self._on_reactor_start)
