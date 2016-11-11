@@ -12,7 +12,8 @@
 import logging
 from locale import strcoll
 
-from gi.repository import Gdk, GObject, Gtk
+from gi.repository import Gdk, Gtk
+from gi.repository.GObject import TYPE_UINT64, idle_add
 from twisted.internet import reactor
 
 import deluge.component as component
@@ -20,7 +21,6 @@ from deluge.ui.client import client
 from deluge.ui.gtkui import torrentview_data_funcs as funcs
 from deluge.ui.gtkui.listview import ListView
 from deluge.ui.gtkui.removetorrentdialog import RemoveTorrentDialog
-
 
 log = logging.getLogger(__name__)
 
@@ -93,16 +93,17 @@ def progress_sort(model, iter1, iter2, sort_column_id):
 class SearchBox(object):
     def __init__(self, torrentview):
         self.torrentview = torrentview
-        self.window = torrentview.window
+        mainwindow = component.get('MainWindow')
+        main_builder = mainwindow.get_builder()
 
         self.visible = False
         self.search_pending = self.prefiltered = None
 
-        self.search_box = self.window.main_builder.get_object('search_box')
-        self.search_torrents_entry = self.window.main_builder.get_object('search_torrents_entry')
-        self.close_search_button = self.window.main_builder.get_object('close_search_button')
-        self.match_search_button = self.window.main_builder.get_object('search_torrents_match')
-        self.window.connect_signals(self)
+        self.search_box = main_builder.get_object('search_box')
+        self.search_torrents_entry = main_builder.get_object('search_torrents_entry')
+        self.close_search_button = main_builder.get_object('close_search_button')
+        self.match_search_button = main_builder.get_object('search_torrents_match')
+        mainwindow.connect_signals(self)
 
     def show(self):
         self.visible = True
@@ -222,9 +223,9 @@ class TorrentView(ListView, component.Component):
     """TorrentView handles the listing of torrents."""
     def __init__(self):
         component.Component.__init__(self, 'TorrentView', interval=2, depend=['SessionProxy'])
-        self.window = component.get('MainWindow')
+        main_builder = component.get('MainWindow').get_builder()
         # Call the ListView constructor
-        ListView.__init__(self, self.window.main_builder.get_object('torrent_view'), 'torrentview.state')
+        ListView.__init__(self, main_builder.get_object('torrent_view'), 'torrentview.state')
         log.debug('TorrentView Init..')
 
         # If we have gotten the state yet
@@ -237,7 +238,7 @@ class TorrentView(ListView, component.Component):
         self.prev_status = {}
 
         # Register the columns menu with the listview so it gets updated accordingly.
-        self.register_checklist_menu(self.window.main_builder.get_object('menu_columns'))
+        self.register_checklist_menu(main_builder.get_object('menu_columns'))
 
         # Add the columns to the listview
         self.add_text_column('torrent_id', hidden=True, unique=True)
@@ -250,15 +251,15 @@ class TorrentView(ListView, component.Component):
                                  function=funcs.cell_data_statusicon,
                                  default_sort=True)
         self.add_func_column(_('Size'), funcs.cell_data_size,
-                             [GObject.TYPE_UINT64],
+                             [TYPE_UINT64],
                              status_field=['total_wanted'])
         self.add_func_column(_('Downloaded'), funcs.cell_data_size,
-                             [GObject.TYPE_UINT64],
+                             [TYPE_UINT64],
                              status_field=['all_time_download'], default=False)
         self.add_func_column(_('Uploaded'), funcs.cell_data_size,
-                             [GObject.TYPE_UINT64],
+                             [TYPE_UINT64],
                              status_field=['total_uploaded'], default=False)
-        self.add_func_column(_('Remaining'), funcs.cell_data_size, [GObject.TYPE_UINT64],
+        self.add_func_column(_('Remaining'), funcs.cell_data_size, [TYPE_UINT64],
                              status_field=['total_remaining'], default=False)
         self.add_progress_column(_('Progress'),
                                  status_field=['progress', 'state'],
@@ -379,7 +380,7 @@ class TorrentView(ListView, component.Component):
         """
         Saves the state of the torrent view.
         """
-        if self.window.visible():
+        if component.get('MainWindow').visible():
             ListView.save_state(self, 'torrentview.state')
 
     def remove_column(self, header):
@@ -465,7 +466,7 @@ class TorrentView(ListView, component.Component):
                 # An update request is scheduled, let's wait for that one
                 return
             # Send a status request
-            GObject.idle_add(self.send_status_request, None, select_row)
+            idle_add(self.send_status_request, None, select_row)
 
     def update_view(self, load_new_list=False):
         """Update the torrent view model with data we've received."""

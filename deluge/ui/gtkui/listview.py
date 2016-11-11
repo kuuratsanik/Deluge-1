@@ -35,6 +35,7 @@ class ListViewColumnState:  # pylint: disable=old-style-class
         self.sort_order = sort_order
 
 
+# FIXME: Why is this needed?
 class TreeModel(GObject.Object, Gtk.TreeModel):
 
     def __init__(self, filter):
@@ -195,10 +196,7 @@ class ListView(object):
         # Using the default sort column
         elif self.default_sort_column_id:
             self.model_filter.set_sort_column_id(self.default_sort_column_id, Gtk.SortType.ASCENDING)
-        # FIXME: This does not match the orginal code below, should not need to call set_sort_func.
-        # self.model_filter.set_default_sort_func(None)
-        self.model_filter.set_default_sort_func(self.generic_sort_func, self.default_sort_column_id)
-        self.model_filter.set_sort_func(0, self.generic_sort_func, None)
+        self.model_filter.set_default_sort_func(lambda x: None)
 
     def get_sort_column_from_state(self):
         """Find the first (should only be one) state with sort enabled"""

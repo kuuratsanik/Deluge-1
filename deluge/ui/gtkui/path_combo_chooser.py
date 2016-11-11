@@ -18,6 +18,7 @@ from gi.importer import modules
 # from gi.module import get_introspection_module
 from gi.repository import Gdk, GObject, Gtk
 
+import deluge.component as component
 from deluge.common import resource_filename
 from deluge.path_chooser_common import get_completion_paths
 
@@ -515,11 +516,7 @@ class CompletionList(ValueList):
 
 
 class PathChooserPopup(object):
-    """
-
-    This creates the popop window for the ComboEntry
-
-    """
+    """This creates the popop window for the ComboEntry."""
     def __init__(self, min_visible_rows, max_visible_rows, popup_alignment_widget):
         self.min_visible_rows = min_visible_rows
         # Maximum number of rows to display without scrolling
@@ -529,10 +526,7 @@ class PathChooserPopup(object):
         self.popup_buttonbox = None  # If set, the height of this widget is the minimum height
 
     def popup(self):
-        """
-        Makes the popup visible.
-
-        """
+        """Make the popup visible."""
         # Entry is not yet visible
         if not self.path_entry.get_realized():
             return
@@ -547,8 +541,11 @@ class PathChooserPopup(object):
         self.popup_window.hide()
 
     def is_popped_up(self):
-        """
-        Return True if the window is popped up.
+        """Check if window is popped up.
+
+        Returns:
+            bool: True if popped up, False otherwise.
+
         """
         return self.popup_window.get_mapped()
 
@@ -1060,7 +1057,7 @@ class PathChooserComboBox(GtkGI.Box, StoredValuesPopup, GObject.GObject):
         self.open_filechooser_dialog_button = self.builder.get_object('button_open_dialog')
         self.filechooser_button = self.open_filechooser_dialog_button
         self.filechooserdialog = self.builder.get_object('filechooserdialog')
-        self.filechooserdialog.set_transient_for(Gtk.Window(Gtk.WindowType.TOPLEVEL))
+        self.filechooserdialog.set_transient_for(component.get('MainWindow').get_window())
         self.folder_name_label = self.builder.get_object('folder_name_label')
         self.default_text = None
         self.button_properties = self.builder.get_object('button_properties')
@@ -1415,7 +1412,7 @@ class PathChooserComboBox(GtkGI.Box, StoredValuesPopup, GObject.GObject):
         self.visible_rows_label = self.builder.get_object('visible_rows_label')
         self.show_hidden_files_checkbutton = self.builder.get_object('show_hidden_files_checkbutton')
         self.show_folder_name_on_button_checkbutton = self.builder.get_object('show_folder_name_on_button_checkbutton')
-        self.config_dialog.set_transient_for(self.popup_window)
+        self.config_dialog.set_transient_for(component.get('MainWindow').get_window())
 
         def on_close(widget, event=None):
             if not self.setting_accelerator_key:

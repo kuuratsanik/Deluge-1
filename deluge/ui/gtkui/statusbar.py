@@ -11,7 +11,8 @@ from __future__ import division
 
 import logging
 
-from gi.repository import GObject, Gtk
+from gi.repository import Gtk
+from gi.repository.GObject import timeout_add
 
 import deluge.component as component
 from deluge.common import fsize, fspeed, get_pixmap
@@ -100,8 +101,8 @@ class StatusBarItem(object):
 class StatusBar(component.Component):
     def __init__(self):
         component.Component.__init__(self, 'StatusBar', interval=3)
-        self.window = component.get('MainWindow')
-        self.statusbar = self.window.get_builder().get_object('statusbar')
+        main_builder = component.get('MainWindow').get_builder()
+        self.statusbar = main_builder.get_object('statusbar')
         self.config = ConfigManager('gtkui.conf')
 
         # Status variables that are updated via callback
@@ -224,17 +225,16 @@ class StatusBar(component.Component):
         self.config['show_statusbar'] = visible
 
     def show_not_connected(self):
-        self.hbox.pack_start(
-            self.not_connected_item.get_eventbox(), expand=False, fill=False)
+        self.hbox.pack_start(self.not_connected_item.get_eventbox(), False, False, 0)
 
     def add_item(self, image=None, stock=None, text=None, markup=False, callback=None, tooltip=None, pack_start=False):
         """Adds an item to the status bar"""
         # The return tuple.. we return whatever widgets we add
         item = StatusBarItem(image, stock, text, markup, callback, tooltip)
         if pack_start:
-            self.hbox.pack_start(item.get_eventbox(), expand=False, fill=False)
+            self.hbox.pack_start(item.get_eventbox(), False, False, 0)
         else:
-            self.hbox.pack_end(item.get_eventbox(), expand=False, fill=False)
+            self.hbox.pack_end(item.get_eventbox(), False, False, 0)
         return item
 
     def remove_item(self, item):
@@ -249,7 +249,7 @@ class StatusBar(component.Component):
         """Adds an item to the StatusBar for seconds"""
         item = self.add_item(image, stock, text, callback)
         # Start a timer to remove this item in seconds
-        GObject.timeout_add(seconds * 1000, self.remove_item, item)
+        timeout_add(seconds * 1000, self.remove_item, item)
 
     def display_warning(self, text, callback=None):
         """Displays a warning to the user in the status bar"""
@@ -257,7 +257,7 @@ class StatusBar(component.Component):
             item = self.add_item(
                 stock=Gtk.STOCK_DIALOG_WARNING, text=text, callback=callback)
             self.current_warnings.append(text)
-            GObject.timeout_add(3000, self.remove_warning, item)
+            timeout_add(3000, self.remove_warning, item)
 
     def remove_warning(self, item):
         self.current_warnings.remove(item.get_text())
@@ -297,8 +297,7 @@ class StatusBar(component.Component):
     def _on_dht(self, value):
         self.dht_status = value
         if value:
-            self.hbox.pack_start(
-                self.dht_item.get_eventbox(), expand=False, fill=False)
+            self.hbox.pack_start(self.dht_item.get_eventbox(), False, False, 0)
             self.send_status_request()
         else:
             self.remove_item(self.dht_item)
@@ -432,7 +431,7 @@ class StatusBar(component.Component):
             self.config['tray_upload_speed_list'],
             self._on_set_upload_speed,
             self.max_upload_speed,
-            _('KiB/s'), show_notset=True, show_other=True)
+            _('K/s'), show_notset=True, show_other=True)
         menu.show_all()
         menu.popup(None, None, None, None, event.button, event.time)
 

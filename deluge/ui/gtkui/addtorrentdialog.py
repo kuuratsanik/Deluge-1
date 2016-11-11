@@ -14,7 +14,8 @@ import logging
 import os
 from xml.sax.saxutils import escape as xml_escape
 
-from gi.repository import Gdk, GObject, Gtk
+from gi.repository import Gdk, Gtk
+from gi.repository.GObject import TYPE_INT64, TYPE_UINT64
 
 import deluge.common
 import deluge.component as component
@@ -26,7 +27,6 @@ from deluge.ui.gtkui.common import listview_replace_treestore, reparent_iter
 from deluge.ui.gtkui.dialogs import ErrorDialog
 from deluge.ui.gtkui.path_chooser import PathChooser
 from deluge.ui.gtkui.torrentview_data_funcs import cell_data_size
-
 
 log = logging.getLogger(__name__)
 
@@ -67,7 +67,7 @@ class AddTorrentDialog(component.Component):
 
         # download?, path, filesize, sequence number, inconsistent?
         self.files_treestore = Gtk.TreeStore(
-            bool, str, GObject.TYPE_UINT64, GObject.TYPE_INT64, bool, str)
+            bool, str, TYPE_UINT64, TYPE_INT64, bool, str)
         self.files_treestore.set_sort_column_id(1, Gtk.SortType.ASCENDING)
 
         # Holds the files info
@@ -148,7 +148,7 @@ class AddTorrentDialog(component.Component):
 
     def _show(self, focus=False):
         if component.get('MainWindow').is_on_active_workspace():
-            self.dialog.set_transient_for(component.get('MainWindow').window)
+            self.dialog.set_transient_for(component.get('MainWindow').get_window())
         else:
             self.dialog.set_transient_for(None)
 
@@ -166,7 +166,7 @@ class AddTorrentDialog(component.Component):
         self.previous_selected_torrent = None
         self.torrent_liststore.clear()
         self.files_treestore.clear()
-        self.dialog.set_transient_for(component.get('MainWindow').window)
+        self.dialog.set_transient_for(component.get('MainWindow').get_window())
         return None
 
     def update_core_config(self, show=False, focus=False):

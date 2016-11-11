@@ -16,16 +16,19 @@ import signal
 import sys
 import time
 
-import gi  # isort: skip
+import gi  # isort:skip (Required before Gtk import).
 gi.require_version('Gtk', '3.0')  # NOQA: E402
 
-from gi.repository import GObject, Gdk, Gtk
+# isort:imports-thirdparty
+from gi.repository import Gdk, Gtk
+from gi.repository.GObject import set_prgname
 from twisted.internet import defer, gtk3reactor
 from twisted.internet.error import ReactorAlreadyInstalledError
 from twisted.internet.task import LoopingCall
 
 try:
-    reactor = gtk3reactor.install()  # Install twisted reactor, before any other modules import reactor.
+    # Install twisted reactor, before any other modules import reactor.
+    reactor = gtk3reactor.install()
 except ReactorAlreadyInstalledError as ex:
     # Running unit tests so trial already installed a rector
     from twisted.internet import reactor
@@ -57,9 +60,7 @@ from deluge.ui.sessionproxy import SessionProxy
 from deluge.ui.tracker_icons import TrackerIcons
 from deluge.ui.util import lang
 
-
-GObject.set_prgname('deluge')
-
+set_prgname('deluge')
 log = logging.getLogger(__name__)
 
 try:
@@ -264,7 +265,7 @@ class GtkUI(object):
         # The gtk modal dialogs (e.g. Preferences) can prevent the application
         # quitting, so force exiting by destroying MainWindow. Must be done here
         # to avoid hanging when quitting with SIGINT (CTRL-C).
-        self.mainwindow.window.destroy()
+        self.mainwindow.get_window().destroy()
 
         reactor.stop()
 

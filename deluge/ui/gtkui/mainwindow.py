@@ -23,7 +23,6 @@ from deluge.ui.client import client
 from deluge.ui.gtkui.dialogs import PasswordDialog
 from deluge.ui.gtkui.ipcinterface import process_args
 
-
 try:
     from gi.repository import Wnck
 except ImportError:
@@ -199,6 +198,9 @@ class MainWindow(component.Component):
         """Returns a reference to the main window GTK builder object."""
         return self.main_builder
 
+    def get_window(self):
+        return self.window
+
     def quit(self, shutdown=False, restart=False):
         """Quits the GtkUI application.
 
@@ -290,7 +292,7 @@ class MainWindow(component.Component):
         if selection_data.get_uris():
             process_args(selection_data.get_uris())
         else:
-            process_args(selection_data.data.split())
+            process_args(selection_data.get_text().split())
         drag_context.finish(True, True, timestamp)
 
     def on_expose_event(self, widget, event):

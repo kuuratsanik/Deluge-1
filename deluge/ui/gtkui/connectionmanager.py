@@ -126,11 +126,10 @@ class ConnectionManager(component.Component):
         self.builder.add_from_file(resource_filename(
             'deluge.ui.gtkui', os.path.join('glade', 'connection_manager.askpassword.ui')
         ))
-        self.window = component.get('MainWindow')
 
         # Setup the ConnectionManager dialog
         self.connection_manager = self.builder.get_object('connection_manager')
-        self.connection_manager.set_transient_for(self.window.window)
+        self.connection_manager.set_transient_for(component.get('MainWindow').get_window())
 
         self.connection_manager.set_icon(get_deluge_icon())
 

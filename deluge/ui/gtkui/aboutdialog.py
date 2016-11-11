@@ -9,6 +9,7 @@
 
 from gi.repository import GdkPixbuf, Gtk
 
+import deluge.component as component
 from deluge.common import get_pixmap, get_version
 from deluge.ui.client import client
 from deluge.ui.gtkui.common import get_deluge_icon
@@ -17,7 +18,7 @@ from deluge.ui.gtkui.common import get_deluge_icon
 class AboutDialog(object):
     def __init__(self):
         self.about = Gtk.AboutDialog()
-        self.about.set_transient_for(Gtk.Window(Gtk.WindowType.TOPLEVEL))
+        self.about.set_transient_for(component.get('MainWindow').get_window())
         self.about.set_position(Gtk.WindowPosition.CENTER)
         self.about.set_name('Deluge')
         self.about.set_program_name(_('Deluge'))

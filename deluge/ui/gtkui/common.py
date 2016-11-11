@@ -20,7 +20,6 @@ from gi.repository.GLib import GError
 
 import deluge.common
 
-
 log = logging.getLogger(__name__)
 
 

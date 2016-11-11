@@ -10,8 +10,8 @@
 import logging
 import os.path
 
-from gi.repository import GObject, Gtk
-
+from gi.repository import Gtk
+from gi.repository.GObject import timeout_add
 import deluge.common
 import deluge.component as component
 from deluge.configmanager import ConfigManager
@@ -52,7 +52,7 @@ class QueuedTorrents(component.Component):
         self.treeview.set_tooltip_column(1)
 
     def run(self):
-        self.dialog.set_transient_for(component.get('MainWindow').window)
+        self.dialog.set_transient_for(component.get('MainWindow').get_window())
         self.dialog.show()
 
     def start(self):
@@ -106,7 +106,7 @@ class QueuedTorrents(component.Component):
         except Exception:
             # The statusbar hasn't been loaded yet, so we'll add a timer to
             # update it later.
-            GObject.timeout_add(100, self.update_status_bar)
+            timeout_add(100, self.update_status_bar)
             return False
 
         # Set the label text for statusbar

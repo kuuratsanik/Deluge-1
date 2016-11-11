@@ -14,7 +14,7 @@ import os
 import warnings
 
 from gi.repository import GdkPixbuf, Gtk, Pango
-from gi.repository.GLib import GError
+from gi.repository.GObject import GError
 
 import deluge.component as component
 from deluge.common import TORRENT_STATE, get_pixmap, resource_filename
@@ -47,7 +47,6 @@ FILTER_COLUMN = 5
 class FilterTreeView(component.Component):
     def __init__(self):
         component.Component.__init__(self, 'FilterTreeView', interval=2)
-        self.window = component.get('MainWindow')
         self.config = ConfigManager('gtkui.conf')
 
         self.tracker_icons = component.get('TrackerIcons')
@@ -98,7 +97,7 @@ class FilterTreeView(component.Component):
         self.treeview.connect('button-press-event', self.on_button_press_event)
 
         # colors using current theme.
-        style_ctx = self.window.window.get_style_context()
+        style_ctx = component.get('MainWindow').get_window().get_style_context()
         self.colour_background = style_ctx.get_background_color(Gtk.StateFlags.NORMAL)
         self.colour_foreground = style_ctx.get_color(Gtk.StateFlags.NORMAL)
 

@@ -13,7 +13,8 @@ import base64
 import logging
 import os.path
 
-from gi.repository import GObject, Gtk
+from gi.repository import Gtk
+from gi.repository.GObject import TYPE_UINT64, idle_add
 from twisted.internet.threads import deferToThread
 
 import deluge.component as component
@@ -68,7 +69,7 @@ class CreateTorrentDialog(object):
         })
 
         # path, icon, size
-        self.files_treestore = Gtk.TreeStore(str, str, GObject.TYPE_UINT64)
+        self.files_treestore = Gtk.TreeStore(str, str, TYPE_UINT64)
 
         column = Gtk.TreeViewColumn(_('Filename'))
         render = Gtk.CellRendererPixbuf()
@@ -350,7 +351,7 @@ class CreateTorrentDialog(object):
                           add_to_session).addCallback(hide_progress)
 
         # Setup progress dialog
-        self.builder.get_object('progress_dialog').set_transient_for(component.get('MainWindow').window)
+        self.builder.get_object('progress_dialog').set_transient_for(component.get('MainWindow').get_window())
         self.builder.get_object('progress_dialog').show_all()
 
         self.dialog.destroy()
@@ -377,7 +378,7 @@ class CreateTorrentDialog(object):
                                          {'download_location': os.path.split(path)[0]})
 
     def _on_create_torrent_progress(self, value, num_pieces):
-        percent = float(value) / float(num_pieces)
+        percent = value / num_pieces
 
         def update_pbar_with_gobject(percent):
             pbar = self.builder.get_object('progressbar')
@@ -388,7 +389,7 @@ class CreateTorrentDialog(object):
         if percent >= 0 and percent <= 1.0:
             # Make sure there are no threads race conditions that can
             # crash the UI while updating it.
-            GObject.idle_add(update_pbar_with_gobject, percent)
+            idle_add(update_pbar_with_gobject, percent)
 
     def _on_button_up_clicked(self, widget):
         log.debug('_on_button_up_clicked')

@@ -13,7 +13,8 @@ import cPickle
 import logging
 import os.path
 
-from gi.repository import Gdk, GObject, Gtk
+from gi.repository import Gdk, Gtk
+from gi.repository.GObject import TYPE_UINT64
 
 import deluge.component as component
 from deluge.common import FILE_PRIORITY, open_file, show_file
@@ -87,15 +88,15 @@ def cell_progress(column, cell, model, row, data):
 class FilesTab(Tab):
     def __init__(self):
         Tab.__init__(self)
-        builder = component.get('MainWindow').get_builder()
+        main_builder = component.get('MainWindow').get_builder()
 
         self._name = 'Files'
-        self._child_widget = builder.get_object('files_tab')
-        self._tab_label = builder.get_object('files_tab_label')
+        self._child_widget = main_builder.get_object('files_tab')
+        self._tab_label = main_builder.get_object('files_tab_label')
 
-        self.listview = builder.get_object('files_listview')
+        self.listview = main_builder.get_object('files_listview')
         # filename, size, progress string, progress value, priority, file index, icon id
-        self.treestore = Gtk.TreeStore(str, GObject.TYPE_UINT64, str, float, int, int, str)
+        self.treestore = Gtk.TreeStore(str, TYPE_UINT64, str, float, int, int, str)
         self.treestore.set_sort_column_id(0, Gtk.SortType.ASCENDING)
 
         # We need to store the row that's being edited to prevent updating it until
@@ -171,19 +172,19 @@ class FilesTab(Tab):
 
         self.listview.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
 
-        self.file_menu = builder.get_object('menu_file_tab')
+        self.file_menu = main_builder.get_object('menu_file_tab')
         self.file_menu_priority_items = [
-            builder.get_object('menuitem_donotdownload'),
-            builder.get_object('menuitem_normal'),
-            builder.get_object('menuitem_high'),
-            builder.get_object('menuitem_highest'),
-            builder.get_object('menuitem_priority_sep')
+            main_builder.get_object('menuitem_donotdownload'),
+            main_builder.get_object('menuitem_normal'),
+            main_builder.get_object('menuitem_high'),
+            main_builder.get_object('menuitem_highest'),
+            main_builder.get_object('menuitem_priority_sep')
         ]
 
         self.localhost_widgets = [
-            builder.get_object('menuitem_open_file'),
-            builder.get_object('menuitem_show_file'),
-            builder.get_object('menuitem3')
+            main_builder.get_object('menuitem_open_file'),
+            main_builder.get_object('menuitem_show_file'),
+            main_builder.get_object('menuitem3')
         ]
 
         self.listview.connect('row-activated', self._on_row_activated)
@@ -379,7 +380,7 @@ class FilesTab(Tab):
         with listview_replace_treestore(self.listview):
             self.prepare_file_store(self.files_list[self.torrent_id])
         # FIXME
-        # self.listview.expand_row("0", False)
+        # self.listview.expand_row('0', False)
 
     def get_selected_files(self):
         """Returns a list of file indexes that are selected."""
@@ -413,6 +414,7 @@ class FilesTab(Tab):
 
     def update_folder_percentages(self):
         """Go through the tree and update the folder complete percentages."""
+        # FIXME Why changed? Was: self.treestore.get_iter_root()
         root = self.treestore.get_iter_first()
         if root is None or self.treestore[root][5] != -1:
             return
@@ -764,9 +766,9 @@ class FilesTab(Tab):
                     child_itr = self.treestore.iter_children(old_folder_iter)
                     reparent_iter(self.treestore, child_itr, old_folder_iter_parent, move_siblings=True)
 
-            # We need to check if the old_folder_iter_parent no longer has children
+            # We need to check if the old_folder_iter no longer has children
             # and if so, we delete it
-            self.remove_childless_folders(old_folder_iter_parent)
+            self.remove_childless_folders(old_folder_iter)
 
     def _on_torrentremoved_event(self, torrent_id):
         if torrent_id in self.files_list:
