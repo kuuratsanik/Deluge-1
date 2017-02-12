@@ -1016,7 +1016,7 @@ class TorrentManager(component.Component):
             return
 
         # Set the tracker status for the torrent
-        torrent.set_tracker_status('Announce OK')
+        torrent.set_tracker_status('Announce OK', alert.tracker_url())
 
         # Check for peer information from the tracker, if none then send a scrape request.
         if alert.handle.status().num_complete == -1 or alert.handle.status().num_incomplete == -1:
@@ -1030,7 +1030,7 @@ class TorrentManager(component.Component):
             return
 
         # Set the tracker status for the torrent
-        torrent.set_tracker_status('Announce Sent')
+        torrent.set_tracker_status('Announce Sent', alert.tracker_url())
 
     def on_alert_tracker_warning(self, alert):
         """Alert handler for libtorrent tracker_warning_alert"""
@@ -1039,7 +1039,7 @@ class TorrentManager(component.Component):
         except (RuntimeError, KeyError):
             return
         # Set the tracker status for the torrent
-        torrent.set_tracker_status('Warning: %s' % decode_string(alert.message()))
+        torrent.set_tracker_status('Warning: %s' % decode_string(alert.message()), alert.tracker_url())
 
     def on_alert_tracker_error(self, alert):
         """Alert handler for libtorrent tracker_error_alert"""
@@ -1052,7 +1052,7 @@ class TorrentManager(component.Component):
         if not error_message:
             error_message = alert.error.message()
         log.debug('Tracker Error Alert: %s [%s]', decode_string(alert.message()), error_message)
-        torrent.set_tracker_status('Error: ' + error_message)
+        torrent.set_tracker_status('Error: ' + error_message, alert.tracker_url())
 
     def on_alert_storage_moved(self, alert):
         """Alert handler for libtorrent storage_moved_alert"""

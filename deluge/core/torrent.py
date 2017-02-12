@@ -566,7 +566,7 @@ class Torrent(object):
             self.force_reannounce()
         self.tracker_host = None
 
-    def set_tracker_status(self, status):
+    def set_tracker_status(self, status, tracker_url=None):
         """Sets the tracker status.
 
         Args:
@@ -576,8 +576,8 @@ class Torrent(object):
             TorrentTrackerStatusEvent upon tracker status change.
 
         """
-
         self.tracker_host = None
+        self.get_tracker_host(tracker_url)
 
         if self.tracker_status != status:
             self.tracker_status = status
@@ -801,20 +801,19 @@ class Torrent(object):
         return [progress / _file.size if _file.size else 0.0 for progress, _file in
                 zip(self.handle.file_progress(), self.torrent_info.files())]
 
-    def get_tracker_host(self):
+    def get_tracker_host(self, tracker_url=None):
         """Get the hostname of the currently connected tracker.
-
-        If no tracker is connected, it uses the 1st tracker.
 
         Returns:
             str: The tracker host
+
         """
         if self.tracker_host:
             return self.tracker_host
 
         tracker = self.status.current_tracker
-        if not tracker and self.trackers:
-            tracker = self.trackers[0]['url']
+        if not tracker and tracker_url:
+            tracker = tracker_url
 
         if tracker:
             url = urlparse(tracker.replace('udp://', 'http://'))
@@ -836,8 +835,13 @@ class Torrent(object):
                     else:
                         host = '.'.join(parts[-2:])
                 self.tracker_host = host
-                return host
-        return ''
+        elif self.trackers:
+            self.tracker_host = 'Not connected'
+        else:
+            self.tracker_host = 'Trackers list is empty'
+
+        log.debug(self.tracker_host)
+        return self.tracker_host
 
     def get_magnet_uri(self):
         """Returns a magnet uri for this torrent"""
@@ -906,6 +910,7 @@ class Torrent(object):
         Returns:
             dict: a dictionary of the status keys and their values
         """
+
         if update:
             self.update_status(self.handle.status())
 
