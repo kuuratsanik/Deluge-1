@@ -30,7 +30,7 @@ class TrackersTab(Tab):
 
         self.label_widgets = [
             (main_builder.get_object('summary_next_announce'), ftime, ('next_announce',)),
-            (main_builder.get_object('summary_tracker'), None, ('tracker_host',)),
+            (main_builder.get_object('summary_tracker'), None, ('tracker',)),
             (main_builder.get_object('summary_tracker_status'), ftranslate, ('tracker_status',)),
             (main_builder.get_object('summary_tracker_total'), fcount, ('trackers',)),
             (main_builder.get_object('summary_private'), fyes_no, ('private',)),

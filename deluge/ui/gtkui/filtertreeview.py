@@ -129,7 +129,8 @@ class FilterTreeView(component.Component):
                                                                       _('Trackers'), 0, None, False])
         self.update_row('tracker_host', 'All', 0, _('All'))
         self.update_row('tracker_host', 'Error', 0, _('Error'))
-        self.update_row('tracker_host', '', 0, _('None'))
+        self.update_row('tracker_host', None, 0, _('None'))
+        self.update_row('tracker_host', '', 0, _('Inactive'))
 
         self.cat_nodes['owner'] = self.treestore.append(None, ['cat', 'owner', _('Owner'), 0, None, False])
         self.update_row('owner', 'localclient', 0, _('Admin'))
