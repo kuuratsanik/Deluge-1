@@ -1167,27 +1167,41 @@ class Torrent(object):
             except OSError as ex:
                 log.warning('Unable to delete the torrent file: %s', ex)
 
-    def force_reannounce(self):
-        """Force a tracker reannounce"""
+    def force_dht_announce(self):
+        """Force a dht announce for this torrent"""
+        self.handle.force_dht_announce()
+
+    def force_reannounce(self, delay_sec=0, tracker_idx=-1):
+        """Force announce to all trackers, or specified tracker for this torrent.
+
+        Args:
+            delay (int): The delay, in seconds, from now to issue announces.
+            tracker_idx (int): The index of the tracker to announce to. Use -1 for all trackers.
+
+        """
         try:
-            self.handle.force_reannounce()
+            self.handle.force_reannounce(delay_sec, tracker_idx)
         except RuntimeError as ex:
             log.debug('Unable to force reannounce: %s', ex)
-            return False
-        return True
 
-    def scrape_tracker(self):
-        """Scrape the tracker
+    def scrape_tracker(self, tracker_idx=-1):
+        """Query the specified tracker for statistics.
 
-         A scrape request queries the tracker for statistics such as total
-         number of incomplete peers, complete peers, number of downloads etc.
+        A scrape request queries the tracker for statistics such as total
+        number of incomplete peers, complete peers, number of downloads etc.
+        It will generate a `scrape_reply_alert`. If it fails, it will generate
+        a `scrape_failed_alert`.
+
+        Also will update the `num_complete` and `num_incomplete` fields in torrent_status.
+
+        Args:
+            tracker_idx (int): The tracker index to scrape, else -1 uses last working tracker.
+
         """
         try:
             self.handle.scrape_tracker()
         except RuntimeError as ex:
             log.debug('Unable to scrape tracker: %s', ex)
-            return False
-        return True
 
     def force_recheck(self):
         """Forces a recheck of the torrent's pieces"""
