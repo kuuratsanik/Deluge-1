@@ -1092,12 +1092,7 @@ class Torrent(object):
                 return False
 
         try:
-            # libtorrent needs unicode object if wstrings are enabled, utf8 bytestring otherwise
-            # Keyword argument flags=1 (fail_if_exist) stops overwriting of target files.
-            try:
-                self.handle.move_storage(dest, flags=1)
-            except TypeError:
-                self.handle.move_storage(utf8_encoded(dest), flags=1)
+            self.handle.move_storage(utf8_encoded(dest), flags=1)
         except RuntimeError as ex:
             log.error('Error calling libtorrent move_storage: %s', ex)
             return False
@@ -1218,13 +1213,8 @@ class Torrent(object):
             filenames (list): A list of (index, filename) pairs.
         """
         for index, filename in filenames:
-            # Make sure filename is a unicode object
-            filename = sanitize_filepath(decode_string(filename))
-            # libtorrent needs unicode object if wstrings are enabled, utf8 bytestring otherwise
-            try:
-                self.handle.rename_file(index, filename)
-            except TypeError:
-                self.handle.rename_file(index, utf8_encoded(filename))
+            filename = sanitize_filepath(filename)
+            self.handle.rename_file(index, utf8_encoded(filename))
 
     def rename_folder(self, folder, new_folder):
         """Renames a folder within a torrent.
@@ -1257,10 +1247,7 @@ class Torrent(object):
                     on_file_rename_complete, wait_on_folder, _file['index']
                 )
                 new_path = _file['path'].replace(folder, new_folder, 1)
-                try:
-                    self.handle.rename_file(_file['index'], new_path)
-                except TypeError:
-                    self.handle.rename_file(_file['index'], utf8_encoded(new_path))
+                self.handle.rename_file(_file['index'], utf8_encoded(new_path))
 
         def on_folder_rename_complete(dummy_result, torrent, folder, new_folder):
             """Folder rename complete"""

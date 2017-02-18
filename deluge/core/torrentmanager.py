@@ -360,10 +360,7 @@ class TorrentManager(component.Component):
                 fname = sanitize_filepath(decode_string(fname))
                 if log.isEnabledFor(logging.DEBUG):
                     log.debug('renaming file index %s to %s', index, fname)
-                try:
-                    torrent_info.rename_file(index, fname)
-                except TypeError:
-                    torrent_info.rename_file(index, utf8_encoded(fname))
+                torrent_info.rename_file(index, utf8_encoded(fname))
             add_torrent_params['ti'] = torrent_info
 
         if not options['owner']:
