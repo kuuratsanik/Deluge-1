@@ -77,21 +77,25 @@ def filter_by_name(torrent_ids, search_string):
             yield torrent_id
 
 
-def tracker_error_filter(torrent_ids, values):
+def filter_by_tracker(torrent_ids, values):
+    all_torrents = component.get('TorrentManager').torrents
+
     filtered_torrent_ids = []
-    tm = component.get('TorrentManager')
-
-    # If this is a tracker_host, then we need to filter on it
-    if values[0] != 'Error':
+    if values[0] is None:
         for torrent_id in torrent_ids:
-            if values[0] == tm[torrent_id].get_status(['tracker_host'])['tracker_host']:
+            if len(all_torrents[torrent_id].get_status(['trackers'])['trackers']) == 0:
                 filtered_torrent_ids.append(torrent_id)
-        return filtered_torrent_ids
+    elif values[0] == 'Error':
+        # Check torrent's tracker_status for 'Error:' and return those torrent_ids
+        for torrent_id in torrent_ids:
+            if 'Error:' in all_torrents[torrent_id].get_status(['tracker_status'])['tracker_status']:
+                filtered_torrent_ids.append(torrent_id)
+    else:
+        # If this is a tracker_host, then we need to filter on it
+        for torrent_id in torrent_ids:
+            if values[0] == all_torrents[torrent_id].get_status(['tracker_host'])['tracker_host']:
+                filtered_torrent_ids.append(torrent_id)
 
-    # Check torrent's tracker_status for 'Error:' and return those torrent_ids
-    for torrent_id in torrent_ids:
-        if 'Error:' in tm[torrent_id].get_status(['tracker_status'])['tracker_status']:
-            filtered_torrent_ids.append(torrent_id)
     return filtered_torrent_ids
 
 
@@ -115,7 +119,7 @@ class FilterManager(component.Component):
             return {'Error': 0}
         self.register_tree_field('tracker_host', _init_tracker_tree)
 
-        self.register_filter('tracker_host', tracker_error_filter)
+        self.register_filter('tracker_host', filter_by_tracker)
 
         def _init_users_tree():
             return {'': 0}
@@ -202,7 +206,8 @@ class FilterManager(component.Component):
 
         if 'tracker_host' in items:
             items['tracker_host']['All'] = len(torrent_ids)
-            items['tracker_host']['Error'] = len(tracker_error_filter(torrent_ids, ('Error',)))
+            items['tracker_host']['Error'] = len(filter_by_tracker(torrent_ids, ('Error',)))
+            items['tracker_host'][None] = len(filter_by_tracker(torrent_ids, (None,)))
 
         if not show_zero_hits:
             for cat in ['state', 'owner', 'tracker_host']:

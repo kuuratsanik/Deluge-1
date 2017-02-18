@@ -232,6 +232,7 @@ class Torrent(object):
         self.options.update(options)
 
         # Load values from state if we have it
+        self.trackers = []
         if state:
             self.set_trackers(state.trackers)
             self.is_finished = state.is_finished
@@ -246,7 +247,7 @@ class Torrent(object):
         self.state = None
         self.moving_storage_dest_path = None
         self.tracker_status = ''
-        self.tracker_host = None
+        self.tracker_host = '' if len(self.trackers) else None
         self.forcing_recheck = False
         self.forcing_recheck_paused = False
         self.status_funcs = None
@@ -530,39 +531,36 @@ class Torrent(object):
 
     # End Options methods #
 
-    def set_trackers(self, trackers=None):
+    def set_trackers(self, trackers=None, reannounce=True):
         """Sets the trackers for this torrent.
 
         Args:
-            trackers (list of dicts): A list of trackers.
-        """
-        if trackers is None:
-            self.trackers = [tracker for tracker in self.handle.trackers()]
-            self.tracker_host = None
-            return
+            trackers (list of dicts): A list of trackers, default None resets to libtorrent values.
+            reannounce (bool): If should reannounce after settings trackers, default True.
 
+        """
         if log.isEnabledFor(logging.DEBUG):
             log.debug('Setting trackers for %s: %s', self.torrent_id, trackers)
 
-        tracker_list = []
-
-        for tracker in trackers:
-            new_entry = lt.announce_entry(str(tracker['url']))
-            new_entry.tier = tracker['tier']
-            tracker_list.append(new_entry)
-        self.handle.replace_trackers(tracker_list)
-
+        if trackers is None:
+            self.trackers = [tracker for tracker in self.handle.trackers()]
+        else:
+            tracker_list = []
+            for tracker in trackers:
+                new_entry = lt.announce_entry(utf8_encoded(tracker['url']))
+                new_entry.tier = tracker['tier']
+                tracker_list.append(new_entry)
+            self.handle.replace_trackers(tracker_list)
+            self.trackers = trackers
         # Print out the trackers
         if log.isEnabledFor(logging.DEBUG):
             log.debug('Trackers set for %s:', self.torrent_id)
             for tracker in self.handle.trackers():
                 log.debug(' [tier %s]: %s', tracker['tier'], tracker['url'])
-        # Set the tracker list in the torrent object
-        self.trackers = trackers
-        if len(trackers) > 0:
-            # Force a re-announce if there is at least 1 tracker
+
+        # Announce to trackers.
+        if reannounce:
             self.force_reannounce()
-        self.tracker_host = None
 
     def set_tracker_status(self, status, tracker_url=None):
         """Sets the tracker status.
@@ -574,12 +572,10 @@ class Torrent(object):
             TorrentTrackerStatusEvent upon tracker status change.
 
         """
-        self.tracker_host = None
-        self.get_tracker_host(tracker_url)
-
         if self.tracker_status != status:
             self.tracker_status = status
-            component.get('EventManager').emit(TorrentTrackerStatusEvent(self.torrent_id, self.tracker_status))
+            component.get('EventManager').emit(
+                TorrentTrackerStatusEvent(self.torrent_id, self.tracker_status))
 
     def merge_trackers(self, torrent_info):
         """Merges new trackers in torrent_info into torrent"""
@@ -806,13 +802,16 @@ class Torrent(object):
             str: The tracker hostname.
 
         """
-        tracker = self.status.current_tracker
-        if not tracker:
+        if len(self.trackers) == 0:
             self.tracker_host = None
-        elif self.tracker_host not in tracker:
-            self.tracker_host = extract_domain_name(tracker)
+        else:
+            tracker = self.status.current_tracker
+            if not tracker:
+                self.tracker_host = ''
+            elif not self.tracker_host or self.tracker_host not in tracker:
+                self.tracker_host = extract_domain_name(tracker)
 
-        log.debug('Tracker hostname:', self.tracker_host)
+        log.critical('Tracker hostname: %s', self.tracker_host)
         return self.tracker_host
 
     def get_magnet_uri(self):
@@ -1179,10 +1178,14 @@ class Torrent(object):
             tracker_idx (int): The index of the tracker to announce to. Use -1 for all trackers.
 
         """
-        try:
-            self.handle.force_reannounce(delay_sec, tracker_idx)
-        except RuntimeError as ex:
-            log.debug('Unable to force reannounce: %s', ex)
+        if len(self.trackers):
+            try:
+                self.handle.force_reannounce(delay_sec, tracker_idx)
+            except RuntimeError as ex:
+                log.debug('Unable to force reannounce: %s', ex)
+
+        # Update tracket_host
+        self.get_tracker_host()
 
     def scrape_tracker(self, tracker_idx=-1):
         """Query the specified tracker for statistics.
