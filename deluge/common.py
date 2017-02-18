@@ -22,7 +22,7 @@ import subprocess
 import sys
 import time
 import urllib
-import urlparse
+from urlparse import urljoin, urlparse
 
 import chardet
 import pkg_resources
@@ -241,7 +241,7 @@ def show_file(path, timestamp=None):
             timestamp = int(time.time())
         startup_id = '%s_%u_%s-dbus_TIME%d' % (os.path.basename(sys.argv[0]), os.getpid(), os.uname()[1], timestamp)
         if DBUS_FILEMAN:
-            paths = [urlparse.urljoin('file:', urllib.pathname2url(utf8_encoded(path)))]
+            paths = [urljoin('file:', urllib.pathname2url(utf8_encoded(path)))]
             DBUS_FILEMAN.ShowItems(paths, startup_id, dbus_interface='org.freedesktop.FileManager1')
         else:
             env = os.environ.copy()
@@ -782,6 +782,28 @@ def is_ipv6(ip):
             pass
 
     return False
+
+
+def extract_domain_name(url):
+    """Parses a supplied url for the domain name.
+
+    Note:
+        If the hostname of the url is an ip address, the ip is returned.
+
+    Returns:
+        str: The domain name or empty string.
+
+    """
+    hostname = urlparse(url).hostname
+
+    if hostname and not is_ip(hostname):
+        parts = hostname.split('.')
+        if len(parts) > 2:
+            if parts[-2] in ('co', 'com', 'net', 'org') or parts[-1] == 'uk':
+                hostname = '.'.join(parts[-3:])
+            else:
+                hostname = '.'.join(parts[-2:])
+    return hostname
 
 
 def decode_string(s, encoding='utf8'):

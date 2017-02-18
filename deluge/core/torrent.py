@@ -18,15 +18,13 @@ from __future__ import division
 
 import logging
 import os
-import socket
 from future_builtins import zip
-from urlparse import urlparse
 
 from twisted.internet.defer import Deferred, DeferredList
 
 import deluge.component as component
 from deluge._libtorrent import lt
-from deluge.common import decode_string, utf8_encoded
+from deluge.common import decode_string, extract_domain_name, utf8_encoded
 from deluge.configmanager import ConfigManager, get_config_dir
 from deluge.core.authmanager import AUTH_LEVEL_ADMIN
 from deluge.decorators import deprecated
@@ -801,46 +799,20 @@ class Torrent(object):
         return [progress / _file.size if _file.size else 0.0 for progress, _file in
                 zip(self.handle.file_progress(), self.torrent_info.files())]
 
-    def get_tracker_host(self, tracker_url=None):
+    def get_tracker_host(self):
         """Get the hostname of the currently connected tracker.
 
         Returns:
-            str: The tracker host
+            str: The tracker hostname.
 
         """
-        if self.tracker_host:
-            return self.tracker_host
-
         tracker = self.status.current_tracker
-        if not tracker and tracker_url:
-            tracker = tracker_url
+        if not tracker:
+            self.tracker_host = None
+        elif self.tracker_host not in tracker:
+            self.tracker_host = extract_domain_name(tracker)
 
-        if tracker:
-            url = urlparse(tracker.replace('udp://', 'http://'))
-            if hasattr(url, 'hostname'):
-                host = (url.hostname or 'DHT')
-                # Check if hostname is an IP address and just return it if that's the case
-                try:
-                    socket.inet_aton(host)
-                except socket.error:
-                    pass
-                else:
-                    # This is an IP address because an exception wasn't raised
-                    return url.hostname
-
-                parts = host.split('.')
-                if len(parts) > 2:
-                    if parts[-2] in ('co', 'com', 'net', 'org') or parts[-1] == 'uk':
-                        host = '.'.join(parts[-3:])
-                    else:
-                        host = '.'.join(parts[-2:])
-                self.tracker_host = host
-        elif self.trackers:
-            self.tracker_host = 'Not connected'
-        else:
-            self.tracker_host = 'Trackers list is empty'
-
-        log.debug(self.tracker_host)
+        log.debug('Tracker hostname:', self.tracker_host)
         return self.tracker_host
 
     def get_magnet_uri(self):
