@@ -11,7 +11,7 @@ from __future__ import unicode_literals
 
 import logging
 import os
-from HTMLParser import HTMLParseError, HTMLParser
+from six.moves.html_parser import HTMLParseError, HTMLParser
 from tempfile import mkstemp
 from urlparse import urljoin, urlparse
 

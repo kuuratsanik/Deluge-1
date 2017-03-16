@@ -10,7 +10,6 @@
 """TorrentManager handles Torrent objects"""
 from __future__ import unicode_literals
 
-import cPickle as pickle
 import datetime
 import logging
 import operator
@@ -18,6 +17,7 @@ import os
 import shutil
 import time
 
+import six.moves.cPickle as pickle
 from twisted.internet import defer, reactor, threads
 from twisted.internet.defer import Deferred, DeferredList
 from twisted.internet.task import LoopingCall

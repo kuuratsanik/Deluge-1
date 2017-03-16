@@ -16,6 +16,7 @@ and subsequently emitted to the clients.
 """
 from __future__ import unicode_literals
 
+import six
 known_events = {}
 
 
@@ -29,7 +30,7 @@ class DelugeEventMetaClass(type):
             known_events[name] = self
 
 
-class DelugeEvent(object):
+class DelugeEvent(six.with_metaclass(DelugeEventMetaClass, object)):
     """
     The base class for all events.
 
@@ -39,7 +40,6 @@ class DelugeEvent(object):
     :type args: list
 
     """
-    __metaclass__ = DelugeEventMetaClass
 
     def _get_name(self):
         return self.__class__.__name__

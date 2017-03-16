@@ -14,6 +14,7 @@ from functools import wraps
 from sys import exc_info
 
 import pkg_resources
+import six
 
 
 def get_resource(filename):
@@ -40,7 +41,11 @@ def raises_errors_as(error):
                 return func(self, *args, **kwargs)
             except:
                 (value, tb) = exc_info()[1:]
-                raise error, value, tb
+                try:
+                    raise
+                except AttributeError:
+                    raise error, value, tb
+                six.reraise(error, value, tb)
         return wrapper
     return decorator
 

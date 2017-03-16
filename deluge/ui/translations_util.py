@@ -9,7 +9,6 @@
 
 from __future__ import unicode_literals
 
-import __builtin__
 import gettext
 import locale
 import logging
@@ -23,13 +22,14 @@ log.addHandler(logging.NullHandler())  # Silence: No handlers could be found for
 
 
 def set_dummy_trans(warn_msg=None):
+    import six.moves.builtins
 
     def _func(*txt):
         if warn_msg:
             log.warn('"%s" has been marked for translation, but translation is unavailable.', txt[0])
         return txt[0]
-    __builtin__.__dict__['_'] = _func
-    __builtin__.__dict__['_n'] = _func
+    six.moves.builtins.__dict__['_'] = _func
+    six.moves.builtins.__dict__['_n'] = _func
 
 
 def get_translations_path():
