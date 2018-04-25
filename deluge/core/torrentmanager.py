@@ -10,7 +10,7 @@
 """TorrentManager handles Torrent objects"""
 from __future__ import unicode_literals
 
-import cPickle as pickle
+from six.moves import cPickle as pickle
 import datetime
 import logging
 import operator

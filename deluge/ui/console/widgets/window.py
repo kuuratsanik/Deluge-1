@@ -100,9 +100,10 @@ class BaseWindow(object):
         self._height, self._width = rows, cols
 
     def move_window(self, posy, posx):
-        self.outer_screen.mvwin(posy, posx)
-        self.posy = posy
-        self.posx = posx
+        log.warning('fix this %s %s', posy, posx)
+        self.outer_screen.mvwin(int(posy), int(posx))
+        self.posy = int(posy)
+        self.posx = int(posx)
         self._height, self._width = self.screen.getmaxyx()
 
     def ensure_content_pane_height(self, height):

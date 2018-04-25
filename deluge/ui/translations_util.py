@@ -9,7 +9,7 @@
 
 from __future__ import unicode_literals
 
-import __builtin__
+from six.moves import builtins as __builtin__
 import gettext
 import locale
 import logging

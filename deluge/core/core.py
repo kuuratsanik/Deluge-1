@@ -354,7 +354,8 @@ class Core(component.Component):
     def get_new_release(self):
         log.debug('get_new_release')
         try:
-            self.new_release = urlopen('http://download.deluge-torrent.org/version-2.0').read().strip()
+            request = urlopen('http://download.deluge-torrent.org/version-2.0')
+            self.new_release = request.read().decode('utf-8').strip()
         except URLError as ex:
             log.debug('Unable to get release info from website: %s', ex)
             return

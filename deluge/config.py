@@ -41,7 +41,7 @@ version as this will be done internally.
 """
 from __future__ import unicode_literals
 
-import cPickle as pickle
+from six.moves import cPickle as pickle
 import json
 import logging
 import os
