@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[dev-packages]
+"flake8" = "*"
+pre-commit = "*"
+
+[packages]
+twisted = {extras = ["tls"]}
+chardet = "*"
+mako = "*"
+pyxdg = "*"
+pillow = "*"
+slimit = "*"
