@@ -6,6 +6,8 @@ name = "pypi"
 [dev-packages]
 "flake8" = "*"
 pre-commit = "*"
+bpython = "*"
+isort = "*"
 
 [packages]
 twisted = {extras = ["tls"]}
